@@ -1,4 +1,5 @@
 ﻿using CA.Ticketing.Common.Constants;
+using CA.Ticketing.Common.Setup;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,7 +17,7 @@ namespace CA.Ticketing.Business.Bootstrap
         public static void RegisterAuthentication(this IServiceCollection service, IConfiguration configuration)
         {
             var securitySettings = configuration
-                .GetSection(nameof(SecuritySettings)).Get<SecuritySettings>();
+                .GetSection(nameof(ApplicationSettings)).Get<ApplicationSettings>();
 
             var key = Encoding.ASCII.GetBytes(securitySettings.Secret);
 
