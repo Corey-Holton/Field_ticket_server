@@ -1,0 +1,28 @@
+﻿using CA.Ticketing.Common.Constants;
+using CA.Ticketing.Common.Enums;
+using Microsoft.AspNetCore.Mvc.Rendering;
+
+namespace CA.Ticketing.Common.Extensions
+{
+    public static class EnumExtensions
+    {
+        public static IEnumerable<SelectListItem> GetJobsSelection()
+        {
+            return Enum.GetValues(typeof(JobTitle))
+                .Cast<JobTitle>()
+                .Select(x => new SelectListItem { Value = x.ToString(), Text = x.GetJobTitle()});
+        }
+
+        public static string GetJobTitle(this JobTitle jobTitle)
+        {
+            return jobTitle switch
+            {
+                JobTitle.ToolPusher => Business.JobTitles.ToolPusher,
+                JobTitle.CrewChief => Business.JobTitles.CrewChief,
+                JobTitle.DerrickMan => Business.JobTitles.DerrickMan,
+                JobTitle.FloorHand => Business.JobTitles.FloorHand,
+                _ => throw new ArgumentException(null, nameof(jobTitle))
+            };
+        }
+    }
+}
