@@ -4,7 +4,7 @@
     {
         public const string Admin = nameof(Admin);
 
-        public const string Scheduler = nameof(Scheduler);
+        public const string Manager = nameof(Manager);
 
         public const string Customer = nameof(Customer);
 

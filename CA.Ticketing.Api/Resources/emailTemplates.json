@@ -1,0 +1,51 @@
+[
+  {
+    "templateKey": "ResetPassword",
+    "title": "Reset Password",
+    "subject": "Reset Password - CA Well Services, LLC",
+    "paragraphs": [
+      {
+        "order": 1,
+        "paragraphType": 0,
+        "text": "You have requested password reset from the CA Well Services portal."
+      },
+      {
+        "order": 2,
+        "paragraphType": 0,
+        "text": "Please click on the button below to set your new password."
+      },
+      {
+        "order": 3,
+        "paragraphType": 2,
+        "text": "Set Password"
+      }
+    ]
+  },
+  {
+    "templateKey": "InviteUser",
+    "title": "User Invitation - CA Well Services, LLC",
+    "subject": "Customer Login portal - CA Well Services, LLC",
+    "paragraphs": [
+      {
+        "order": 1,
+        "paragraphType": 0,
+        "text": "Dear {0},"
+      },
+      {
+        "order": 2,
+        "paragraphType": 0,
+        "text": "You have been invited to create your user in CA Well Services Customer Portal."
+      },
+      {
+        "order": 3,
+        "paragraphType": 0,
+        "text": "Click the button bellow to confirm your email and set your password."
+      },
+      {
+        "order": 4,
+        "paragraphType": 2,
+        "text": "Set Password"
+      }
+    ]
+  }
+]

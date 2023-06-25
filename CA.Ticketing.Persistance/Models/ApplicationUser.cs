@@ -9,9 +9,17 @@ namespace CA.Ticketing.Persistance.Models
 
         public string LastName { get; set; }
 
+        [NotMapped]
+        public string DisplayName => $"{FirstName} {LastName}";
+
         [ForeignKey(nameof(Employee))]
         public int? EmployeeId { get; set; }
 
         public virtual Employee? Employee { get; set; }
+
+        [ForeignKey(nameof(CustomerContact))] 
+        public int? CustomerContactId { get; set; }
+
+        public virtual CustomerContact? CustomerContact { get; set; }
     }
 }

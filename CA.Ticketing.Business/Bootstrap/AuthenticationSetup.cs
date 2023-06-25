@@ -17,14 +17,15 @@ namespace CA.Ticketing.Business.Bootstrap
         public static void RegisterAuthentication(this IServiceCollection service, IConfiguration configuration)
         {
             var securitySettings = configuration
-                .GetSection(nameof(ApplicationSettings)).Get<ApplicationSettings>();
+                .GetSection(nameof(SecuritySettings)).Get<SecuritySettings>();
 
             var key = Encoding.ASCII.GetBytes(securitySettings.Secret);
 
             service.AddAuthorization(options =>
             {
-                options.AddPolicy(Policies.Admin, policy => policy.RequireRole(new string[] { RoleNames.Admin }));
-                options.AddPolicy(Policies.Customer, policy => policy.RequireRole(new string[] { RoleNames.Customer }));
+                options.AddPolicy(Policies.AdminOnly, policy => policy.RequireRole(new string[] { RoleNames.Admin }));
+                options.AddPolicy(Policies.ApplicationManager, policy => policy.RequireRole(new string[] { RoleNames.Admin, RoleNames.Manager }));
+                options.AddPolicy(Policies.ReadOnly, policy => policy.RequireRole(new string[] { RoleNames.Customer, RoleNames.ToolPusher }));
             });
 
             service.AddAuthentication(x =>
@@ -53,7 +54,7 @@ namespace CA.Ticketing.Business.Bootstrap
 
                         var path = c.HttpContext.Request.Path;
                         if (!string.IsNullOrEmpty(accessToken) &&
-                            (path.StartsWithSegments("/chat")))
+                            path.StartsWithSegments("/chat"))
                         {
                             c.Token = accessToken;
                         }

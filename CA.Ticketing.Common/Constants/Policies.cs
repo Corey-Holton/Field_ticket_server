@@ -2,10 +2,10 @@
 {
     public class Policies
     {
-        public const string Admin = nameof(Admin);
+        public const string AdminOnly = nameof(AdminOnly);
 
-        public const string Scheduler = nameof(Scheduler);
+        public const string ApplicationManager = nameof(ApplicationManager);
 
-        public const string Customer = nameof(Customer);
+        public const string ReadOnly = nameof(ReadOnly);
     }
 }

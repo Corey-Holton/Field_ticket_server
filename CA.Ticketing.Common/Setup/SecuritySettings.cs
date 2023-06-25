@@ -1,6 +1,6 @@
 ﻿namespace CA.Ticketing.Common.Setup
 {
-    public class ApplicationSettings
+    public class SecuritySettings
     {
         public string Secret { get; set; }
     }

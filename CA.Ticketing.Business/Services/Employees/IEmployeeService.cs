@@ -7,12 +7,18 @@ namespace CA.Ticketing.Business.Services.Employees
     {
         Task<IEnumerable<EmployeeDto>> GetAll(EmployeeStatus status);
 
-        Task<EmployeeDto> GetById(int id);
+        Task<EmployeeDetailsDto> GetById(int id);
 
-        Task<int> Create(EmployeeDto entity);
+        Task<int> Create(EmployeeDetailsDto entity);
 
-        Task Update(EmployeeDto entity);
+        Task Update(EmployeeDetailsDto entity);
 
         Task Delete(int id);
+
+        Task AddLogin(AddEmployeeLoginDto addEmployeeLoginModel);
+
+        Task ResetPassword(ResetEmployeePasswordDto resetEmployeePasswordModel);
+
+        Task DeleteLogin(int id);
     }
 }

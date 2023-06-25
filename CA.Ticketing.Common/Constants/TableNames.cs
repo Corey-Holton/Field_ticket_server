@@ -3,5 +3,21 @@
     public class TableNames
     {
         public const string Employees = nameof(Employees);
+
+        public const string Customers = nameof(Customers);
+
+        public const string CustomerLocations = nameof(CustomerLocations);
+
+        public const string CustomerContacts = nameof(CustomerContacts);
+
+        public const string Equipment = nameof(Equipment);
+
+        public const string Charges = nameof(Charges);
+
+        public const string EquipmentCharges = nameof(EquipmentCharges);
+
+        public const string FieldTickets = nameof(FieldTickets);
+
+        public const string Invoices = nameof(Invoices);
     }
 }

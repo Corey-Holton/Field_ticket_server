@@ -1,0 +1,104 @@
+﻿@using CA.Ticketing.Common.Models
+
+@model EmailMessage
+
+@{
+    Layout = "~/Views/Shared/_Layout_Email.cshtml";
+}
+<tr>
+    <td></td>
+    <td class="container" width="561">
+        <div class="content">
+            <table class="main" width="100%" cellpadding="0" cellspacing="0">
+                <tr class="image-row">
+                    <td colspan="3" class="header-image">
+                        <table width="100%" cellpadding="0" cellspacing="0">
+                            <tr style="background-color: #590027">
+                                <td style="width:20%;"></td>
+                                <td style="font-size:30px; line-height: 0; font-weight:bold; padding: 10px; text-align: center; color:white;">
+                                    <img style="height: 50px;" src="https://fksarajevo.ba/img/template/fksarajevo_logo_header.png" />
+                                </td>
+                                <td style="width:20%;"></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="content-wrap">
+                        <table width="100%" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td class="content-title">
+                                    @Model.Title
+                                </td>
+                            </tr>
+                            @foreach (var messageBlock in Model.Paragraphs)
+                            {
+                                <tr>
+                                    <td class="content-block">
+                                        @if (messageBlock.ParagraphType == ParagraphTypes.Text)
+                                        {
+                                            <text>@messageBlock.Text</text>
+                                        }
+                                        else if (messageBlock.ParagraphType == ParagraphTypes.AccessorialText)
+                                        {
+                                            <span class="accessorial-text">@messageBlock.Text</span>
+                                        }
+                                        else if (messageBlock.ParagraphType == ParagraphTypes.Action)
+                                        {
+                                            <a href="@messageBlock.ActionUrl" class="btn">@messageBlock.Text</a>
+                                        }
+                                        else if(messageBlock.ParagraphType == ParagraphTypes.List)
+                                        {
+                                            <table width="100%" cellpadding="0" cellspacing="0">
+                                                <thead>
+                                                    <tr>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                @foreach (var listEntry in messageBlock.ListItems)
+                                                {
+                                                    <tr>
+                                                        <td style="text-align: left;">
+                                                            @listEntry.Description
+                                                        </td>
+                                                        <td style="text-align: right;">
+                                                            @if (listEntry.Quantity > 0)
+                                                            {
+                                                                @listEntry.Quantity.ToString("#.##")
+                                                            }
+                                                        </td>
+                                                        <td style="text-align: right;">
+                                                            @if (listEntry.Price > 0)
+                                                            {
+                                                                @listEntry.Price.ToString("#.##")<text> KM</text>
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                }
+                                                <tr>
+                                                    <td colspan="2">
+                                                        Total
+                                                    </td>
+                                                    <td style="text-align:right;">
+                                                        @messageBlock.ListItems.Sum(x => x.Price).ToString("#.##") KM
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        }
+                                        else
+                                        {
+                                            <span class="labeled-text"><text>@messageBlock.Text</text></span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                            <tr></tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr style="height: 40px; background-color: #590027; color: white; padding: 10px 30px;"><td style="padding: 0 30px; text-align: center;">Copyright 2023 © CA Well Services</td></tr>
+            </table>
+        </div>
+    </td>
+    <td></td>
+</tr>

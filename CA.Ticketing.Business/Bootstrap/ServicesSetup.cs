@@ -1,11 +1,11 @@
-﻿using CA.Ticketing.Common.Authentication;
-using CA.Ticketing.Business.Authentication;
+﻿using CA.Ticketing.Business.Authentication;
+using CA.Ticketing.Business.Services.Authentication;
+using CA.Ticketing.Business.Services.Employees;
+using CA.Ticketing.Business.Services.Notifications;
+using CA.Ticketing.Business.Services.Notifications.Renderers;
+using CA.Ticketing.Common.Authentication;
+using CA.Ticketing.Persistance.Seed;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CA.Ticketing.Business.Bootstrap
 {
@@ -13,10 +13,19 @@ namespace CA.Ticketing.Business.Bootstrap
     {
         public static void RegisterDomainServices(this IServiceCollection services)
         {
+            services.RegisterBaseServices();
 
+            services.AddSingleton<MessagesComposer>();
+
+            services.AddTransient<DatabaseInitializer>();
+
+            services.AddScoped<IRazorViewToStringRenderer, RazorViewToStringRenderer>();
+            services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<IEmployeeService, EmployeeService>();
+            services.AddScoped<IAccountsService, AccountsService>();
         }
 
-        public static void RegisterBaseServices(this IServiceCollection services)
+        private static void RegisterBaseServices(this IServiceCollection services)
         {
             services.AddScoped<IUserContext, UserContext>();
         }
