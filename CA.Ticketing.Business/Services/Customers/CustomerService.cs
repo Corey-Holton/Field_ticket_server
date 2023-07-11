@@ -32,6 +32,15 @@ namespace CA.Ticketing.Business.Services.Customers
             return _mapper.Map<CustomerDetailsDto>(customer);
         }
 
+        public async Task<int> Create(CustomerDetailsDto entity)
+        {
+            var customer = _mapper.Map<Customer>(entity);
+            customer.Locations = _mapper.Map<List<CustomerLocation>>(entity.Locations);
+            _context.Customers.Add(customer);
+            await _context.SaveChangesAsync();
+            return customer.Id;
+        }
+
         private async Task<Customer> GetCustomer(int id)
         {
             var customer = await _context.Customers

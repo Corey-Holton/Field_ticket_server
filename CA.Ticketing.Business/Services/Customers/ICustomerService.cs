@@ -12,5 +12,7 @@ namespace CA.Ticketing.Business.Services.Customers
         Task<IEnumerable<CustomerDto>> GetAll();
 
         Task<CustomerDetailsDto> GetById(int id);
+
+        Task<int> Create(CustomerDetailsDto entity);
     }
 }
