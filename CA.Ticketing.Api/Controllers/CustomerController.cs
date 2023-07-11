@@ -28,5 +28,19 @@ namespace CA.Ticketing.Api.Controllers
             var customers = await _customerService.GetAll();
             return Ok(customers);
         }
+
+        /// <summary>
+        /// Get Customer by id
+        /// </summary>
+        /// <param name="customerId">Customer Id</param>
+        /// <returns>CustomerDetailsDto</returns>
+        [Route(ApiRoutes.Customers.Get)]
+        [HttpGet]
+        [ProducesResponseType(typeof(CustomerDetailsDto), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetById(int customerId)
+        {
+            var customer = await _customerService.GetById(customerId);
+            return Ok(customer);
+        }
     }
 }

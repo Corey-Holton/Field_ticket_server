@@ -30,6 +30,8 @@
             public const string _root = $"{ApiRoutes._root}/customers";
 
             public const string List = $"{_root}/list";
+
+            public const string Get = $"{_root}/{{customerId}}";
         }
     }
 }

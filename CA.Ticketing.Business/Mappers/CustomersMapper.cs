@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CA.Ticketing.Business.Services.Customers.Dto;
+using CA.Ticketing.Common.Extensions;
 using CA.Ticketing.Persistance.Models;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,14 @@ namespace CA.Ticketing.Business.Mappers
         public CustomersMapper()
         {
             CreateMap<Customer, CustomerDto>();
+
+            CreateMap<CustomerLocation, CustomerLocationDto>()
+                .ForMember(x => x.LocationType, dest => dest.MapFrom(src => src.LocationType.GetLocationType()));
+
+            CreateMap<CustomerContact, CustomerContactDto>();
+
+            CreateMap<Customer, CustomerDetailsDto>()
+                .IncludeBase<Customer, CustomerDto>(); 
         }
     }
 }

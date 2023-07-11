@@ -10,5 +10,7 @@ namespace CA.Ticketing.Business.Services.Customers
     public interface ICustomerService
     {
         Task<IEnumerable<CustomerDto>> GetAll();
+
+        Task<CustomerDetailsDto> GetById(int id);
     }
 }
