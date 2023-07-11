@@ -24,5 +24,12 @@
 
             public const string DeleteLogin = $"{_root}/delete-login";
         }
+
+        public class Customers
+        {
+            public const string _root = $"{ApiRoutes._root}/customers";
+
+            public const string List = $"{_root}/list";
+        }
     }
 }
