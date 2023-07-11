@@ -24,7 +24,8 @@ namespace CA.Ticketing.Business.Mappers
             CreateMap<Customer, CustomerDetailsDto>()
                 .IncludeBase<Customer, CustomerDto>();
 
-            CreateMap<CustomerDto, Customer>();
+            CreateMap<CustomerDto, Customer>()
+                .ForMember(x => x.Locations, dest => dest.Ignore());
             CreateMap<CustomerLocationDto, CustomerLocation>();
             CreateMap<CustomerContactDto, CustomerContact>();
         }

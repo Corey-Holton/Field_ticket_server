@@ -14,5 +14,7 @@ namespace CA.Ticketing.Business.Services.Customers
         Task<CustomerDetailsDto> GetById(int id);
 
         Task<int> Create(CustomerDetailsDto entity);
+
+        Task Update(CustomerDetailsDto entity);
     }
 }

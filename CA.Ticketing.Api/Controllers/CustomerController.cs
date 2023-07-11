@@ -56,5 +56,18 @@ namespace CA.Ticketing.Api.Controllers
             var customerId = await _customerService.Create(customer);
             return Ok(customerId);
         }
+
+        ///<summary>
+        /// Edit a Customer
+        /// </summary>
+        /// <param name="customer">CustomerDetailsDto</param>
+        [Route(ApiRoutes.Customers.Update)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> Update(CustomerDetailsDto customer)
+        {
+            await _customerService.Update(customer);
+            return Ok();
+        }
     }
 }
