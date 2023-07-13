@@ -56,6 +56,13 @@ namespace CA.Ticketing.Business.Services.Customers
             await _context.SaveChangesAsync();
         }
 
+        public async Task Delete(int id)
+        {
+            var customer = await GetCustomer(id);
+            _context.Customers.Remove(customer);
+            await _context.SaveChangesAsync();
+        }
+
         private async Task<Customer> GetCustomer(int id)
         {
             var customer = await _context.Customers

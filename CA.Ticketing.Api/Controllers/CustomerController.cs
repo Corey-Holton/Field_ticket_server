@@ -69,5 +69,18 @@ namespace CA.Ticketing.Api.Controllers
             await _customerService.Update(customer);
             return Ok();
         }
+
+        ///<summary>
+        /// Delete a Customer
+        /// </summary>
+        /// <param name="customerId">Customer Id</param>
+        [Route(ApiRoutes.Customers.Delete)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> Delete(int customerId)
+        {
+            await _customerService.Delete(customerId);
+            return Ok();
+        }
     }
 }
