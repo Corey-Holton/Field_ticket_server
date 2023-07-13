@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CA.Ticketing.Business.Extensions;
 using CA.Ticketing.Business.Services.Authentication.Dto;
+using CA.Ticketing.Business.Services.Customers.Dto;
 using CA.Ticketing.Business.Services.Employees.Dto;
 using CA.Ticketing.Business.Services.Notifications;
 using CA.Ticketing.Common.Authentication;
@@ -178,6 +179,16 @@ namespace CA.Ticketing.Business.Services.Authentication
             var authenticatedUser = GetAuthenticatedUser(claims, !string.IsNullOrEmpty(user.DisplayName) ? user.DisplayName : user.Email, user.Id);
 
             return new AuthenticationResultDto(authenticatedUser);
+        }
+
+        public Task ResetCustomerContactPassword(ResetCustomerContactPasswordDto resetCustomerContactPasswordModel)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task DeleteCustomerContactLogin(int customerContactId)
+        {
+            throw new NotImplementedException();
         }
 
         public Task CreateEmployeeLogin(CreateEmployeeLoginDto employeeLoginModel)

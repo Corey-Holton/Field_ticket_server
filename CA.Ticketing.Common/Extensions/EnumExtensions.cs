@@ -24,5 +24,15 @@ namespace CA.Ticketing.Common.Extensions
                 _ => throw new ArgumentException(null, nameof(jobTitle))
             };
         }
+
+        public static string GetLocationType(this LocationType locationType)
+        {
+            return locationType switch
+            {
+                LocationType.Field => Business.LocationTypes.Field,
+                LocationType.HQ => Business.LocationTypes.HQ,
+                _ => throw new ArgumentNullException(null, nameof(locationType))
+            };
+        }
     }
 }

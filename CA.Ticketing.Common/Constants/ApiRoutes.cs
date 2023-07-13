@@ -24,5 +24,30 @@
 
             public const string DeleteLogin = $"{_root}/delete-login";
         }
+
+        public class Customers
+        {
+            public const string _root = $"{ApiRoutes._root}/customers";
+
+            public const string List = $"{_root}/list";
+
+            public const string Get = $"{_root}/{{customerId}}";
+
+            public const string Create = $"{_root}/create";
+
+            public const string Update = $"{_root}/update";
+
+            public const string Delete = $"{_root}/delete";
+
+            public const string AddLocation = $"{_root}/add-location";
+
+            public const string AddLogin = $"{_root}/add-login";
+
+            public const string AddPassword = $"{_root}/add-password";
+
+            public const string ResetPassword = $"{_root}/reset-password";
+
+            public const string DeleteLogin = $"{_root}/delete-login";
+        }
     }
 }

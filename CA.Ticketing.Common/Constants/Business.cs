@@ -9,5 +9,11 @@
             public const string DerrickMan = "Derrick Man";
             public const string FloorHand = "Floor Hand";
         }
+
+        public class LocationTypes
+        {
+            public const string HQ = "HQ";
+            public const string Field = "Field";
+        }
     }
 }
