@@ -121,5 +121,29 @@ namespace CA.Ticketing.Api.Controllers
             await _customerService.AddPassword(customerContactPasswordModel);
             return Ok();
         }
+
+        ///<summary>
+        /// Reset customer contact password
+        /// </summary>
+        [Route(ApiRoutes.Customers.ResetPassword)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> ResetPassword(ResetCustomerContactPasswordDto resetCustomerContactPasswordDto)
+        {
+            await _customerService.ResetPassword(resetCustomerContactPasswordDto);
+            return Ok();
+        }
+
+        ///<summary>
+        ///Delete customer contact login
+        ///</summary>
+        [Route(ApiRoutes.Customers.DeleteLogin)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> DeleteLogin(int customerContactId)
+        {
+            await _customerService.DeleteLogin(customerContactId);
+            return Ok();
+        }
     }
 }

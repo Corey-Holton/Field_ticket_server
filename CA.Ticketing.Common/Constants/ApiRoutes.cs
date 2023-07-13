@@ -44,6 +44,10 @@
             public const string AddLogin = $"{_root}/add-login";
 
             public const string AddPassword = $"{_root}/add-password";
+
+            public const string ResetPassword = $"{_root}/reset-password";
+
+            public const string DeleteLogin = $"{_root}/delete-login";
         }
     }
 }

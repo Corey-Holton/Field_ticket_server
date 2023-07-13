@@ -102,6 +102,16 @@ namespace CA.Ticketing.Business.Services.Customers
             await _accountsService.SetCustomerPassword(customerAddPasswordModel);
         }
 
+        public async Task ResetPassword(ResetCustomerContactPasswordDto resetCustomerContactPasswordModel)
+        {
+            await _accountsService.ResetCustomerContactPassword(resetCustomerContactPasswordModel);
+        }
+
+        public async Task DeleteLogin(int customerContactId)
+        {
+            await _accountsService.DeleteCustomerContactLogin(customerContactId);
+        }
+
         private async Task<Customer> GetCustomer(int id)
         {
             var customer = await _context.Customers

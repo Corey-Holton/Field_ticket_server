@@ -1,4 +1,5 @@
 ﻿using CA.Ticketing.Business.Services.Authentication.Dto;
+using CA.Ticketing.Business.Services.Customers.Dto;
 using CA.Ticketing.Business.Services.Employees.Dto;
 
 namespace CA.Ticketing.Business.Services.Authentication
@@ -24,5 +25,10 @@ namespace CA.Ticketing.Business.Services.Authentication
         Task ResendCustomerContactEmail(ResendInviteDto resendInviteModel);
 
         Task<AuthenticationResultDto> SetCustomerPassword(SetCustomerPasswordDto setCustomerPasswordModel);
+
+        Task ResetCustomerContactPassword(ResetCustomerContactPasswordDto resetCustomerContactPasswordModel);
+
+        Task DeleteCustomerContactLogin(int customerContactId);
+        
     }
 }

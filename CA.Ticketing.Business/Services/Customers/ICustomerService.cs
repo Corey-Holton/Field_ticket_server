@@ -24,5 +24,9 @@ namespace CA.Ticketing.Business.Services.Customers
         Task AddLogin(int customerId);
 
         Task AddPassword(AddCustomerContactPasswordDto addCustomerContactPasswordModel);
+
+        Task ResetPassword(ResetCustomerContactPasswordDto resetCustomerContactPasswordDto);
+
+        Task DeleteLogin(int customerContactId);
     }
 }
