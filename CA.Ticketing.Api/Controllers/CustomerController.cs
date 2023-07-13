@@ -125,6 +125,7 @@ namespace CA.Ticketing.Api.Controllers
         ///<summary>
         /// Reset customer contact password
         /// </summary>
+        /// <param name="resetCustomerContactPasswordDto">resetCustomerContactPasswordDto</param>
         [Route(ApiRoutes.Customers.ResetPassword)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -137,6 +138,7 @@ namespace CA.Ticketing.Api.Controllers
         ///<summary>
         ///Delete customer contact login
         ///</summary>
+        ///<param name="customerContactId">customerContactId</param>
         [Route(ApiRoutes.Customers.DeleteLogin)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
