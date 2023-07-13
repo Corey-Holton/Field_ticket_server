@@ -78,14 +78,28 @@ namespace CA.Ticketing.Business.Services.Customers
         public async Task AddLogin(int customerId)
         {
             var customerContact = await GetCustomerContact(customerId);
-
-            var customerAddPasswordModel = _mapper.Map<CreateCustomerContactLoginDto>(customerContact);
-
-            await _accountsService.CreateCustomerContactLogin(customerAddPasswordModel);
-
-            customerContact.InviteSent = true;
-            customerContact.InviteSentOn = DateTime.Now;
+            if (!customerContact.InviteSent)
+            {
+                var customerAddLoginModel = _mapper.Map<CreateCustomerContactLoginDto>(customerContact);
+                await _accountsService.CreateCustomerContactLogin(customerAddLoginModel);
+                customerContact.InviteSent = true;
+                customerContact.InviteSentOn = DateTime.Now;
+            }
+            else if(customerContact.InviteSent)
+            {
+                ResendInviteDto inviteDto = new ResendInviteDto();
+                inviteDto.CustomerContactId = customerContact.Id;
+                await _accountsService.ResendCustomerContactEmail(inviteDto);
+                customerContact.InviteSentOn = DateTime.Now;
+            }
+                
             await _context.SaveChangesAsync();
+        }
+
+        public async Task AddPassword(AddCustomerContactPasswordDto addCustomerContactPasswordModel)
+        {
+            var customerAddPasswordModel = _mapper.Map<SetCustomerPasswordDto>(addCustomerContactPasswordModel);
+            await _accountsService.SetCustomerPassword(customerAddPasswordModel);
         }
 
         private async Task<Customer> GetCustomer(int id)

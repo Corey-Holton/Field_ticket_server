@@ -108,5 +108,18 @@ namespace CA.Ticketing.Api.Controllers
             await _customerService.AddLogin(customerId);
             return Ok();
         }
+
+        ///<summary>
+        /// Invited user password setup
+        /// </summary>
+        /// <param name="customerContactPasswordModel">customerContactPasswordModel</param>
+        [Route(ApiRoutes.Customers.AddPassword)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> AddPassword(AddCustomerContactPasswordDto customerContactPasswordModel)
+        {
+            await _customerService.AddPassword(customerContactPasswordModel);
+            return Ok();
+        }
     }
 }

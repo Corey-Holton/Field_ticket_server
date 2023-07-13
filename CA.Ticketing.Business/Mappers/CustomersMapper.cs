@@ -34,6 +34,8 @@ namespace CA.Ticketing.Business.Mappers
 
             CreateMap<CustomerContact, CreateCustomerContactLoginDto>()
                 .ForMember(x => x.CustomerContactId, dest => dest.MapFrom(src => src.Id));
+            
+            CreateMap<AddCustomerContactPasswordDto, SetCustomerPasswordDto>();
         }
     }
 }

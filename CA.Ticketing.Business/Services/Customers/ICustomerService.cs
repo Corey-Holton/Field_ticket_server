@@ -22,5 +22,7 @@ namespace CA.Ticketing.Business.Services.Customers
         Task<int> AddLocation(CustomerLocationDto entity);
 
         Task AddLogin(int customerId);
+
+        Task AddPassword(AddCustomerContactPasswordDto addCustomerContactPasswordModel);
     }
 }

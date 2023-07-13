@@ -42,6 +42,8 @@
             public const string AddLocation = $"{_root}/add-location";
 
             public const string AddLogin = $"{_root}/add-login";
+
+            public const string AddPassword = $"{_root}/add-password";
         }
     }
 }
