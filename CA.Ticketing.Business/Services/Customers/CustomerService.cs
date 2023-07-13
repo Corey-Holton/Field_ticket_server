@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using CA.Ticketing.Business.Services.Authentication;
+using CA.Ticketing.Business.Services.Authentication.Dto;
 using CA.Ticketing.Business.Services.Base;
 using CA.Ticketing.Business.Services.Customers.Dto;
 using CA.Ticketing.Persistance.Context;
@@ -15,9 +17,10 @@ namespace CA.Ticketing.Business.Services.Customers
 {
     public class CustomerService : EntityServiceBase, ICustomerService
     {
-        public CustomerService(CATicketingContext context, IMapper mapper) : base (context, mapper)
+        private readonly IAccountsService _accountsService;
+        public CustomerService(CATicketingContext context, IMapper mapper, IAccountsService accountsService) : base (context, mapper)
         {
-            
+            _accountsService = accountsService;
         }
 
         public async Task<IEnumerable<CustomerDto>> GetAll()
@@ -72,6 +75,19 @@ namespace CA.Ticketing.Business.Services.Customers
             return location.Id;
         }
 
+        public async Task AddLogin(int customerId)
+        {
+            var customerContact = await GetCustomerContact(customerId);
+
+            var customerAddPasswordModel = _mapper.Map<CreateCustomerContactLoginDto>(customerContact);
+
+            await _accountsService.CreateCustomerContactLogin(customerAddPasswordModel);
+
+            customerContact.InviteSent = true;
+            customerContact.InviteSentOn = DateTime.Now;
+            await _context.SaveChangesAsync();
+        }
+
         private async Task<Customer> GetCustomer(int id)
         {
             var customer = await _context.Customers
@@ -85,6 +101,17 @@ namespace CA.Ticketing.Business.Services.Customers
             }
 
             return customer!;
+        }
+
+        private async Task<CustomerContact> GetCustomerContact(int id)
+        {
+            var customerContact = await _context.CustomerContacts
+                .SingleOrDefaultAsync(x => x.Id == id);
+            if (customerContact == null)
+            {
+                throw new KeyNotFoundException(nameof(CustomerContact));
+            }
+            return customerContact;
         }
     }
 }

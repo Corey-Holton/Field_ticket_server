@@ -20,5 +20,7 @@ namespace CA.Ticketing.Business.Services.Customers
         Task Delete(int id);
 
         Task<int> AddLocation(CustomerLocationDto entity);
+
+        Task AddLogin(int customerId);
     }
 }

@@ -86,7 +86,7 @@ namespace CA.Ticketing.Api.Controllers
         ///<summary>
         /// Add a Customer Location
         /// </summary>
-        /// <param name="customerLocation">Customer Location</param>
+        /// <param name="customerLocation">CustomerLocationDto</param>
         [Route(ApiRoutes.Customers.AddLocation)]
         [HttpPost]
         [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
@@ -94,6 +94,19 @@ namespace CA.Ticketing.Api.Controllers
         {
             var locationId =await _customerService.AddLocation(customerLocation);
             return Ok(locationId);
+        }
+
+        ///<summary>
+        /// Invite customer to setup password and access application
+        /// </summary>
+        /// <param name="customerId">customerId</param>
+        [Route(ApiRoutes.Customers.AddLogin)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> AddLogin(int customerId)
+        {
+            await _customerService.AddLogin(customerId);
+            return Ok();
         }
     }
 }

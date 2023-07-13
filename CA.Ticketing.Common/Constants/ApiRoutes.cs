@@ -40,6 +40,8 @@
             public const string Delete = $"{_root}/delete";
 
             public const string AddLocation = $"{_root}/add-location";
+
+            public const string AddLogin = $"{_root}/add-login";
         }
     }
 }
