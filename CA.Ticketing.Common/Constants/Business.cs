@@ -15,5 +15,15 @@
             public const string HQ = "HQ";
             public const string Field = "Field";
         }
+
+        public class EquipmentCategory
+        {
+            public const string Rig = "Rig";
+            public const string Vehicles = "Vehicles";
+            public const string Trailers = "Trailers";
+            public const string Pumps = "Pumps";
+            public const string Tanks = "Tanks";
+            public const string Ancillary = "Ancillary";
+        }
     }
 }
