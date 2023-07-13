@@ -38,6 +38,8 @@
             public const string Update = $"{_root}/update";
 
             public const string Delete = $"{_root}/delete";
+
+            public const string AddLocation = $"{_root}/add-location";
         }
     }
 }

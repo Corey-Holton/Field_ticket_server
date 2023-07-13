@@ -8,6 +8,8 @@ namespace CA.Ticketing.Business.Services.Customers.Dto
 {
     public class CustomerLocationDto
     {
+        public int CustomerId { get; set; }
+
         public string Name { get; set; }
 
         public string Address { get; set; }

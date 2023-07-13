@@ -82,5 +82,18 @@ namespace CA.Ticketing.Api.Controllers
             await _customerService.Delete(customerId);
             return Ok();
         }
+
+        ///<summary>
+        /// Add a Customer Location
+        /// </summary>
+        /// <param name="customerLocation">Customer Location</param>
+        [Route(ApiRoutes.Customers.AddLocation)]
+        [HttpPost]
+        [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
+        public async Task<IActionResult> AddLocation(CustomerLocationDto customerLocation)
+        {
+            var locationId =await _customerService.AddLocation(customerLocation);
+            return Ok(locationId);
+        }
     }
 }
