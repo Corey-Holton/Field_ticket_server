@@ -206,9 +206,24 @@ namespace CA.Ticketing.Business.Services.Authentication
             throw new NotImplementedException();
         }
 
-        public Task ResetPassword(ResetPasswordDto resetPasswordModel)
+        public async Task ResetPassword(ResetPasswordDto resetPasswordModel)
         {
-            throw new NotImplementedException();
+            var user = await _userManager.FindByEmailAsync(resetPasswordModel.Email);
+
+            if (user == null)
+            {
+                throw new Exception("User not found");
+            }
+
+            // Send email here;
+            await SendResetPasswordEmail(user, resetPasswordModel.RedirectUrl);
+        }
+
+        public async Task SetPasswordFromLink(SetPasswordDto setPasswordModel)
+        {
+            var user = await _userManager.FindByEmailAsync(setPasswordModel.Email);
+
+            await _userManager.ResetPasswordAsync(user, setPasswordModel.Code, setPasswordModel.Password);
         }
 
         public Task SetPassword(SetPasswordDto setPasswordModel)
@@ -254,6 +269,17 @@ namespace CA.Ticketing.Business.Services.Authentication
             var callBackUrl = $"{redirectUrl}?code={emailConfirmationToken}&email={user.Email}";
 
             var emailMessage = _messagesComposer.GetEmailComposed(EmailMessageKeys.InviteUser, (3, callBackUrl));
+
+            await _notificationService.SendEmail(user.Email, emailMessage);
+        }
+
+        private async Task SendResetPasswordEmail(ApplicationUser user, string redirectUrl)
+        {
+            var emailPasswordResetToken = HttpUtility.UrlEncode(await _userManager.GeneratePasswordResetTokenAsync(user));
+
+            var callBackUrl = $"{redirectUrl}?code={emailPasswordResetToken}";
+
+            var emailMessage = _messagesComposer.GetEmailComposed(EmailMessageKeys.ResetPassword, (3, callBackUrl));
 
             await _notificationService.SendEmail(user.Email, emailMessage);
         }

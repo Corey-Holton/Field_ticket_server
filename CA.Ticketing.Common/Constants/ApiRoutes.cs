@@ -49,5 +49,16 @@
 
             public const string DeleteLogin = $"{_root}/delete-login";
         }
+
+        public class Authentication
+        {
+            public const string _root = $"{ApiRoutes._root}/authentication";
+
+            public const string Login = $"{_root}/login";
+
+            public const string GenerateResetPasswordLink = $"{_root}/GenerateResetPasswordLink";
+
+            public const string SetPasswordFromLink = $"{_root}/SetPasswordFromLink";
+        }
     }
 }
