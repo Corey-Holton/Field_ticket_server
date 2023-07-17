@@ -34,5 +34,17 @@ namespace CA.Ticketing.Common.Extensions
                 _ => throw new ArgumentNullException(null, nameof(locationType))
             };
         }
+
+        public static string GetChargeType(this ChargeType chargeType)
+        {
+            return chargeType switch
+            {
+                ChargeType.EA => Business.ChargeTypes.EA,
+                ChargeType.Hourly => Business.ChargeTypes.Hourly,
+                ChargeType.Daily => Business.ChargeTypes.Daily,
+                ChargeType.Gallon => Business.ChargeTypes.Gallon,
+                _ => throw new ArgumentNullException(null, nameof(chargeType))
+            };
+        }
     }
 }

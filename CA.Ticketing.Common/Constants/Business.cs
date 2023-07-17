@@ -15,5 +15,13 @@
             public const string HQ = "HQ";
             public const string Field = "Field";
         }
+
+        public class ChargeTypes
+        {
+            public const string EA = "EA";
+            public const string Hourly = "Hourly";
+            public const string Daily = "Daily";
+            public const string Gallon = "Gallon";
+        }
     }
 }

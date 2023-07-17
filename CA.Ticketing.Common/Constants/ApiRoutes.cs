@@ -49,5 +49,18 @@
 
             public const string DeleteLogin = $"{_root}/delete-login";
         }
+
+        public class Charges
+        {
+            public const string _root = $"{ApiRoutes._root}/charges";
+
+            public const string List = $"{_root}/list";
+
+            public const string Create = $"{_root}/create";
+
+            public const string Update = $"{_root}/update";
+
+            public const string Delete = $"{_root}/delete";
+        }
     }
 }
