@@ -21,6 +21,9 @@ namespace CA.Ticketing.Business.Mappers
             CreateMap<EmployeeDto, Employee>()
                 .ForMember(x => x.ApplicationUser, dest => dest.Ignore());
 
+            CreateMap<EmployeeDetailsDto, Employee>()
+                .IncludeBase<EmployeeDto, Employee>();
+
             CreateMap<(Employee Employee, AddEmployeeLoginDto AddEmployeeLoginModel), CreateEmployeeLoginDto>()
                 .ForMember(x => x.Id, dest => dest.MapFrom(src => src.Employee.Id))
                 .ForMember(x => x.FirstName, dest => dest.MapFrom(src => src.Employee.FirstName))
