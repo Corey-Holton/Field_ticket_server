@@ -17,6 +17,10 @@ namespace CA.Ticketing.Business.Mappers
                 .IncludeBase<Equipment, EquipmentDto>();
 
             CreateMap<EquipmentDetailsDto, Equipment>();
+
+            CreateMap<EquipmentCharge, EquipmentChargeDto>();
+
+            CreateMap<EquipmentChargeDto, EquipmentCharge>();
         }
     }
 }

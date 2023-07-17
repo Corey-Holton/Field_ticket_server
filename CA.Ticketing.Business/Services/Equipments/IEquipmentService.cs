@@ -13,5 +13,9 @@ namespace CA.Ticketing.Business.Services.Equipments
         Task Update(EquipmentDetailsDto entity);
 
         Task Delete(int id);
+
+        Task<int> CreateEquipmentCharge(EquipmentChargeDto entity);
+
+        Task UpdateEquipmentCharge(EquipmentChargeDto entity);
     }
 }

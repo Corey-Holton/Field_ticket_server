@@ -54,6 +54,24 @@ namespace CA.Ticketing.Business.Services.Equipments
             await _context.SaveChangesAsync();
         }
 
+        public async Task<int> CreateEquipmentCharge(EquipmentChargeDto entity)
+        {
+            var equipmentCharge = _mapper.Map<EquipmentCharge>(entity);
+
+            _context.EquipmentCharges.Add(equipmentCharge);
+            await _context.SaveChangesAsync();
+            return entity.Id;
+        }
+
+        public async Task UpdateEquipmentCharge(EquipmentChargeDto entity)
+        {
+            var equipmentCharge = await GetEquipmentCharge(entity.Id);
+
+            _mapper.Map(entity, equipmentCharge);
+
+            await _context.SaveChangesAsync();
+        }
+
         private async Task<Equipment> GetEquipment(int id)
         {
             var equipment = await _context.Equipment
@@ -65,6 +83,19 @@ namespace CA.Ticketing.Business.Services.Equipments
             }
 
             return equipment!;
+        }
+
+        private async Task<EquipmentCharge> GetEquipmentCharge(int id)
+        {
+            var equipmentCharge = await _context.EquipmentCharges
+                .SingleOrDefaultAsync(x => x.Id == id);
+
+            if (equipmentCharge == null)
+            {
+                throw new KeyNotFoundException(nameof(EquipmentCharge));
+            }
+
+            return equipmentCharge!;
         }
     }
 }

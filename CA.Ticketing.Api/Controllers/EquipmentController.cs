@@ -83,6 +83,31 @@ namespace CA.Ticketing.Api.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Create an equipment charge
+        /// </summary>
+        /// <param name="equipmentChargeModel"></param>
+        /// <returns>Equipment Id</returns>
+        [Route(ApiRoutes.Equipment.CreateEquipmentCharge)]
+        [HttpPost]
+        [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
+        public async Task<IActionResult> CreateEquipmentCharge(EquipmentChargeDto equipmentChargeModel)
+        {
+            var equipmentChargeId = await _equipmentService.CreateEquipmentCharge(equipmentChargeModel);
+            return Ok(equipmentChargeId);
+        }
 
+        ///<summary>
+        /// Update an equipment charge
+        /// </summary>
+        /// <param name="equipmentChargeModel"></param>
+        [Route(ApiRoutes.Equipment.UpdateEquipmentCharge)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> UpdateEquipmentCharge(EquipmentChargeDto equipmentChargeModel)
+        {
+            await _equipmentService.UpdateEquipmentCharge(equipmentChargeModel);
+            return Ok();
+        }
     }
 }
