@@ -2,7 +2,6 @@
 using CA.Ticketing.Business.Services.Authentication;
 using CA.Ticketing.Business.Services.Customers;
 using CA.Ticketing.Business.Services.Employees;
-using CA.Ticketing.Business.Services.Equipments;
 using CA.Ticketing.Business.Services.Notifications;
 using CA.Ticketing.Business.Services.Notifications.Renderers;
 using CA.Ticketing.Common.Authentication;
@@ -26,7 +25,6 @@ namespace CA.Ticketing.Business.Bootstrap
             services.AddScoped<IEmployeeService, EmployeeService>();
             services.AddScoped<IAccountsService, AccountsService>();
             services.AddScoped<ICustomerService, CustomerService>();
-            services.AddScoped<IEquipmentService, EquipmentService>();
         }
 
         private static void RegisterBaseServices(this IServiceCollection services)
