@@ -35,6 +35,20 @@ namespace CA.Ticketing.Api.Controllers
         }
 
         /// <summary>
+        /// Authenticate user with email instead of username
+        /// </summary>
+        /// <param name="loginModel">loginModel</param>
+        /// <returns>AuthenticatedUser</returns>
+        [Route(ApiRoutes.Authentication.EmailLogin)]
+        [HttpPost]
+        [ProducesResponseType(typeof(AuthenticatedUser), StatusCodes.Status200OK)]
+        public async Task<IActionResult> EmailLogin(EmailLoginDto loginModel)
+        {
+            var authUser = await _accountsService.EmailAuthenticate(loginModel);
+            return Ok(authUser);
+        }
+
+        /// <summary>
         /// Generate reset password link
         /// </summary>
         /// <param name="resetPasswordModel"></param>

@@ -74,6 +74,28 @@ namespace CA.Ticketing.Business.Services.Authentication
             return new AuthenticationResultDto(authenticatedUser);
         }
 
+        public async Task<AuthenticationResultDto> EmailAuthenticate(EmailLoginDto loginModel)
+        {
+            var user = await _userManager.FindByEmailAsync(loginModel.Email);
+            if (user == null)
+            {
+                return new AuthenticationResultDto();
+            }
+
+            var checkPassword = await _userManager.CheckPasswordAsync(user, loginModel.Password);
+
+            if (!checkPassword)
+            {
+                return new AuthenticationResultDto();
+            }
+
+            var claims = await GetUserClaims(user);
+
+            var authenticatedUser = GetAuthenticatedUser(claims, !string.IsNullOrEmpty(user.DisplayName) ? user.DisplayName : user.Email, user.Id);
+
+            return new AuthenticationResultDto(authenticatedUser);
+        }
+
         public async Task ChangePassword(ChangePasswordDto changePasswordModel)
         {
             var userId = _userContext.User?.Id;
