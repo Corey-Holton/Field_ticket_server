@@ -56,6 +56,8 @@
 
             public const string List = $"{_root}/list";
 
+            public const string ListCategory = $"{_root}/list/{{equipmentCategory}}";
+
             public const string Get = $"{_root}/{{equipmentId}}";
 
             public const string Create = $"{_root}/create";

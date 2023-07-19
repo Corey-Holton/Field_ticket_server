@@ -6,6 +6,8 @@ namespace CA.Ticketing.Business.Services.Equipments
     {
         Task<IEnumerable<EquipmentDto>> GetAll();
 
+        Task<IEnumerable<EquipmentDto>> GetAllByCategory(int equipmentCategory);
+
         Task<EquipmentDetailsDto> GetById(int equipmentId);
 
         Task<int> Create(EquipmentDetailsDto entity);

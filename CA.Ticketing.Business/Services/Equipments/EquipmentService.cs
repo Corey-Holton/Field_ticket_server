@@ -20,7 +20,16 @@ namespace CA.Ticketing.Business.Services.Equipments
                 .ToListAsync();
             return equipment.Select(x => _mapper.Map<EquipmentDto>(x));
         }
-        
+
+        public async Task<IEnumerable<EquipmentDto>> GetAllByCategory(int equipmentCategory)
+        {
+            var equipment = await _context.Equipment
+                .Where(x => (int)x.Category == equipmentCategory)
+                .ToListAsync();
+            return equipment.Select(x => _mapper.Map<EquipmentDto>(x));
+        }
+
+
         public async Task<EquipmentDetailsDto> GetById(int id)
         {
             var equipment = await GetEquipment(id);

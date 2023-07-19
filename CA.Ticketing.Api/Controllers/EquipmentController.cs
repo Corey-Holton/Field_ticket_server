@@ -30,6 +30,20 @@ namespace CA.Ticketing.Api.Controllers
         }
 
         /// <summary>
+        /// Get a list of equipment by category
+        /// </summary>
+        /// <param name="equipmentCategory"></param>
+        /// <returns>List of Equipment based on category</returns>
+        [Route(ApiRoutes.Equipment.ListCategory)]
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<EquipmentDto>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAllByCategory(int equipmentCategory)
+        {
+            var equipment = await _equipmentService.GetAllByCategory(equipmentCategory);
+            return Ok(equipment);
+        }
+
+        /// <summary>
         /// Get Equipment by id
         /// </summary>
         /// <param name="equipmentId">Equipment Id</param>
