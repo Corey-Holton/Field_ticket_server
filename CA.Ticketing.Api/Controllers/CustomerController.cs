@@ -22,7 +22,7 @@ namespace CA.Ticketing.Api.Controllers
         /// <returns>List of Customers</returns>
         [Route(ApiRoutes.Customers.List)]
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<CustomerDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<CustomerDetailsDto>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAll()
         {
             var customers = await _customerService.GetAll();

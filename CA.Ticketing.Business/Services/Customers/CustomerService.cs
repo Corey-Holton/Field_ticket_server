@@ -23,11 +23,12 @@ namespace CA.Ticketing.Business.Services.Customers
             _accountsService = accountsService;
         }
 
-        public async Task<IEnumerable<CustomerDto>> GetAll()
+        public async Task<IEnumerable<CustomerDetailsDto>> GetAll()
         {
             var customers = await _context.Customers
+                .Include(x => x.Locations.Where(x => (int)x.LocationType == 1))
                 .ToListAsync();
-            return customers.Select(x => _mapper.Map<CustomerDto>(x));
+            return customers.Select(x => _mapper.Map<CustomerDetailsDto>(x));
         }
 
         public async Task<CustomerDetailsDto> GetById(int id)
