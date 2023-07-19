@@ -2,7 +2,7 @@
 
 namespace CA.Ticketing.Business.Services.Customers.Dto
 {
-    public class CustomerLocationDto : EntityDtoBase<int>
+    public class AddLocationDto : EntityDtoBase<int>
     {
         public int CustomerId { get; set; }
 
@@ -17,7 +17,5 @@ namespace CA.Ticketing.Business.Services.Customers.Dto
         public string State { get; set; }
 
         public string LocationType { get; set; }
-
-        public List<CustomerContactDto> Contacts { get; set; }
     }
 }

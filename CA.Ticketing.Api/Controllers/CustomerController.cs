@@ -90,10 +90,36 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Customers.AddLocation)]
         [HttpPost]
         [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
-        public async Task<IActionResult> AddLocation(CustomerLocationDto customerLocation)
+        public async Task<IActionResult> AddLocation(AddLocationDto customerLocation)
         {
             var locationId =await _customerService.AddLocation(customerLocation);
             return Ok(locationId);
+        }
+
+        /// <summary>
+        /// Edit an existing Location
+        /// </summary>
+        /// <param name="customerLocation">CustomerLocationDto</param>
+        [Route(ApiRoutes.Customers.UpdateLocation)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> UpdateLocation(AddLocationDto customerLocation)
+        {
+            await _customerService.UpdateLocation(customerLocation);
+            return Ok();
+        }
+
+        /// <summary>
+        /// Delete an existing Location
+        /// </summary>
+        /// /// <param name="customerLocationId">Customer Location Id</param>
+        [Route(ApiRoutes.Customers.DeleteLocation)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> DeleteLocation(int customerLocationId)
+        {
+            await _customerService.DeleteLocation(customerLocationId);
+            return Ok();
         }
 
         ///<summary>

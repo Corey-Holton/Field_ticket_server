@@ -67,12 +67,26 @@ namespace CA.Ticketing.Business.Services.Customers
             await _context.SaveChangesAsync();
         }
 
-        public async Task<int> AddLocation(CustomerLocationDto entity)
+        public async Task<int> AddLocation(AddLocationDto entity)
         {
             var location = _mapper.Map<CustomerLocation>(entity);
             _context.CustomerLocations.Add(location);
             await _context.SaveChangesAsync();
             return location.Id;
+        }
+
+        public async Task UpdateLocation(AddLocationDto entity)
+        {
+            var location = await GetLocation(entity.Id);
+            _mapper.Map(entity, location);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteLocation(int id)
+        {
+            var location = await GetLocation(id);
+            _context.CustomerLocations.Remove(location);
+            await _context.SaveChangesAsync();
         }
 
         public async Task AddLogin(int customerId)
@@ -125,6 +139,19 @@ namespace CA.Ticketing.Business.Services.Customers
             }
 
             return customer!;
+        }
+
+        private async Task<CustomerLocation> GetLocation(int id)
+        {
+            var location = await _context.CustomerLocations
+                .SingleOrDefaultAsync (x => x.Id == id);
+
+            if(location == null)
+            {
+                throw new KeyNotFoundException(nameof(CustomerLocation));
+            }
+
+            return location!;
         }
 
         private async Task<CustomerContact> GetCustomerContact(int id)
