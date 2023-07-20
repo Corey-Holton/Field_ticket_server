@@ -1,4 +1,4 @@
-﻿using CA.Ticketing.Api.Extensions;
+﻿ using CA.Ticketing.Api.Extensions;
 using CA.Ticketing.Business.Services.Customers;
 using CA.Ticketing.Business.Services.Customers.Dto;
 using CA.Ticketing.Common;
@@ -112,13 +112,52 @@ namespace CA.Ticketing.Api.Controllers
         /// <summary>
         /// Delete an existing Location
         /// </summary>
-        /// /// <param name="customerLocationId">Customer Location Id</param>
+        /// <param name="customerLocationId">Customer Location Id</param>
         [Route(ApiRoutes.Customers.DeleteLocation)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> DeleteLocation(int customerLocationId)
         {
             await _customerService.DeleteLocation(customerLocationId);
+            return Ok();
+        }
+
+        /// <summary>
+        /// Add a contact for an existing Location
+        /// </summary>
+        /// <param name="customerContact">Customer Contact Details</param>
+        [Route(ApiRoutes.Customers.AddContact)]
+        [HttpPost]
+        [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
+        public async Task<IActionResult> AddContact(AddContactDto customerContact)
+        {
+            var customerId = await _customerService.AddContact(customerContact);
+            return Ok(customerId);
+        }
+
+        /// <summary>
+        /// Update an existing contact
+        /// </summary>
+        /// <param name="customerContact">Update Contact Details</param>
+        [Route(ApiRoutes.Customers.UpdateContact)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> UpdateContact(AddContactDto customerContact)
+        {
+            await _customerService.UpdateContact(customerContact);
+            return Ok();
+        }
+
+        /// <summary>
+        /// Delete an existing contact
+        /// </summary>
+        /// <param name="contactId">Contact Id</param>
+        [Route(ApiRoutes.Customers.DeleteContact)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> DeleteContact(int contactId)
+        {
+            await _customerService.DeleteContact(contactId);
             return Ok();
         }
 

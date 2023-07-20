@@ -45,6 +45,12 @@
 
             public const string DeleteLocation = $"{_root}/delete-location";
 
+            public const string AddContact = $"{_root}/add-contact";
+
+            public const string UpdateContact = $"{_root}/update-contact";
+
+            public const string DeleteContact = $"{_root}/delete-contact";
+
             public const string AddLogin = $"{_root}/add-login";
 
             public const string AddPassword = $"{_root}/add-password";

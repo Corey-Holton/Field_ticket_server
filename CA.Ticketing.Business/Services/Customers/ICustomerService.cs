@@ -25,6 +25,12 @@ namespace CA.Ticketing.Business.Services.Customers
 
         Task DeleteLocation(int id);
 
+        Task<int> AddContact(AddContactDto entity);
+
+        Task UpdateContact(AddContactDto entity);
+
+        Task DeleteContact(int id);
+
         Task AddLogin(int customerId);
 
         Task AddPassword(AddCustomerContactPasswordDto addCustomerContactPasswordModel);

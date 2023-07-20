@@ -18,7 +18,7 @@ namespace CA.Ticketing.Business.Services.Customers
     public class CustomerService : EntityServiceBase, ICustomerService
     {
         private readonly IAccountsService _accountsService;
-        public CustomerService(CATicketingContext context, IMapper mapper, IAccountsService accountsService) : base (context, mapper)
+        public CustomerService(CATicketingContext context, IMapper mapper, IAccountsService accountsService) : base(context, mapper)
         {
             _accountsService = accountsService;
         }
@@ -40,10 +40,10 @@ namespace CA.Ticketing.Business.Services.Customers
         public async Task<int> Create(CustomerDetailsDto entity)
         {
             var customer = _mapper.Map<Customer>(entity);
-            
-            if(entity.Locations != null)
+
+            if (entity.Locations != null)
                 customer.Locations = _mapper.Map<List<CustomerLocation>>(entity.Locations);
-            
+
             _context.Customers.Add(customer);
             await _context.SaveChangesAsync();
             return customer.Id;
@@ -52,12 +52,12 @@ namespace CA.Ticketing.Business.Services.Customers
         public async Task Update(CustomerDetailsDto entity)
         {
             var customer = await GetCustomer(entity.Id);
-            
+
             _mapper.Map(entity, customer);
-            
-            if(entity.Locations != null)
+
+            if (entity.Locations != null)
                 customer.Locations = _mapper.Map<List<CustomerLocation>>(entity.Locations);
-            
+
             await _context.SaveChangesAsync();
         }
 
@@ -87,6 +87,28 @@ namespace CA.Ticketing.Business.Services.Customers
         {
             var location = await GetLocation(id);
             _context.CustomerLocations.Remove(location);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<int> AddContact(AddContactDto entity)
+        {
+            var contact = _mapper.Map<CustomerContact>(entity);
+            _context.CustomerContacts.Add(contact);
+            await _context.SaveChangesAsync();
+            return contact.Id;
+        }
+
+        public async Task UpdateContact(AddContactDto entity)
+        {
+            var contact = await GetCustomerContact(entity.Id);
+            _mapper.Map(entity, contact);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteContact(int id)
+        {
+            var contact = await GetCustomerContact(id);
+            _context.CustomerContacts.Remove(contact);
             await _context.SaveChangesAsync();
         }
 
