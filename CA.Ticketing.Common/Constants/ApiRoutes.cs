@@ -72,5 +72,18 @@
 
             public const string DeleteEquipmentCharge = $"{_root}/delete-equipment-charge";
         }
+
+        public class Authentication
+        {
+            public const string _root = $"{ApiRoutes._root}/authentication";
+
+            public const string Login = $"{_root}/login";
+
+            public const string EmailLogin = $"{_root}/email-login";
+
+            public const string GenerateResetPasswordLink = $"{_root}/GenerateResetPasswordLink";
+
+            public const string SetPasswordFromLink = $"{_root}/SetPasswordFromLink";
+        }
     }
 }
