@@ -27,5 +27,7 @@
         public bool HasLogin { get; set; }
 
         public string Username { get; set; }
+
+        public string SSN { get; set; }
     }
 }
