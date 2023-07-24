@@ -20,7 +20,7 @@ namespace CA.Ticketing.Api.Controllers
         /// <returns>List of Scheduling</returns>
         [Route(ApiRoutes.Scheduling.List)]
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<SchedulingDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<SchedulingDetailsDto>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAll()
         {
             var scheduling = await _schedulingService.GetAll();
@@ -34,7 +34,7 @@ namespace CA.Ticketing.Api.Controllers
         /// <returns>SchedulingDto</returns>
         [Route(ApiRoutes.Scheduling.Get)]
         [HttpGet]
-        [ProducesResponseType(typeof(SchedulingDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(SchedulingDetailsDto), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetById(int schedulingId)
         {
             var scheduling = await _schedulingService.GetById(schedulingId);
