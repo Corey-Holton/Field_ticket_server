@@ -22,6 +22,10 @@ namespace CA.Ticketing.Business.Mappers
 
             CreateMap<CustomerLocationDto, CustomerLocation>();
 
+            CreateMap<AddLocationDto, CustomerLocation>();
+
+            CreateMap<AddContactDto, CustomerContact>();
+
             CreateMap<CustomerContactDto, CustomerContact>();
 
             CreateMap<CustomerContact, CustomerContactDto>();

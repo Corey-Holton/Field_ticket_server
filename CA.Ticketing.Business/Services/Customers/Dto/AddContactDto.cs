@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace CA.Ticketing.Business.Services.Customers.Dto
 {
-    public class CustomerContactDto : EntityDtoBase<int>
-    {
+    public class AddContactDto : EntityDtoBase<int>
+    { 
         public string FirstName { get; set; }
 
         public string LastName { get; set; }
@@ -16,5 +16,7 @@ namespace CA.Ticketing.Business.Services.Customers.Dto
         public string Email { get; set; }
 
         public string PhoneNumber { get; set; }
+
+        public int CustomerLocationId { get; set; }
     }
 }
