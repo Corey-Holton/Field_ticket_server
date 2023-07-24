@@ -8,6 +8,8 @@ namespace CA.Ticketing.Business.Services.Employees.Dto
 
         public string LastName { get; set; }
 
-        public string Date { get; set; }
+        public DateTime DoB { get; set; }
+
+        public DateTime HireDate { get; set; }
     }
 }

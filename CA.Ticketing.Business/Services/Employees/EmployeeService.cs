@@ -59,12 +59,41 @@ namespace CA.Ticketing.Business.Services.Employees
 
         public async Task<IEnumerable<EmployeeDateDto>> GetEmployeesBirthdays()
         {
-            throw new NotImplementedException();
+            var employeesUnfiltered = await _context.Employees.ToListAsync();
+            var employees = new List<Employee>();
+            foreach (var employee in employeesUnfiltered)
+            {
+                if (isWithinMonth(employee.DoB))
+                    employees.Add(employee);
+
+            }
+            return employees.Select(x => _mapper.Map<EmployeeDateDto>(x));
         }
 
         public async Task<IEnumerable<EmployeeDateDto>> GetEmployeesAnniversaries()
         {
-            throw new NotImplementedException();
+            var employeesUnfiltered = await _context.Employees.ToListAsync();
+            var employees = new List<Employee>();
+            foreach (var employee in employeesUnfiltered)
+            {
+                if (isWithinMonth(employee.HireDate))
+                    employees.Add(employee);
+
+            }
+            return employees.Select(x => _mapper.Map<EmployeeDateDto>(x));
+        }
+
+        private bool isWithinMonth(DateTime? date)
+        {
+            if (date != null)
+            {
+                var birthday = new DateTime(DateTime.Now.Year, date.Value.Month, date.Value.Day);
+                var difference = birthday - DateTime.Now;
+                if (difference.TotalDays <= 30 && difference.TotalDays >= 0)
+                    return true;
+                else return false;
+            }
+            return false;
         }
 
         private async Task<Employee> GetEmployee(int id)
