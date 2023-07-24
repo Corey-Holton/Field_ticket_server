@@ -15,7 +15,7 @@ namespace CA.Ticketing.Business.Services.Customers
 
         Task<int> Create(CustomerDetailsDto entity);
 
-        Task Update(CustomerDetailsDto entity);
+        Task Update(CustomerDto entity);
 
         Task Delete(int id);
 

@@ -64,7 +64,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Customers.Update)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> Update(CustomerDetailsDto customer)
+        public async Task<IActionResult> Update(CustomerDto customer)
         {
             await _customerService.Update(customer);
             return Ok();

@@ -43,14 +43,11 @@ namespace CA.Ticketing.Business.Services.Customers
             return customer.Id;
         }
 
-        public async Task Update(CustomerDetailsDto entity)
+        public async Task Update(CustomerDto entity)
         {
             var customer = await GetCustomer(entity.Id);
 
             _mapper.Map(entity, customer);
-
-            if (entity.Locations != null)
-                customer.Locations = _mapper.Map<List<CustomerLocation>>(entity.Locations);
 
             await _context.SaveChangesAsync();
         }
