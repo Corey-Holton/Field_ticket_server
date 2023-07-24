@@ -57,6 +57,16 @@ namespace CA.Ticketing.Business.Services.Employees
             await _context.SaveChangesAsync();
         }
 
+        public async Task<IEnumerable<EmployeeDateDto>> GetEmployeesBirthdays()
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<IEnumerable<EmployeeDateDto>> GetEmployeesAnniversaries()
+        {
+            throw new NotImplementedException();
+        }
+
         private async Task<Employee> GetEmployee(int id)
         {
             var employee = await _context.Employees

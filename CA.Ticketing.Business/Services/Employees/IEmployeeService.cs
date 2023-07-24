@@ -20,5 +20,9 @@ namespace CA.Ticketing.Business.Services.Employees
         Task ResetPassword(ResetEmployeePasswordDto resetEmployeePasswordModel);
 
         Task DeleteLogin(int id);
+
+        Task<IEnumerable<EmployeeDateDto>> GetEmployeesBirthdays();
+
+        Task<IEnumerable<EmployeeDateDto>> GetEmployeesAnniversaries();
     }
 }
