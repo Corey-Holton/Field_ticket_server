@@ -19,5 +19,8 @@
         public const string FieldTickets = nameof(FieldTickets);
 
         public const string Invoices = nameof(Invoices);
+
+        public const string Scheduling = nameof(Scheduling);
+
     }
 }
