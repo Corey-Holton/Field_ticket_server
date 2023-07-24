@@ -23,6 +23,10 @@
             public const string ResetPassword = $"{_root}/reset-password";
 
             public const string DeleteLogin = $"{_root}/delete-login";
+
+            public const string Birthdays = $"{_root}/birthdays";
+
+            public const string WorkAnniversairies = $"{_root}/work-anniversairies";
         }
 
         public class Customers

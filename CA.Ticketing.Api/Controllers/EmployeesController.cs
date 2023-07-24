@@ -122,5 +122,29 @@ namespace CA.Ticketing.Api.Controllers
             await _employeeService.DeleteLogin(employeeId);
             return Ok();
         }
+
+        /// <summary>
+        /// List of employees with birthdays in next 30 days
+        /// </summary>
+        [Route(ApiRoutes.Employees.Birthdays)]
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<EmployeeDateDto>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetEmployeesBirthdays()
+        {
+            var employees = await _employeeService.GetEmployeesBirthdays();
+            return Ok(employees);
+        }
+
+        /// <summary>
+        /// List of employees with work-anniversairys in next 30 days
+        /// </summary>
+        [Route(ApiRoutes.Employees.WorkAnniversairies)]
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<EmployeeDateDto>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetEmployeesAnniversaries()
+        {
+            var employees = await _employeeService.GetEmployeesAnniversaries();
+            return Ok(employees);
+        }
     }
 }

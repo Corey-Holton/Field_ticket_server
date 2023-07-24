@@ -30,6 +30,8 @@ namespace CA.Ticketing.Business.Mappers
                 .ForMember(x => x.LastName, dest => dest.MapFrom(src => src.Employee.LastName))
                 .ForMember(x => x.Username, dest => dest.MapFrom(src => src.AddEmployeeLoginModel.Username))
                 .ForMember(x => x.Password, dest => dest.MapFrom(src => src.AddEmployeeLoginModel.Password));
+
+            CreateMap<Employee, EmployeeDateDto>();
         }
     }
 }
