@@ -15,5 +15,7 @@ namespace CA.Ticketing.Business.Services.Customers.Dto
         public string Zip { get; set; }
 
         public string State { get; set; }
+
+        public string LocationType { get; set; }
     }
 }

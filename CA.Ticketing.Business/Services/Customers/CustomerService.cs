@@ -68,10 +68,7 @@ namespace CA.Ticketing.Business.Services.Customers
             if (customer.Locations.Any(x => x.LocationType == Common.Enums.LocationType.HQ))
             {
                 location.LocationType = Common.Enums.LocationType.Field;
-            } else
-            {
-                location.LocationType = Common.Enums.LocationType.HQ;
-            }
+            } 
 
             _context.CustomerLocations.Add(location);
             await _context.SaveChangesAsync();
