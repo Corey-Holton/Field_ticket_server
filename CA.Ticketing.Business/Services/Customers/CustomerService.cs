@@ -61,8 +61,17 @@ namespace CA.Ticketing.Business.Services.Customers
 
         public async Task<int> AddLocation(AddLocationDto entity)
         {
+            var customer = await GetCustomer(entity.CustomerId);
+        
             var location = _mapper.Map<CustomerLocation>(entity);
-            location.LocationType = Common.Enums.LocationType.Field;
+
+            if (customer.Locations.Any(x => x.LocationType == Common.Enums.LocationType.HQ))
+            {
+                location.LocationType = Common.Enums.LocationType.Field;
+            } else
+            {
+                location.LocationType = Common.Enums.LocationType.HQ;
+            }
 
             _context.CustomerLocations.Add(location);
             await _context.SaveChangesAsync();
