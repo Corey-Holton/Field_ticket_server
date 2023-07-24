@@ -21,14 +21,14 @@ namespace CA.Ticketing.Business.Services.Scheduling
         {
         }
 
-        public async Task<IEnumerable<SchedulingDto>> GetAll()
+        public async Task<IEnumerable<SchedulingDetailsDto>> GetAll()
         {
             var scheduling = await _context.Scheduling
                                      .Include(s => s.Customer)
                                      .Include(s => s.Rig)
                                      .ToListAsync();
 
-            return scheduling.Select(x => _mapper.Map<SchedulingDto>(x));
+            return scheduling.Select(x => _mapper.Map<SchedulingDetailsDto>(x));
 
         }
 
@@ -67,10 +67,10 @@ namespace CA.Ticketing.Business.Services.Scheduling
         }
   
 
-        public async Task<SchedulingDto> GetById(int id)
+        public async Task<SchedulingDetailsDto> GetById(int id)
         {
             var scheduling = await GetScheduling(id);
-            return _mapper.Map<SchedulingDto>(scheduling);
+            return _mapper.Map<SchedulingDetailsDto>(scheduling);
         }
 
         public async Task Update(SchedulingDto entity)
