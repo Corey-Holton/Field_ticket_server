@@ -8,7 +8,7 @@ namespace CA.Ticketing.Api.Extensions
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class BaseController : ControllerBase
     {
     }

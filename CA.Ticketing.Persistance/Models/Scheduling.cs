@@ -15,15 +15,15 @@ namespace CA.Ticketing.Persistance.Models
     {
         public DateTime? ArrangeDateTime { get; set; }
         public DateTime? Duration { get; set; }
-        public double locationX { get; set; }
-        public double locationY { get; set; }
+        public double LocationX { get; set; }
+        public double LocationY { get; set; }
         [ForeignKey(nameof(Customer))]
         public int CustomerId { get; set; }
         public virtual Customer Customer { get; set;}
         public string Description { get; set; }
         [ForeignKey(nameof(Equipment))]
-        public int RigId { get; set; }
-        public virtual Equipment Rig { get; set; }
+        public int EquipmentId { get; set; }
+        public virtual Equipment Equipment { get; set; }
 
     }
 }

@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static CA.Ticketing.Common.Constants.ApiRoutes;
 
 namespace CA.Ticketing.Business.Services.Scheduling
 {
@@ -25,7 +26,7 @@ namespace CA.Ticketing.Business.Services.Scheduling
         {
             var scheduling = await _context.Scheduling
                                      .Include(s => s.Customer)
-                                     .Include(s => s.Rig)
+                                     .Include(s => s.Equipment)
                                      .ToListAsync();
 
             return scheduling.Select(x => _mapper.Map<SchedulingDetailsDto>(x));
@@ -38,23 +39,8 @@ namespace CA.Ticketing.Business.Services.Scheduling
 
             _context.Scheduling.Add(scheduling);
             await _context.SaveChangesAsync();
-            return entity.Id;
+            return scheduling.Id;
 
-        }
-
-        private async Task<CA.Ticketing.Persistance.Models.Scheduling> GetScheduling(int id)
-        {
-            var scheduling = await _context.Scheduling
-                         .Include(s => s.Customer)
-                         .Include(s => s.Rig)
-                .SingleOrDefaultAsync(x => x.Id == id);
-
-            if (scheduling == null)
-            {
-                throw new KeyNotFoundException(nameof(CA.Ticketing.Persistance.Models.Scheduling));
-            }
-
-            return scheduling!;
         }
 
         public async Task Delete(int id)
@@ -81,5 +67,21 @@ namespace CA.Ticketing.Business.Services.Scheduling
 
             await _context.SaveChangesAsync();
         }
+
+        private async Task<CA.Ticketing.Persistance.Models.Scheduling> GetScheduling(int id)
+        {
+            var scheduling = await _context.Scheduling
+                         .Include(s => s.Customer)
+                         .Include(s => s.Equipment)
+                .SingleOrDefaultAsync(x => x.Id == id);
+
+            if (scheduling == null)
+            {
+                throw new KeyNotFoundException(nameof(CA.Ticketing.Persistance.Models.Scheduling));
+            }
+
+            return scheduling!;
+        }
+
     }
 }
