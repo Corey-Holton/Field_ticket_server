@@ -15,6 +15,8 @@ namespace CA.Ticketing.Business.Services.Scheduling.Dto
         public DateTime? ArrangeDateTime { get; set; }
         public DateTime? Duration { get; set; }
         public string Description { get; set; }
+        public string CustomerName { get; set; }
+        public string EquipmentName { get; set; }
         public int CustomerId { get; set; }
         public int EquipmentId { get; set; }
         public double LocationX { get; set; }

@@ -18,10 +18,7 @@ namespace CA.Ticketing.Business.Mappers
 
             CreateMap<Scheduling, SchedulingDto>()
                 .ForMember(dest => dest.CustomerId, opt => opt.MapFrom(src => src.Customer.Id))
-                .ForMember(dest => dest.EquipmentId, opt => opt.MapFrom(src => src.Equipment.Id));
-
-
-            CreateMap<Scheduling, SchedulingDetailsDto>()
+                .ForMember(dest => dest.EquipmentId, opt => opt.MapFrom(src => src.Equipment.Id))
                 .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Customer.Name))
                 .ForMember(dest => dest.EquipmentName, opt => opt.MapFrom(src => src.Equipment.Name));
 

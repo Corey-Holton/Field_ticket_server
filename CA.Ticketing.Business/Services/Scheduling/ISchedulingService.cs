@@ -12,9 +12,9 @@ namespace CA.Ticketing.Business.Services.Scheduling
 {
     public interface ISchedulingService
     {
-        Task<IEnumerable<SchedulingDetailsDto>> GetAll();
+        Task<IEnumerable<SchedulingDto>> GetAll();
 
-        Task<SchedulingDetailsDto> GetById(int id);
+        Task<SchedulingDto> GetById(int id);
 
         Task<int> Create(SchedulingDto entity);
 
