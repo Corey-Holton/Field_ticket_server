@@ -4,6 +4,7 @@ using CA.Ticketing.Persistance.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CA.Ticketing.Persistance.Migrations
 {
     [DbContext(typeof(CATicketingContext))]
-    partial class CATicketingContextModelSnapshot : ModelSnapshot
+    [Migration("20230724081519_Scheduling")]
+    partial class Scheduling
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -143,6 +145,12 @@ namespace CA.Ticketing.Persistance.Migrations
 
                     b.Property<int>("NetTerm")
                         .HasColumnType("int");
+
+                    b.Property<double>("locationX")
+                        .HasColumnType("float");
+
+                    b.Property<double>("locationY")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 
@@ -434,20 +442,20 @@ namespace CA.Ticketing.Persistance.Migrations
                     b.Property<DateTime?>("Duration")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("EquipmentId")
+                    b.Property<int>("RigId")
                         .HasColumnType("int");
 
-                    b.Property<double>("LocationX")
+                    b.Property<double>("locationX")
                         .HasColumnType("float");
 
-                    b.Property<double>("LocationY")
+                    b.Property<double>("locationY")
                         .HasColumnType("float");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
 
-                    b.HasIndex("EquipmentId");
+                    b.HasIndex("RigId");
 
                     b.ToTable("Scheduling");
                 });
@@ -668,15 +676,15 @@ namespace CA.Ticketing.Persistance.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CA.Ticketing.Persistance.Models.Equipment", "Equipment")
+                    b.HasOne("CA.Ticketing.Persistance.Models.Equipment", "Rig")
                         .WithMany()
-                        .HasForeignKey("EquipmentId")
+                        .HasForeignKey("RigId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Customer");
 
-                    b.Navigation("Equipment");
+                    b.Navigation("Rig");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
