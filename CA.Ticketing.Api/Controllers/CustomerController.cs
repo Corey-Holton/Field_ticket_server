@@ -164,13 +164,13 @@ namespace CA.Ticketing.Api.Controllers
         ///<summary>
         /// Invite customer to setup password and access application
         /// </summary>
-        /// <param name="customerId">customerId</param>
+        /// <param name="loginDto">Customer Contact Login Dto</param>
         [Route(ApiRoutes.Customers.AddLogin)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> AddLogin(int customerId)
+        public async Task<IActionResult> AddLogin(AddCustomerLoginDto loginDto)
         {
-            await _customerService.AddLogin(customerId);
+            await _customerService.AddLogin(loginDto);
             return Ok();
         }
 

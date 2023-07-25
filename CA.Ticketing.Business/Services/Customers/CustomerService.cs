@@ -111,12 +111,13 @@ namespace CA.Ticketing.Business.Services.Customers
             await _context.SaveChangesAsync();
         }
 
-        public async Task AddLogin(int customerId)
+        public async Task AddLogin(AddCustomerLoginDto loginDto)
         {
-            var customerContact = await GetCustomerContact(customerId);
+            var customerContact = await GetCustomerContact(loginDto.customerContactId);
             if (!customerContact.InviteSent)
             {
                 var customerAddLoginModel = _mapper.Map<CreateCustomerContactLoginDto>(customerContact);
+                customerAddLoginModel.RedirectUrl = loginDto.redirectUrl;
                 await _accountsService.CreateCustomerContactLogin(customerAddLoginModel);
                 customerContact.InviteSent = true;
                 customerContact.InviteSentOn = DateTime.Now;
@@ -124,6 +125,7 @@ namespace CA.Ticketing.Business.Services.Customers
             else if(customerContact.InviteSent)
             {
                 ResendInviteDto inviteDto = new ResendInviteDto();
+                inviteDto.RedirectUrl = loginDto.redirectUrl;
                 inviteDto.CustomerContactId = customerContact.Id;
                 await _accountsService.ResendCustomerContactEmail(inviteDto);
                 customerContact.InviteSentOn = DateTime.Now;

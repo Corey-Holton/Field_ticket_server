@@ -31,7 +31,7 @@ namespace CA.Ticketing.Business.Services.Customers
 
         Task DeleteContact(int id);
 
-        Task AddLogin(int customerId);
+        Task AddLogin(AddCustomerLoginDto loginDto);
 
         Task AddPassword(AddCustomerContactPasswordDto addCustomerContactPasswordModel);
 
