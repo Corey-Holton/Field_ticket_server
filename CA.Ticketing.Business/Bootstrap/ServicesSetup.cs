@@ -6,6 +6,7 @@ using CA.Ticketing.Business.Services.Equipments;
 using CA.Ticketing.Business.Services.Notifications;
 using CA.Ticketing.Business.Services.Notifications.Renderers;
 using CA.Ticketing.Business.Services.Scheduling;
+using CA.Ticketing.Business.Services.Tickets;
 using CA.Ticketing.Common.Authentication;
 using CA.Ticketing.Persistance.Seed;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,6 +30,7 @@ namespace CA.Ticketing.Business.Bootstrap
             services.AddScoped<ICustomerService, CustomerService>();
             services.AddScoped<IEquipmentService, EquipmentService>();
             services.AddScoped<ISchedulingService, SchedulingService>();
+            services.AddScoped<ITicketService, TicketService>();
         }
 
         private static void RegisterBaseServices(this IServiceCollection services)

@@ -87,6 +87,21 @@
             public const string DeleteEquipmentCharge = $"{_root}/delete-equipment-charge";
         }
 
+        public class Tickets
+        {
+            public const string _root = $"{ApiRoutes._root}/tickets";
+
+            public const string List = $"{_root}/list";
+
+            public const string Get = $"{_root}/{{ticketId}}";
+
+            public const string Create = $"{_root}/create";
+
+            public const string Update = $"{_root}/update";
+
+            public const string Delete = $"{_root}/delete";
+        }
+
         public class Scheduling
         {
             public const string _root = $"{ApiRoutes._root}/scheduling";

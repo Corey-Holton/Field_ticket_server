@@ -48,5 +48,19 @@ namespace CA.Ticketing.Common.Extensions
                 _ => throw new ArgumentNullException(null, nameof(equipmentCategory))
             };
         }
+
+        public static string GetServiceType(this ServiceType serviceType) 
+        {
+            return serviceType switch
+            {
+                ServiceType.RodsAndTubing => Business.ServiceType.RodsAndTubing,
+                ServiceType.PAndA => Business.ServiceType.PAndA,
+                ServiceType.Completion => Business.ServiceType.Completion,
+                ServiceType.Yard => Business.ServiceType.Yard,
+                ServiceType.Workovers => Business.ServiceType.Workovers,
+                ServiceType.StandBy => Business.ServiceType.StandBy,
+                _ => throw new ArgumentNullException(null, nameof(serviceType))
+            };
+        }
     }
 }
