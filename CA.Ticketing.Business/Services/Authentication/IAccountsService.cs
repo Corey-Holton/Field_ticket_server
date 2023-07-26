@@ -8,7 +8,11 @@ namespace CA.Ticketing.Business.Services.Authentication
     {
         Task<AuthenticationResultDto> Authenticate(LoginDto loginModel);
 
+        Task<AuthenticationResultDto> EmailAuthenticate(EmailLoginDto loginModel);
+
         Task ResetPassword(ResetPasswordDto resetPasswordModel);
+
+        Task SetPasswordFromLink(SetPasswordDto setPasswordModel);
 
         Task SetPassword(SetPasswordDto setPasswordModel);
 

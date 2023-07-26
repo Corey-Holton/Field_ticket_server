@@ -1,4 +1,4 @@
-﻿using CA.Ticketing.Api.Extensions;
+﻿ using CA.Ticketing.Api.Extensions;
 using CA.Ticketing.Business.Services.Customers;
 using CA.Ticketing.Business.Services.Customers.Dto;
 using CA.Ticketing.Common;
@@ -22,7 +22,7 @@ namespace CA.Ticketing.Api.Controllers
         /// <returns>List of Customers</returns>
         [Route(ApiRoutes.Customers.List)]
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<CustomerDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<CustomerDetailsDto>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAll()
         {
             var customers = await _customerService.GetAll();
@@ -64,7 +64,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Customers.Update)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> Update(CustomerDetailsDto customer)
+        public async Task<IActionResult> Update(CustomerDto customer)
         {
             await _customerService.Update(customer);
             return Ok();
@@ -90,22 +90,87 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Customers.AddLocation)]
         [HttpPost]
         [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
-        public async Task<IActionResult> AddLocation(CustomerLocationDto customerLocation)
+        public async Task<IActionResult> AddLocation(AddLocationDto customerLocation)
         {
             var locationId =await _customerService.AddLocation(customerLocation);
             return Ok(locationId);
         }
 
+        /// <summary>
+        /// Edit an existing Location
+        /// </summary>
+        /// <param name="customerLocation">CustomerLocationDto</param>
+        [Route(ApiRoutes.Customers.UpdateLocation)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> UpdateLocation(AddLocationDto customerLocation)
+        {
+            await _customerService.UpdateLocation(customerLocation);
+            return Ok();
+        }
+
+        /// <summary>
+        /// Delete an existing Location
+        /// </summary>
+        /// <param name="customerLocationId">Customer Location Id</param>
+        [Route(ApiRoutes.Customers.DeleteLocation)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> DeleteLocation(int customerLocationId)
+        {
+            await _customerService.DeleteLocation(customerLocationId);
+            return Ok();
+        }
+
+        /// <summary>
+        /// Add a contact for an existing Location
+        /// </summary>
+        /// <param name="customerContact">Customer Contact Details</param>
+        [Route(ApiRoutes.Customers.AddContact)]
+        [HttpPost]
+        [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
+        public async Task<IActionResult> AddContact(AddContactDto customerContact)
+        {
+            var customerId = await _customerService.AddContact(customerContact);
+            return Ok(customerId);
+        }
+
+        /// <summary>
+        /// Update an existing contact
+        /// </summary>
+        /// <param name="customerContact">Update Contact Details</param>
+        [Route(ApiRoutes.Customers.UpdateContact)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> UpdateContact(AddContactDto customerContact)
+        {
+            await _customerService.UpdateContact(customerContact);
+            return Ok();
+        }
+
+        /// <summary>
+        /// Delete an existing contact
+        /// </summary>
+        /// <param name="contactId">Contact Id</param>
+        [Route(ApiRoutes.Customers.DeleteContact)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> DeleteContact(int contactId)
+        {
+            await _customerService.DeleteContact(contactId);
+            return Ok();
+        }
+
         ///<summary>
         /// Invite customer to setup password and access application
         /// </summary>
-        /// <param name="customerId">customerId</param>
+        /// <param name="loginDto">Customer Contact Login Dto</param>
         [Route(ApiRoutes.Customers.AddLogin)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> AddLogin(int customerId)
+        public async Task<IActionResult> AddLogin(AddCustomerLoginDto loginDto)
         {
-            await _customerService.AddLogin(customerId);
+            await _customerService.AddLogin(loginDto);
             return Ok();
         }
 

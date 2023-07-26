@@ -23,5 +23,7 @@ namespace CA.Ticketing.Persistance.Context
         public DbSet<EquipmentCharge> EquipmentCharges { get; set; }
 
         public DbSet<FieldTicket> FieldTickets { get; set; }
+
+        public DbSet<Scheduling> Scheduling { get; set; }
     }
 }

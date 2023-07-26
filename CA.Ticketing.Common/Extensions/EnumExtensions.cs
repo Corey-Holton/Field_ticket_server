@@ -35,6 +35,20 @@ namespace CA.Ticketing.Common.Extensions
             };
         }
 
+        public static string GetCatgeoryName(this EquipmentCategory equipmentCategory)
+        {
+            return equipmentCategory switch
+            {
+                EquipmentCategory.Rig => Business.EquipmentCategory.Rig,
+                EquipmentCategory.Vehicles => Business.EquipmentCategory.Vehicles,
+                EquipmentCategory.Trailers => Business.EquipmentCategory.Trailers,
+                EquipmentCategory.Pumps => Business.EquipmentCategory.Pumps,
+                EquipmentCategory.Tanks => Business.EquipmentCategory.Tanks,
+                EquipmentCategory.Ancillary => Business.EquipmentCategory.Ancillary,
+                _ => throw new ArgumentNullException(null, nameof(equipmentCategory))
+            };
+        }
+
         public static string GetChargeType(this ChargeType chargeType)
         {
             return chargeType switch
