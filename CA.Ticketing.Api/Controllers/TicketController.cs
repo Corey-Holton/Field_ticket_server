@@ -30,6 +30,19 @@ namespace CA.Ticketing.Api.Controllers
         }
 
         /// <summary>
+        /// Get a list of tickets between start and end date
+        /// </summary>
+        /// <returns>List of tickets</returns>
+        [Route(ApiRoutes.Tickets.ListByDates)]
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<TicketDto>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetByDates(DateTime startDate, DateTime endDate)
+        {
+            var tickets = await _ticketService.GetByDates(startDate, endDate);
+            return Ok(tickets);
+        }
+
+        /// <summary>
         /// Create a ticket
         /// </summary>
         /// <param name="ticket">TicketDetailsDto</param>

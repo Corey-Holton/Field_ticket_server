@@ -93,6 +93,8 @@
 
             public const string List = $"{_root}/list";
 
+            public const string ListByDates = $"{_root}/list/startDate={{startDate}}&endDate={{endDate}}";    
+
             public const string Get = $"{_root}/{{ticketId}}";
 
             public const string Create = $"{_root}/create";

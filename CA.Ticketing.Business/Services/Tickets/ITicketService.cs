@@ -12,6 +12,8 @@ namespace CA.Ticketing.Business.Services.Tickets
     {
         Task<IEnumerable<TicketDto>> GetAll();
 
+        Task<IEnumerable<TicketDto>> GetByDates(DateTime startDate, DateTime endDate);
+
         Task<int> Create(TicketDetailsDto entity);
     }
 }

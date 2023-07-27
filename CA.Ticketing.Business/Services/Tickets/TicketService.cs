@@ -25,6 +25,16 @@ namespace CA.Ticketing.Business.Services.Tickets
             return tickets.Select(x => _mapper.Map<TicketDto>(x));
         }
 
+        public async Task<IEnumerable<TicketDto>> GetByDates(DateTime startDate, DateTime endDate)
+        {
+            var tickets = await _context.FieldTickets
+               .Include(x => x.Customer)
+               .Where(x => x.ExecutionDate >= startDate && x.ExecutionDate <= endDate)
+               .ToListAsync();
+
+            return tickets.Select(x => _mapper.Map<TicketDto>(x));
+        }
+
         public async Task<int> Create(TicketDetailsDto entity)
         {
             var ticket = _mapper.Map<FieldTicket>(entity);
