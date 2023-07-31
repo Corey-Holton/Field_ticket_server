@@ -10,6 +10,11 @@ namespace CA.Ticketing.Api.Controllers
     {
         private readonly IInvoiceService _invoiceService;
 
+        public InvoicesController(IInvoiceService invoiceService)
+        {
+            _invoiceService = invoiceService;
+        }
+
         /// <summary>
         /// Get a list of all Invoices
         /// </summary>
@@ -21,6 +26,31 @@ namespace CA.Ticketing.Api.Controllers
         {
             var invoices = await _invoiceService.GetAll();
             return Ok(invoices);
+        }
+
+        /// <summary>
+        /// Create an invoice
+        /// </summary>
+        /// <returns>Invoice Id</returns>
+        [Route(ApiRoutes.Invoices.Create)]
+        [HttpPost]
+        [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
+        public async Task<IActionResult> Create(InvoiceDto invoice)
+        {
+            var invoiceId = await _invoiceService.Create(invoice);
+            return Ok(invoiceId);
+        }
+
+        /// <summary>
+        /// Update an invoice
+        /// </summary>
+        [Route(ApiRoutes.Invoices.Update)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> Update(InvoiceDto invoice)
+        {
+            await _invoiceService.Update(invoice);
+            return Ok();
         }
     }
 }

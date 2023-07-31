@@ -16,7 +16,7 @@ namespace CA.Ticketing.Business.Services.Tickets
         {
 
         }
-
+        // TO DO: IF FOREIGN KEY FOR INVOICE EXISTS THEN RETURN INVOICE TRUE IN MAPPER
         public async Task<IEnumerable<TicketDto>> GetAll()
         {
             var tickets = await _context.FieldTickets

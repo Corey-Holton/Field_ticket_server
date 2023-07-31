@@ -9,7 +9,7 @@ namespace CA.Ticketing.Business.Services.Invoices.Dto
 {
     public class InvoiceDto : EntityDtoBase<int>
     {
-        public string InvoiceIdentifer { get; set; }
+        public string InvoiceIdentifier { get; set; }
 
         public DateTime InvoiceDate { get; set; }
 
