@@ -43,6 +43,8 @@
 
             public const string Delete = $"{_root}/delete";
 
+            public const string LocationList = $"{_root}/location-list/{{customerId}}";
+
             public const string AddLocation = $"{_root}/add-location";
 
             public const string UpdateLocation = $"{_root}/update-location";
@@ -102,8 +104,17 @@
             public const string Create = $"{_root}/create";
 
             public const string Update = $"{_root}/update";
+        }
 
-            public const string Delete = $"{_root}/delete";
+        public class Invoices
+        {
+            public const string _root = $"{ApiRoutes._root}/invoices";
+
+            public const string List = $"{_root}/list";
+
+            public const string Create = $"{_root}/create";
+
+            public const string Update = $"{_root}/update";
         }
 
         public class Scheduling
@@ -121,7 +132,6 @@
             public const string Delete = $"{_root}/delete";
 
         }
-
 
         public class Authentication
         {

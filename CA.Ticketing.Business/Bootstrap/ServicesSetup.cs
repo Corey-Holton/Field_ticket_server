@@ -3,6 +3,7 @@ using CA.Ticketing.Business.Services.Authentication;
 using CA.Ticketing.Business.Services.Customers;
 using CA.Ticketing.Business.Services.Employees;
 using CA.Ticketing.Business.Services.Equipments;
+using CA.Ticketing.Business.Services.Invoices;
 using CA.Ticketing.Business.Services.Notifications;
 using CA.Ticketing.Business.Services.Notifications.Renderers;
 using CA.Ticketing.Business.Services.Scheduling;
@@ -31,6 +32,7 @@ namespace CA.Ticketing.Business.Bootstrap
             services.AddScoped<IEquipmentService, EquipmentService>();
             services.AddScoped<ISchedulingService, SchedulingService>();
             services.AddScoped<ITicketService, TicketService>();
+            services.AddScoped<IInvoiceService, InvoiceService>();
         }
 
         private static void RegisterBaseServices(this IServiceCollection services)

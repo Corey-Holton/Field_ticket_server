@@ -6,6 +6,7 @@ using CA.Ticketing.Business.Services.Customers.Dto;
 using CA.Ticketing.Persistance.Context;
 using CA.Ticketing.Persistance.Models;
 using Microsoft.EntityFrameworkCore;
+using static CA.Ticketing.Common.Constants.ApiRoutes;
 
 namespace CA.Ticketing.Business.Services.Customers
 {
@@ -57,6 +58,14 @@ namespace CA.Ticketing.Business.Services.Customers
             var customer = await GetCustomer(id);
             _context.Customers.Remove(customer);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<CustomerLocationDto>> GetCustomerLocations(int id)
+        {
+            var locations = await _context.CustomerLocations
+                .Where(x => x.CustomerId == id)
+                .ToListAsync();
+            return locations.Select(x => _mapper.Map<CustomerLocationDto>(x));
         }
 
         public async Task<int> AddLocation(AddLocationDto entity)
