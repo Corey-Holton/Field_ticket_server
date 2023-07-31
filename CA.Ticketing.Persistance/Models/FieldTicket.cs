@@ -38,5 +38,9 @@ namespace CA.Ticketing.Persistance.Models
         public virtual CustomerLocation Location { get; set; }
 
         public bool Signature { get; set; }
+
+        [ForeignKey(nameof(Invoice))]
+        public int? InvoiceId { get; set; }
+        public virtual Invoice Invoice { get; set; }
     }
 }
