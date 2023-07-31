@@ -16,6 +16,13 @@ namespace CA.Ticketing.Business.Services.Tickets
 
         Task<IEnumerable<TicketDto>> GetByLocation(string search);
 
+        Task<TicketDetailsDto> GetById(int id);
+
+
         Task<int> Create(TicketDetailsDto entity);
+
+        Task Update(TicketDetailsDto entity);
+
+
     }
 }

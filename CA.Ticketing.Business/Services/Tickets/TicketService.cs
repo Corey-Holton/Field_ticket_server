@@ -6,6 +6,7 @@ using CA.Ticketing.Persistance.Context;
 using CA.Ticketing.Persistance.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.CompilerServices;
 
 namespace CA.Ticketing.Business.Services.Tickets
 {
@@ -60,6 +61,12 @@ namespace CA.Ticketing.Business.Services.Tickets
             return tickets.Select(x => _mapper.Map<TicketDto>(x));
         }
 
+        public async Task<TicketDetailsDto> GetById(int id)
+        {
+            var ticket = await GetTicket(id);
+            return _mapper.Map<TicketDetailsDto>(ticket);
+        }
+
         public async Task<int> Create(TicketDetailsDto entity)
         {
             var ticket = _mapper.Map<FieldTicket>(entity);
@@ -67,6 +74,27 @@ namespace CA.Ticketing.Business.Services.Tickets
             _context.FieldTickets.Add(ticket);
             await _context.SaveChangesAsync();
             return ticket.Id;
+        }
+
+        public async Task Update(TicketDetailsDto entity)
+        {
+            var ticket = await GetTicket(entity.Id);
+            _mapper.Map(entity, ticket);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<FieldTicket> GetTicket(int id)
+        {
+            var ticket = await _context.FieldTickets
+                .Where(x => x.Id == id)
+                .FirstOrDefaultAsync();
+
+            if(ticket == null)
+            {
+                throw new KeyNotFoundException(nameof(FieldTicket));
+            }
+
+            return ticket;
         }
     }
 }

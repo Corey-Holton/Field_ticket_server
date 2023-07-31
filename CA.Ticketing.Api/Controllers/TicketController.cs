@@ -55,6 +55,20 @@ namespace CA.Ticketing.Api.Controllers
             return Ok(tickets);
         }
 
+        /// <summary> 
+        /// Get ticket details
+        /// </summary>
+        /// <returns>Ticket Details</returns>
+        [Route(ApiRoutes.Tickets.Get)]
+        [HttpGet]
+        [ProducesResponseType(typeof(TicketDetailsDto), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetById(int ticketId)
+        {
+            var ticket = await _ticketService.GetById(ticketId);
+            return Ok(ticket);
+        }
+
+
         /// <summary>
         /// Create a ticket
         /// </summary>
@@ -67,6 +81,19 @@ namespace CA.Ticketing.Api.Controllers
         {
             var ticketId = await _ticketService.Create(ticket);
             return Ok(ticketId);
+        }
+
+        /// <summary>
+        /// Update a ticket
+        /// </summary>
+        /// <param name="ticket">TicketDetailsDto</param>
+        [Route(ApiRoutes.Tickets.Update)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> Update(TicketDetailsDto ticket)
+        {
+            await _ticketService.Update(ticket);
+            return Ok();
         }
     }
 }

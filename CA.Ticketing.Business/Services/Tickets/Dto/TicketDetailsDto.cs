@@ -11,7 +11,7 @@ namespace CA.Ticketing.Business.Services.Tickets.Dto
 
         public string Description { get; set; }
 
-        public ServiceType ServiceType { get; set; }
+        public string ServiceType { get; set; }
 
         public int EquipmentId { get; set; }
 
