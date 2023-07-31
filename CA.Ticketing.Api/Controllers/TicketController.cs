@@ -43,6 +43,19 @@ namespace CA.Ticketing.Api.Controllers
         }
 
         /// <summary>
+        /// Get a list of tickets corresponding to location name
+        /// </summary>
+        /// <returns>List of tickets</returns>
+        [Route(ApiRoutes.Tickets.ListByLocation)]
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<TicketDto>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetByLocation(string search)
+        {
+            var tickets = await _ticketService.GetByLocation(search);
+            return Ok(tickets);
+        }
+
+        /// <summary>
         /// Create a ticket
         /// </summary>
         /// <param name="ticket">TicketDetailsDto</param>

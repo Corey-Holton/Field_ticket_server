@@ -20,6 +20,7 @@ namespace CA.Ticketing.Business.Services.Tickets
         {
             var tickets = await _context.FieldTickets
                 .Include(x => x.Customer)
+                .Include(x => x.Equipment)
                 .ToListAsync();
 
             return tickets.Select(x => _mapper.Map<TicketDto>(x));
@@ -29,8 +30,32 @@ namespace CA.Ticketing.Business.Services.Tickets
         {
             var tickets = await _context.FieldTickets
                .Include(x => x.Customer)
+               .Include(x => x.Equipment)
                .Where(x => x.ExecutionDate >= startDate && x.ExecutionDate <= endDate)
                .ToListAsync();
+
+            return tickets.Select(x => _mapper.Map<TicketDto>(x));
+        }
+
+        public async Task<IEnumerable<TicketDto>> GetByLocation(string locationName)
+        {
+            var locations = await _context.CustomerLocations
+                .Where(x => x.Name.Contains(locationName))
+                .ToListAsync();
+
+            var tickets = new List<FieldTicket>();
+
+            foreach(var location in locations)
+            {
+                var ticket = await _context.FieldTickets
+                .Include(x => x.Customer)
+                .Include(x => x.Equipment)
+                .SingleOrDefaultAsync(x => x.LocationId == location.Id);
+                if (ticket != null)
+                {
+                    tickets.Add(ticket);
+                }
+            }
 
             return tickets.Select(x => _mapper.Map<TicketDto>(x));
         }

@@ -17,10 +17,14 @@ namespace CA.Ticketing.Business.Services.Tickets.Dto
 
         public int CustomerId { get; set; }
 
+        public int LocationId { get; set; }
+
         public DateTime StartTime { get; set; }
 
         public DateTime EndTime { get; set; }
 
         public double Mileage { get; set; }
+
+        public bool Signature { get; set; }
     }
 }

@@ -93,7 +93,9 @@
 
             public const string List = $"{_root}/list";
 
-            public const string ListByDates = $"{_root}/list/startDate={{startDate}}&endDate={{endDate}}";    
+            public const string ListByDates = $"{_root}/list/startDate={{startDate}}&endDate={{endDate}}";
+
+            public const string ListByLocation = $"{_root}/list/location={{search}}";
 
             public const string Get = $"{_root}/{{ticketId}}";
 

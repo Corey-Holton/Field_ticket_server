@@ -6,10 +6,14 @@ namespace CA.Ticketing.Business.Services.Tickets.Dto
     {
         public string TicketIdentifier { get; set; }
 
+        public string EquipmentName { get; set; }
+
         public string CustomerName { get; set; }
         
         public DateTime ExecutionDate { get; set; }
 
         public string ServiceType { get; set; }
+
+        public bool Signature { get; set; }
     }
 }
