@@ -112,6 +112,10 @@
 
             public const string List = $"{_root}/list";
 
+            public const string ListByDates = $"{_root}/list/startDate={{startDate}}&endDate={{endDate}}";
+
+            public const string ListByCustomer = $"{_root}/list/customer={{search}}";
+                
             public const string Create = $"{_root}/create";
 
             public const string Update = $"{_root}/update";

@@ -29,13 +29,39 @@ namespace CA.Ticketing.Api.Controllers
         }
 
         /// <summary>
+        /// Get a list of Invoices by start and end date
+        /// </summary>
+        /// <returns>List of invoices</returns>
+        [Route(ApiRoutes.Invoices.ListByDates)]
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<InvoiceDto>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetByDates(DateTime startDate, DateTime endDate)
+        {
+            var invoices = await _invoiceService.GetByDates(startDate, endDate);
+            return Ok(invoices);
+        }
+
+        /// <summary>
+        /// Get a list of invoces by searching customer name
+        /// </summary>
+        /// <returns>List of invoices</returns>
+        [Route(ApiRoutes.Invoices.ListByCustomer)]
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<InvoiceDto>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetByCustomer(string search)
+        {
+            var invoices = await _invoiceService.GetByCustomer(search);
+            return Ok(invoices);
+        }
+
+        /// <summary>
         /// Create an invoice
         /// </summary>
         /// <returns>Invoice Id</returns>
         [Route(ApiRoutes.Invoices.Create)]
         [HttpPost]
         [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
-        public async Task<IActionResult> Create(InvoiceDto invoice)
+        public async Task<IActionResult> Create(CreateInvoiceDto invoice)
         {
             var invoiceId = await _invoiceService.Create(invoice);
             return Ok(invoiceId);

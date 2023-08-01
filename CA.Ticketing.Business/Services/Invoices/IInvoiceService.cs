@@ -12,7 +12,11 @@ namespace CA.Ticketing.Business.Services.Invoices
     {
         Task<IEnumerable<InvoiceDto>> GetAll();
 
-        Task<int> Create(InvoiceDto entity);
+        Task<IEnumerable<InvoiceDto>> GetByDates(DateTime startDate, DateTime endDate);
+
+        Task<IEnumerable<InvoiceDto>> GetByCustomer(string search);
+
+        Task<int> Create(CreateInvoiceDto entity);
 
         Task Update(InvoiceDto entity);
     }

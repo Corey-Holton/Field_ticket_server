@@ -29,12 +29,66 @@ namespace CA.Ticketing.Business.Services.Invoices
             return invoices.Select(x => _mapper.Map<InvoiceDto>(x));
         }
 
-        public async Task<int> Create(InvoiceDto entity)
+        public async Task<IEnumerable<InvoiceDto>> GetByDates(DateTime startDate, DateTime endDate)
+        {
+            var invoices = await _context.Invoices
+                .Where(x => x.InvoiceDate >= startDate && x.InvoiceDate <= endDate)
+                .ToListAsync();
+
+            return invoices.Select(x => _mapper.Map<InvoiceDto>(x));
+        }
+
+        public async Task<IEnumerable<InvoiceDto>> GetByCustomer(string customerName)
+        {
+            var customers = await _context.Customers
+                .Where(x => x.Name.Contains(customerName))
+                .ToListAsync();
+
+            var fieldTickets = new List<FieldTicket>();
+
+            foreach (var customer in customers)
+            {
+                var foundTickets = await _context.FieldTickets
+                    .Where(x => x.Location.CustomerId == customer.Id)
+                    .Include(x => x.Invoice)
+                    .ToListAsync();
+                if (foundTickets != null)
+                    fieldTickets.AddRange(foundTickets); 
+            }
+
+            var invoices = new List<Invoice>();
+
+            foreach (var ticket in fieldTickets)
+            {
+                if (ticket.Invoice != null)
+                    if (!invoices.Contains(ticket.Invoice))
+                        invoices.Add(ticket.Invoice);
+            }
+
+            return invoices.Select(x => _mapper.Map<InvoiceDto>(x));
+        }
+
+        public async Task<int> Create(CreateInvoiceDto entity)
         {
             var invoice = _mapper.Map<Invoice>(entity);
 
             _context.Invoices.Add(invoice);
+
+            if (entity.ticketIds != null)
+            {
+                foreach(var ticketId in entity.ticketIds)
+                {
+                    var fieldTicket = await _context.FieldTickets
+                        .Where(x => x.Id == ticketId)
+                        .FirstOrDefaultAsync();
+
+                    if (fieldTicket != null)
+                        fieldTicket.InvoiceId = invoice.Id;
+                } 
+            }
+
             await _context.SaveChangesAsync();
+
             return invoice.Id;
         }
 
