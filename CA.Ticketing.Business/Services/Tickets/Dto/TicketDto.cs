@@ -15,5 +15,7 @@ namespace CA.Ticketing.Business.Services.Tickets.Dto
         public string ServiceType { get; set; }
 
         public bool Signature { get; set; }
+
+        public bool Invoice { get; set; }
     }
 }
