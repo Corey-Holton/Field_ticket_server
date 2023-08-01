@@ -50,14 +50,15 @@ namespace CA.Ticketing.Business.Services.Tickets
 
             foreach(var location in locations)
             {
-                var ticket = await _context.FieldTickets
+                var ticketsResult = await _context.FieldTickets
                 .Include(x => x.Customer)
                 .Include(x => x.Equipment)
                 .Include(x => x.Location)
-                .SingleOrDefaultAsync(x => x.LocationId == location.Id);
-                if (ticket != null)
+                .Where(x => x.LocationId == location.Id)
+                .ToListAsync();
+                if (tickets != null)
                 {
-                    tickets.Add(ticket);
+                    tickets.AddRange(ticketsResult);
                 }
             }
 
