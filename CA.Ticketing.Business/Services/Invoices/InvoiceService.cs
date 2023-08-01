@@ -38,6 +38,12 @@ namespace CA.Ticketing.Business.Services.Invoices
             return invoices.Select(x => _mapper.Map<InvoiceDto>(x));
         }
 
+        public async Task<InvoiceDetailsDto> GetById(int id)
+        {
+            var invoice = await GetInvoice(id);
+            return _mapper.Map<InvoiceDetailsDto>(invoice);
+        }
+
         public async Task<IEnumerable<InvoiceDto>> GetByCustomer(string customerName)
         {
             var customers = await _context.Customers
@@ -92,11 +98,33 @@ namespace CA.Ticketing.Business.Services.Invoices
             return invoice.Id;
         }
 
-        public async Task Update(InvoiceDto entity)
+        public async Task Update(CreateInvoiceDto entity)
         {
             var invoice = await GetInvoice(entity.Id);
-
+            
             _mapper.Map(entity, invoice);
+            
+            if (entity.ticketIds != null)
+            {
+                // Clear all tickets
+                foreach (var ticket in invoice.Tickets)
+                {
+                    ticket.InvoiceId = null;
+                }
+
+                // Re-attach tickets that are in the array of ticketIds
+                foreach (var id in entity.ticketIds)
+                {
+                    var fieldTicket = await _context.FieldTickets
+                        .Where(x => x.Id == id)
+                        .FirstOrDefaultAsync();
+
+                    if (fieldTicket != null)
+                    {
+                        fieldTicket.InvoiceId = invoice.Id;
+                    }
+                }
+            }
 
             await _context.SaveChangesAsync();
         }
@@ -104,6 +132,8 @@ namespace CA.Ticketing.Business.Services.Invoices
         private async Task<Invoice> GetInvoice(int id)
         {
             var invoice = await _context.Invoices
+                .Include(x => x.Tickets).ThenInclude(x => x.Customer)
+                .Include(x => x.Tickets).ThenInclude(x => x.Equipment)
                 .SingleOrDefaultAsync(x => x.Id == id);
 
             if (invoice == null)

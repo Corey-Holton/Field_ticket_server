@@ -9,6 +9,8 @@ namespace CA.Ticketing.Business.Services.Tickets.Dto
         public string EquipmentName { get; set; }
 
         public string CustomerName { get; set; }
+
+        public string LocationName { get; set; }
         
         public DateTime ExecutionDate { get; set; }
 

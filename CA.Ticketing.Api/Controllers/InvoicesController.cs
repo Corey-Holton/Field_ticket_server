@@ -54,6 +54,20 @@ namespace CA.Ticketing.Api.Controllers
             return Ok(invoices);
         }
 
+
+        /// <summary>
+        /// Get a ticket by Id
+        /// </summary>
+        /// <returns>Invoice Details</returns>
+        [Route(ApiRoutes.Invoices.Get)]
+        [HttpGet]
+        [ProducesResponseType(typeof(InvoiceDetailsDto), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetById(int invoiceId)
+        {
+            var invoice = await _invoiceService.GetById(invoiceId);
+            return Ok(invoice);
+        }
+
         /// <summary>
         /// Create an invoice
         /// </summary>
@@ -73,7 +87,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Invoices.Update)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> Update(InvoiceDto invoice)
+        public async Task<IActionResult> Update(CreateInvoiceDto invoice)
         {
             await _invoiceService.Update(invoice);
             return Ok();

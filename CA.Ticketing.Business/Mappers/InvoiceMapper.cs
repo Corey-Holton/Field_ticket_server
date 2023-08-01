@@ -16,6 +16,8 @@ namespace CA.Ticketing.Business.Mappers
             CreateMap<Invoice, InvoiceDto>();
 
             CreateMap<CreateInvoiceDto, Invoice>();
+
+            CreateMap<Invoice, InvoiceDetailsDto>();
         }
     }
 }

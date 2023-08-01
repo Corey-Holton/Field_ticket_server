@@ -115,6 +115,8 @@
             public const string ListByDates = $"{_root}/list/startDate={{startDate}}&endDate={{endDate}}";
 
             public const string ListByCustomer = $"{_root}/list/customer={{search}}";
+
+            public const string Get = $"{_root}/{{invoiceId}}";
                 
             public const string Create = $"{_root}/create";
 

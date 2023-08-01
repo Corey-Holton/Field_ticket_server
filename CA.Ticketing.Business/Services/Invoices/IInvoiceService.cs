@@ -16,8 +16,10 @@ namespace CA.Ticketing.Business.Services.Invoices
 
         Task<IEnumerable<InvoiceDto>> GetByCustomer(string search);
 
+        Task<InvoiceDetailsDto> GetById(int id);
+
         Task<int> Create(CreateInvoiceDto entity);
 
-        Task Update(InvoiceDto entity);
+        Task Update(CreateInvoiceDto entity);
     }
 }
