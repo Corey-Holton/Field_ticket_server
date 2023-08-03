@@ -95,5 +95,17 @@ namespace CA.Ticketing.Api.Controllers
             await _ticketService.Update(ticket);
             return Ok();
         }
+
+        /// <summary>
+        /// Delete an existing Ticket
+        /// </summary>
+        [Route(ApiRoutes.Tickets.Delete)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> Delete(int ticketId)
+        {
+            await _ticketService.Delete(ticketId);
+            return Ok();
+        }
     }
 }

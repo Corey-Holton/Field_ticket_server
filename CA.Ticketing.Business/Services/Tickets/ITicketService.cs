@@ -23,6 +23,6 @@ namespace CA.Ticketing.Business.Services.Tickets
 
         Task Update(TicketDetailsDto entity);
 
-
+        Task Delete(int id);
     }
 }

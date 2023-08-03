@@ -87,6 +87,13 @@ namespace CA.Ticketing.Business.Services.Tickets
             await _context.SaveChangesAsync();
         }
 
+        public async Task Delete(int id)
+        {
+            var ticket = await GetTicket(id);
+            _context.FieldTickets.Remove(ticket);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<FieldTicket> GetTicket(int id)
         {
             var ticket = await _context.FieldTickets

@@ -131,6 +131,13 @@ namespace CA.Ticketing.Business.Services.Invoices
             await _context.SaveChangesAsync();
         }
 
+        public async Task Delete(int id)
+        {
+            var invoice = await GetInvoice(id);
+            _context.Invoices.Remove(invoice);
+            await _context.SaveChangesAsync();
+        }
+
         private async Task<Invoice> GetInvoice(int id)
         {
             var invoice = await _context.Invoices
@@ -144,6 +151,6 @@ namespace CA.Ticketing.Business.Services.Invoices
             }
 
             return invoice!;
-        }
+        }        
     }
 }

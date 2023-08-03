@@ -92,5 +92,17 @@ namespace CA.Ticketing.Api.Controllers
             await _invoiceService.Update(invoice);
             return Ok();
         }
+
+        /// <summary>
+        /// Delete an invoice
+        /// </summary>
+        [Route(ApiRoutes.Invoices.Delete)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> Delete(int invoiceId)
+        {
+            await _invoiceService.Delete(invoiceId);
+            return Ok();
+        }
     }
 }

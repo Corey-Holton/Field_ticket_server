@@ -21,5 +21,7 @@ namespace CA.Ticketing.Business.Services.Invoices
         Task<int> Create(CreateInvoiceDto entity);
 
         Task Update(CreateInvoiceDto entity);
+
+        Task Delete(int id);
     }
 }
