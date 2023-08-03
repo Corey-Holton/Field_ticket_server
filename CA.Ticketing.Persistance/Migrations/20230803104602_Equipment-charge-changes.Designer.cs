@@ -4,6 +4,7 @@ using CA.Ticketing.Persistance.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CA.Ticketing.Persistance.Migrations
 {
     [DbContext(typeof(CATicketingContext))]
-    partial class CATicketingContextModelSnapshot : ModelSnapshot
+    [Migration("20230803104602_Equipment-charge-changes")]
+    partial class Equipmentchargechanges
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -495,27 +497,6 @@ namespace CA.Ticketing.Persistance.Migrations
                     b.ToTable("Scheduling");
                 });
 
-            modelBuilder.Entity("CA.Ticketing.Persistance.Models.TicketSpecification", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("EquipmentChargeId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EquipmentChargeId");
-
-                    b.ToTable("TicketSpecification");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -755,17 +736,6 @@ namespace CA.Ticketing.Persistance.Migrations
                     b.Navigation("Customer");
 
                     b.Navigation("Equipment");
-                });
-
-            modelBuilder.Entity("CA.Ticketing.Persistance.Models.TicketSpecification", b =>
-                {
-                    b.HasOne("CA.Ticketing.Persistance.Models.EquipmentCharge", "EquipmentCharge")
-                        .WithMany()
-                        .HasForeignKey("EquipmentChargeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("EquipmentCharge");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
