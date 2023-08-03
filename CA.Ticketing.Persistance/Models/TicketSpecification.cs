@@ -13,5 +13,10 @@ namespace CA.Ticketing.Persistance.Models
         public int EquipmentChargeId { get; set; }
 
         public virtual EquipmentCharge EquipmentCharge { get; set; }
+
+        [ForeignKey(nameof(FieldTicket))]
+        public int FieldTicketId { get; set; }
+
+        public virtual FieldTicket FieldTicket { get; set; }
     }
 }

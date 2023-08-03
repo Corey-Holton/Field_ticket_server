@@ -122,6 +122,15 @@
             public const string Delete = $"{_root}/delete";
         }
 
+        public class TicketSpecifications
+        {
+            public const string Create = $"{_root}/create";
+
+            public const string Update = $"{_root}/update";
+
+            public const string Delete = $"{_root}/delete";
+        }
+
         public class Invoices
         {
             public const string _root = $"{ApiRoutes._root}/invoices";
