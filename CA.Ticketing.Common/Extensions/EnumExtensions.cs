@@ -48,7 +48,7 @@ namespace CA.Ticketing.Common.Extensions
                 _ => throw new ArgumentNullException(null, nameof(equipmentCategory))
             };
         }
-
+      
         public static string GetServiceType(this ServiceType serviceType) 
         {
             return serviceType switch
@@ -60,6 +60,18 @@ namespace CA.Ticketing.Common.Extensions
                 ServiceType.Workovers => Business.ServiceType.Workovers,
                 ServiceType.StandBy => Business.ServiceType.StandBy,
                 _ => throw new ArgumentNullException(null, nameof(serviceType))
+            };
+        }
+      
+        public static string GetChargeType(this ChargeType chargeType)
+        {
+            return chargeType switch
+            {
+                ChargeType.EA => Business.ChargeTypes.EA,
+                ChargeType.Hourly => Business.ChargeTypes.Hourly,
+                ChargeType.Daily => Business.ChargeTypes.Daily,
+                ChargeType.Gallon => Business.ChargeTypes.Gallon,
+                _ => throw new ArgumentNullException(null, nameof(chargeType))
             };
         }
     }
