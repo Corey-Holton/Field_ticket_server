@@ -80,6 +80,8 @@ namespace CA.Ticketing.Business.Services.Invoices
 
             _context.Invoices.Add(invoice);
 
+            await _context.SaveChangesAsync();
+
             if (entity.ticketIds != null)
             {
                 foreach(var ticketId in entity.ticketIds)
