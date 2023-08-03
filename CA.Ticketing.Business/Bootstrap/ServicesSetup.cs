@@ -1,5 +1,6 @@
 ﻿using CA.Ticketing.Business.Authentication;
 using CA.Ticketing.Business.Services.Authentication;
+using CA.Ticketing.Business.Services.Charges;
 using CA.Ticketing.Business.Services.Customers;
 using CA.Ticketing.Business.Services.Employees;
 using CA.Ticketing.Business.Services.Equipments;
@@ -27,6 +28,7 @@ namespace CA.Ticketing.Business.Bootstrap
             services.AddScoped<IEmployeeService, EmployeeService>();
             services.AddScoped<IAccountsService, AccountsService>();
             services.AddScoped<ICustomerService, CustomerService>();
+            services.AddScoped<IChargesService, ChargesService>();
             services.AddScoped<IEquipmentService, EquipmentService>();
             services.AddScoped<ISchedulingService, SchedulingService>();
         }

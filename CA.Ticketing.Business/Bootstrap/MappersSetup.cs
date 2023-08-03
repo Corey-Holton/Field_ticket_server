@@ -13,6 +13,7 @@ namespace CA.Ticketing.Business.Bootstrap
                 mapperConfiguration.AddProfile(new EmployeesMapper());
                 mapperConfiguration.AddProfile(new AuthenticationMapper());
                 mapperConfiguration.AddProfile(new CustomersMapper());
+                mapperConfiguration.AddProfile(new ChargesMapper());
                 mapperConfiguration.AddProfile(new EquipmentMapper());
                 mapperConfiguration.AddProfile(new SchedulingMapper());
             })

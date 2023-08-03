@@ -16,6 +16,14 @@
             public const string Field = "Field";
         }
 
+        public class ChargeTypes
+        {
+            public const string EA = "EA";
+            public const string Hourly = "Hourly";
+            public const string Daily = "Daily";
+            public const string Gallon = "Gallon";
+        }
+
         public class EquipmentCategory
         {
             public const string Rig = "Rig";
