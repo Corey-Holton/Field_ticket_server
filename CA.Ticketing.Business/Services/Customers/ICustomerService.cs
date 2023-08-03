@@ -19,6 +19,8 @@ namespace CA.Ticketing.Business.Services.Customers
 
         Task Delete(int id);
 
+        Task<IEnumerable<CustomerLocationDto>> GetCustomerLocations(int id);
+
         Task<int> AddLocation(AddLocationDto entity);
 
         Task UpdateLocation(AddLocationDto entity);

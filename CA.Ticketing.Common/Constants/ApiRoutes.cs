@@ -43,6 +43,8 @@
 
             public const string Delete = $"{_root}/delete";
 
+            public const string LocationList = $"{_root}/location-list/{{customerId}}";
+
             public const string AddLocation = $"{_root}/add-location";
 
             public const string UpdateLocation = $"{_root}/update-location";
@@ -101,6 +103,44 @@
             public const string DeleteEquipmentCharge = $"{_root}/delete-equipment-charge";
         }
 
+        public class Tickets
+        {
+            public const string _root = $"{ApiRoutes._root}/tickets";
+
+            public const string List = $"{_root}/list";
+
+            public const string ListByDates = $"{_root}/list/startDate={{startDate}}&endDate={{endDate}}";
+
+            public const string ListByLocation = $"{_root}/list/location={{search}}";
+
+            public const string Get = $"{_root}/{{ticketId}}";
+
+            public const string Create = $"{_root}/create";
+
+            public const string Update = $"{_root}/update";
+
+            public const string Delete = $"{_root}/delete";
+        }
+
+        public class Invoices
+        {
+            public const string _root = $"{ApiRoutes._root}/invoices";
+
+            public const string List = $"{_root}/list";
+
+            public const string ListByDates = $"{_root}/list/startDate={{startDate}}&endDate={{endDate}}";
+
+            public const string ListByCustomer = $"{_root}/list/customer={{search}}";
+
+            public const string Get = $"{_root}/{{invoiceId}}";
+                
+            public const string Create = $"{_root}/create";
+
+            public const string Update = $"{_root}/update";
+
+            public const string Delete = $"{_root}/delete";
+        }
+
         public class Scheduling
         {
             public const string _root = $"{ApiRoutes._root}/scheduling";
@@ -116,7 +156,6 @@
             public const string Delete = $"{_root}/delete";
 
         }
-
 
         public class Authentication
         {

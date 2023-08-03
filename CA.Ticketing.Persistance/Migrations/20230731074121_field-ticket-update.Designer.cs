@@ -4,6 +4,7 @@ using CA.Ticketing.Persistance.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CA.Ticketing.Persistance.Migrations
 {
     [DbContext(typeof(CATicketingContext))]
-    partial class CATicketingContextModelSnapshot : ModelSnapshot
+    [Migration("20230731074121_field-ticket-update")]
+    partial class fieldticketupdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -391,10 +393,6 @@ namespace CA.Ticketing.Persistance.Migrations
                     b.Property<DateTime>("ExecutionDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("InvoiceId")
-                        .IsRequired()
-                        .HasColumnType("int");
-
                     b.Property<int>("LocationId")
                         .HasColumnType("int");
 
@@ -420,37 +418,9 @@ namespace CA.Ticketing.Persistance.Migrations
 
                     b.HasIndex("EquipmentId");
 
-                    b.HasIndex("InvoiceId");
-
                     b.HasIndex("LocationId");
 
                     b.ToTable("FieldTickets");
-                });
-
-            modelBuilder.Entity("CA.Ticketing.Persistance.Models.Invoice", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("DueDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("InvoiceDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("InvoiceIdentifier")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("Paid")
-                        .HasColumnType("bit");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Invoices");
                 });
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.Scheduling", b =>
@@ -695,12 +665,6 @@ namespace CA.Ticketing.Persistance.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CA.Ticketing.Persistance.Models.Invoice", "Invoice")
-                        .WithMany("Tickets")
-                        .HasForeignKey("InvoiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("CA.Ticketing.Persistance.Models.CustomerLocation", "Location")
                         .WithMany()
                         .HasForeignKey("LocationId")
@@ -710,8 +674,6 @@ namespace CA.Ticketing.Persistance.Migrations
                     b.Navigation("Customer");
 
                     b.Navigation("Equipment");
-
-                    b.Navigation("Invoice");
 
                     b.Navigation("Location");
                 });
@@ -804,11 +766,6 @@ namespace CA.Ticketing.Persistance.Migrations
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.Employee", b =>
                 {
                     b.Navigation("ApplicationUser");
-                });
-
-            modelBuilder.Entity("CA.Ticketing.Persistance.Models.Invoice", b =>
-                {
-                    b.Navigation("Tickets");
                 });
 #pragma warning restore 612, 618
         }

@@ -33,5 +33,15 @@
             public const string Tanks = "Tanks";
             public const string Ancillary = "Ancillary";
         }
+
+        public class ServiceType
+        {
+            public const string RodsAndTubing = "Rods And Tubing";
+            public const string Workovers = "Workovers";
+            public const string PAndA = "PAndA";
+            public const string Completion = "Completion";
+            public const string StandBy = "Stand By";
+            public const string Yard = "Yard";
+        }
     }
 }

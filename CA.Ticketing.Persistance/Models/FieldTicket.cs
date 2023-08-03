@@ -31,5 +31,16 @@ namespace CA.Ticketing.Persistance.Models
         public DateTime EndTime { get; set; }
 
         public double Mileage { get; set; }
+
+        [ForeignKey(nameof(CustomerLocation))]
+        public int LocationId { get; set; }
+
+        public virtual CustomerLocation Location { get; set; }
+
+        public bool Signature { get; set; }
+
+        [ForeignKey(nameof(Invoice))]
+        public int? InvoiceId { get; set; }
+        public virtual Invoice? Invoice { get; set; }
     }
 }

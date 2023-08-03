@@ -25,5 +25,7 @@ namespace CA.Ticketing.Persistance.Context
         public DbSet<FieldTicket> FieldTickets { get; set; }
 
         public DbSet<Scheduling> Scheduling { get; set; }
+
+        public DbSet<Invoice> Invoices { get; set; }
     }
 }

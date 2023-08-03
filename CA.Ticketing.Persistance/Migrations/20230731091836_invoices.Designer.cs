@@ -4,6 +4,7 @@ using CA.Ticketing.Persistance.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CA.Ticketing.Persistance.Migrations
 {
     [DbContext(typeof(CATicketingContext))]
-    partial class CATicketingContextModelSnapshot : ModelSnapshot
+    [Migration("20230731091836_invoices")]
+    partial class invoices
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -392,7 +394,6 @@ namespace CA.Ticketing.Persistance.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("InvoiceId")
-                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<int>("LocationId")
@@ -695,11 +696,9 @@ namespace CA.Ticketing.Persistance.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CA.Ticketing.Persistance.Models.Invoice", "Invoice")
+                    b.HasOne("CA.Ticketing.Persistance.Models.Invoice", null)
                         .WithMany("Tickets")
-                        .HasForeignKey("InvoiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("InvoiceId");
 
                     b.HasOne("CA.Ticketing.Persistance.Models.CustomerLocation", "Location")
                         .WithMany()
@@ -710,8 +709,6 @@ namespace CA.Ticketing.Persistance.Migrations
                     b.Navigation("Customer");
 
                     b.Navigation("Equipment");
-
-                    b.Navigation("Invoice");
 
                     b.Navigation("Location");
                 });

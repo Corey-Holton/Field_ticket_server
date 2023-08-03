@@ -18,5 +18,7 @@ namespace CA.Ticketing.Persistance.Models
         public string Name { get; set; }
 
         public virtual ICollection<CustomerContact> Contacts { get; set; } = new List<CustomerContact>();
+
+        public virtual ICollection<FieldTicket> FieldTickets { get; set; } = new List<FieldTicket>();
     }
 }

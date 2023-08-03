@@ -84,6 +84,19 @@ namespace CA.Ticketing.Api.Controllers
         }
 
         ///<summary>
+        /// Get location list for customer
+        /// </summary>
+        /// <param name="customerId">Customer id</param>
+        [Route(ApiRoutes.Customers.LocationList)]
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<CustomerLocationDto>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetCustomerLocations(int customerId)
+        {
+            var locations = await _customerService.GetCustomerLocations(customerId);
+            return Ok(locations);
+        }
+
+        ///<summary>
         /// Add a Customer Location
         /// </summary>
         /// <param name="customerLocation">CustomerLocationDto</param>
