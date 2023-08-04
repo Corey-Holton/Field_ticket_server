@@ -98,6 +98,19 @@ namespace CA.Ticketing.Api.Controllers
         }
 
         /// <summary>
+        /// Get all equipment charges for related equipment 
+        /// </summary>
+        /// <returns>List of equipment charges</returns>
+        [Route(ApiRoutes.Equipment.ListEquipmentCharge)]
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<EquipmentChargeDto>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetEquipmentCharges(int equipmentId)
+        {
+            var equipmentCharges = await _equipmentService.GetEquipmentCharges(equipmentId);
+            return Ok(equipmentCharges);
+        }
+
+        /// <summary>
         /// Create an equipment charge
         /// </summary>
         /// <param name="equipmentChargeModel"></param>

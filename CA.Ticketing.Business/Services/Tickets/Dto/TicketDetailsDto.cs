@@ -1,5 +1,7 @@
 ﻿using CA.Ticketing.Business.Services.Base;
+using CA.Ticketing.Business.Services.TicketSpecifications.Dto;
 using CA.Ticketing.Common.Enums;
+using CA.Ticketing.Persistance.Models;
 
 namespace CA.Ticketing.Business.Services.Tickets.Dto
 {
@@ -26,5 +28,7 @@ namespace CA.Ticketing.Business.Services.Tickets.Dto
         public double Mileage { get; set; }
 
         public bool Signature { get; set; }
+
+        public List<CreateTicketSpecificationDto> TicketSpecifications { get; set; }
     }
 }

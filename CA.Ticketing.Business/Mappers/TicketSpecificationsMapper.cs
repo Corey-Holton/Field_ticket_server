@@ -14,6 +14,8 @@ namespace CA.Ticketing.Business.Mappers
         public TicketSpecificationsMapper()
         {
             CreateMap<CreateTicketSpecificationDto, TicketSpecification>();
+
+            CreateMap<TicketSpecification, CreateTicketSpecificationDto>();
         }
     }
 }

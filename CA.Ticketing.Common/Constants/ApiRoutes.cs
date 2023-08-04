@@ -96,6 +96,8 @@
 
             public const string Delete = $"{_root}/delete";
 
+            public const string ListEquipmentCharge = $"{_root}/list-equipment-charge/{{equipmentId}}";
+
             public const string CreateEquipmentCharge = $"{_root}/create-equipment-charge";
 
             public const string UpdateEquipmentCharge = $"{_root}/update-equipment-charge";

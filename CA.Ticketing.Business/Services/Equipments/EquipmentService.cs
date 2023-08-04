@@ -42,7 +42,7 @@ namespace CA.Ticketing.Business.Services.Equipments
 
             _context.Equipment.Add(equipment);
             await _context.SaveChangesAsync();
-            return entity.Id;
+            return equipment.Id;
         }
 
         public async Task Update(EquipmentDetailsDto entity)
@@ -63,13 +63,21 @@ namespace CA.Ticketing.Business.Services.Equipments
             await _context.SaveChangesAsync();
         }
 
+        public async Task<IEnumerable<EquipmentChargeDto>> GetEquipmentCharges(int id)
+        {
+            var equipmentCharges = await _context.EquipmentCharges
+                .Where(x => x.EquipmentId == id)
+                .ToListAsync();
+            return equipmentCharges.Select(x => _mapper.Map<EquipmentChargeDto>(x));
+        }
+
         public async Task<int> CreateEquipmentCharge(EquipmentChargeDto entity)
         {
             var equipmentCharge = _mapper.Map<EquipmentCharge>(entity);
 
             _context.EquipmentCharges.Add(equipmentCharge);
             await _context.SaveChangesAsync();
-            return entity.Id;
+            return equipmentCharge.Id;
         }
 
         public async Task UpdateEquipmentCharge(EquipmentChargeDto entity)

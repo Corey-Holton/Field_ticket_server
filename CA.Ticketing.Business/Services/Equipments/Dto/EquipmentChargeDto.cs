@@ -1,9 +1,4 @@
 ﻿using CA.Ticketing.Business.Services.Base;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CA.Ticketing.Business.Services.Equipments.Dto
 {
@@ -13,6 +8,8 @@ namespace CA.Ticketing.Business.Services.Equipments.Dto
 
         public int ChargeId { get; set; }
         
-        public double Value { get; set; }
+        public double Rate { get; set; }
+
+        public string ItemName { get; set; }
     }
 }
