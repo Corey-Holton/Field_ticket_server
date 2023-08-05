@@ -41,6 +41,9 @@ namespace CA.Ticketing.Persistance.Models
 
         [ForeignKey(nameof(Invoice))]
         public int? InvoiceId { get; set; }
+
         public virtual Invoice? Invoice { get; set; }
+
+        public virtual ICollection<TicketSpecification> TicketSpecifications { get; set; } = new List<TicketSpecification>();
     }
 }

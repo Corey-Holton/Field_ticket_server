@@ -98,6 +98,7 @@ namespace CA.Ticketing.Business.Services.Tickets
         {
             var ticket = await _context.FieldTickets
                 .Where(x => x.Id == id)
+                .Include(x => x.TicketSpecifications)
                 .FirstOrDefaultAsync();
 
             if(ticket == null)

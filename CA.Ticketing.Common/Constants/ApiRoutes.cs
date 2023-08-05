@@ -96,6 +96,8 @@
 
             public const string Delete = $"{_root}/delete";
 
+            public const string ListEquipmentCharge = $"{_root}/list-equipment-charge/{{equipmentId}}";
+
             public const string CreateEquipmentCharge = $"{_root}/create-equipment-charge";
 
             public const string UpdateEquipmentCharge = $"{_root}/update-equipment-charge";
@@ -115,6 +117,15 @@
 
             public const string Get = $"{_root}/{{ticketId}}";
 
+            public const string Create = $"{_root}/create";
+
+            public const string Update = $"{_root}/update";
+
+            public const string Delete = $"{_root}/delete";
+        }
+
+        public class TicketSpecifications
+        {
             public const string Create = $"{_root}/create";
 
             public const string Update = $"{_root}/update";

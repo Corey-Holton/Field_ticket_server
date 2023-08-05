@@ -15,6 +15,8 @@ namespace CA.Ticketing.Persistance.Models
 
         public virtual Charge Charge { get; set; }
 
-        public double Value { get; set; }
+        public string ItemName { get; set; }
+
+        public double Rate { get; set; }
     }
 }

@@ -4,6 +4,7 @@ using CA.Ticketing.Persistance.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CA.Ticketing.Persistance.Migrations
 {
     [DbContext(typeof(CATicketingContext))]
-    partial class CATicketingContextModelSnapshot : ModelSnapshot
+    [Migration("20230803105436_Ticket-specification-entity")]
+    partial class Ticketspecificationentity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -506,17 +508,12 @@ namespace CA.Ticketing.Persistance.Migrations
                     b.Property<int>("EquipmentChargeId")
                         .HasColumnType("int");
 
-                    b.Property<int>("FieldTicketId")
-                        .HasColumnType("int");
-
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("EquipmentChargeId");
-
-                    b.HasIndex("FieldTicketId");
 
                     b.ToTable("TicketSpecification");
                 });
@@ -770,15 +767,7 @@ namespace CA.Ticketing.Persistance.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CA.Ticketing.Persistance.Models.FieldTicket", "FieldTicket")
-                        .WithMany()
-                        .HasForeignKey("FieldTicketId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("EquipmentCharge");
-
-                    b.Navigation("FieldTicket");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
