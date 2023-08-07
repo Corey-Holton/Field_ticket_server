@@ -14,5 +14,8 @@ namespace CA.Ticketing.Business.Services.Employees.Dto
         [PasswordPropertyText]
         [Required]
         public string Password { get; set; }
+
+        [Required]
+        public string TicketIdentifier { get; set; }
     }
 }

@@ -4,8 +4,10 @@ using CA.Ticketing.Business.Services.Base;
 using CA.Ticketing.Business.Services.Tickets.Dto;
 using CA.Ticketing.Persistance.Context;
 using CA.Ticketing.Persistance.Models;
+using Microsoft.AspNetCore.Connections.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using System.Runtime.CompilerServices;
 
 namespace CA.Ticketing.Business.Services.Tickets
@@ -19,21 +21,13 @@ namespace CA.Ticketing.Business.Services.Tickets
         // TO DO: IF FOREIGN KEY FOR INVOICE EXISTS THEN RETURN INVOICE TRUE IN MAPPER
         public async Task<IEnumerable<TicketDto>> GetAll()
         {
-            var tickets = await _context.FieldTickets
-                .Include(x => x.Customer)
-                .Include(x => x.Equipment)
-                .Include(x => x.Location)
-                .ToListAsync();
-
+            var tickets = await GetTicketIncludes().ToListAsync();
             return tickets.Select(x => _mapper.Map<TicketDto>(x));
         }
 
         public async Task<IEnumerable<TicketDto>> GetByDates(DateTime startDate, DateTime endDate)
         {
-            var tickets = await _context.FieldTickets
-               .Include(x => x.Customer)
-               .Include(x => x.Equipment)
-               .Include(x => x.Location)
+            var tickets = await GetTicketIncludes()
                .Where(x => x.ExecutionDate >= startDate && x.ExecutionDate <= endDate)
                .ToListAsync();
 
@@ -42,25 +36,14 @@ namespace CA.Ticketing.Business.Services.Tickets
 
         public async Task<IEnumerable<TicketDto>> GetByLocation(string locationName)
         {
-            var locations = await _context.CustomerLocations
+            var locationIds = await _context.CustomerLocations
                 .Where(x => x.Name.Contains(locationName))
+                .Select(x => x.Id)
                 .ToListAsync();
 
-            var tickets = new List<FieldTicket>();
-
-            foreach(var location in locations)
-            {
-                var ticketsResult = await _context.FieldTickets
-                .Include(x => x.Customer)
-                .Include(x => x.Equipment)
-                .Include(x => x.Location)
-                .Where(x => x.LocationId == location.Id)
+            var tickets = await GetTicketIncludes()
+                .Where(x => x.LocationId.HasValue && locationIds.Contains(x.LocationId.Value))
                 .ToListAsync();
-                if (tickets != null)
-                {
-                    tickets.AddRange(ticketsResult);
-                }
-            }
 
             return tickets.Select(x => _mapper.Map<TicketDto>(x));
         }
@@ -71,13 +54,18 @@ namespace CA.Ticketing.Business.Services.Tickets
             return _mapper.Map<TicketDetailsDto>(ticket);
         }
 
-        public async Task<int> Create(TicketDetailsDto entity)
+        public async Task<TicketDetailsDto> Create()
         {
-            var ticket = _mapper.Map<FieldTicket>(entity);
+            var ticket = new FieldTicket
+            {
+                ExecutionDate = DateTime.UtcNow
+            };
+
+            var charges = 
 
             _context.FieldTickets.Add(ticket);
             await _context.SaveChangesAsync();
-            return ticket.Id;
+            return _mapper.Map<TicketDetailsDto>(ticket);
         }
 
         public async Task Update(TicketDetailsDto entity)
@@ -94,19 +82,34 @@ namespace CA.Ticketing.Business.Services.Tickets
             await _context.SaveChangesAsync();
         }
 
-        public async Task<FieldTicket> GetTicket(int id)
+        private async Task<FieldTicket> GetTicket(int id)
         {
-            var ticket = await _context.FieldTickets
+            var ticket = await GetTicketIncludes(true)
                 .Where(x => x.Id == id)
-                .Include(x => x.TicketSpecifications)
                 .FirstOrDefaultAsync();
 
-            if(ticket == null)
+            if (ticket == null)
             {
                 throw new KeyNotFoundException(nameof(FieldTicket));
             }
 
             return ticket;
+        }
+
+        private IQueryable<FieldTicket> GetTicketIncludes(bool includeSpecs = false)
+        {
+            var baseIncludes = _context.FieldTickets
+                .Include(x => x.Customer)
+                .Include(x => x.Equipment)
+                .Include(x => x.Location);
+
+            if (!includeSpecs)
+            {
+                return baseIncludes;
+            }
+
+            return baseIncludes
+                .Include(x => x.TicketSpecifications);
         }
     }
 }

@@ -72,15 +72,14 @@ namespace CA.Ticketing.Api.Controllers
         /// <summary>
         /// Create a ticket
         /// </summary>
-        /// <param name="ticket">TicketDetailsDto</param>
-        /// <returns>Ticket Id</returns>
+        /// <returns>TicketDetailsDto</returns>
         [Route(ApiRoutes.Tickets.Create)]
         [HttpPost]
-        [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
-        public async Task<IActionResult> Create(TicketDetailsDto ticket)
+        [ProducesResponseType(typeof(TicketDetailsDto), StatusCodes.Status200OK)]
+        public async Task<IActionResult> Create()
         {
-            var ticketId = await _ticketService.Create(ticket);
-            return Ok(ticketId);
+            var ticketDetails = await _ticketService.Create();
+            return Ok(ticketDetails);
         }
 
         /// <summary>

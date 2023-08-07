@@ -66,20 +66,24 @@
             public const string DeleteLogin = $"{_root}/delete-login";
         }
 
-
         public class Charges
         {
             public const string _root = $"{ApiRoutes._root}/charges";
 
             public const string List = $"{_root}/list";
 
-            public const string Create = $"{_root}/create";
+            public const string Update = $"{_root}/update";
+        }
+
+        public class Settings
+        {
+            public const string _root = $"{ApiRoutes._root}/settings";
+
+            public const string Get = _root;
 
             public const string Update = $"{_root}/update";
-
-            public const string Delete = $"{_root}/delete";
-
         }
+
         public class Equipment
         {
             public const string _root = $"{ApiRoutes._root}/equipment";
@@ -96,13 +100,9 @@
 
             public const string Delete = $"{_root}/delete";
 
-            public const string ListEquipmentCharge = $"{_root}/list-equipment-charge/{{equipmentId}}";
+            public const string ListEquipmentCharges = $"{_root}/{{equipmentId}}/charges/list";
 
-            public const string CreateEquipmentCharge = $"{_root}/create-equipment-charge";
-
-            public const string UpdateEquipmentCharge = $"{_root}/update-equipment-charge";
-
-            public const string DeleteEquipmentCharge = $"{_root}/delete-equipment-charge";
+            public const string UpdateEquipmentCharges = $"{_root}/{{equipmentId}}/charges/update";
         }
 
         public class Tickets

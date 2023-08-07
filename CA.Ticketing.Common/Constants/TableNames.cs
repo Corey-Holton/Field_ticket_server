@@ -23,5 +23,9 @@
         public const string Scheduling = nameof(Scheduling);
 
         public const string TicketSpecification = nameof(TicketSpecification);
+
+        public const string PayrollData = nameof(PayrollData);
+
+        public const string Settings = nameof(Settings);
     }
 }

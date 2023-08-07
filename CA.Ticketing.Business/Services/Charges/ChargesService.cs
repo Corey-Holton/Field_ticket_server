@@ -1,23 +1,16 @@
 ﻿using AutoMapper;
 using CA.Ticketing.Business.Services.Base;
 using CA.Ticketing.Business.Services.Charges.Dto;
+using CA.Ticketing.Common.Enums;
 using CA.Ticketing.Persistance.Context;
 using CA.Ticketing.Persistance.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CA.Ticketing.Business.Services.Charges
 {
     public class ChargesService : EntityServiceBase, IChargesService
     {
-        public ChargesService(CATicketingContext context, IMapper mapper) : base (context, mapper)
-        {
-
-        }
+        public ChargesService(CATicketingContext context, IMapper mapper) : base (context, mapper) { }
 
         public async Task<IEnumerable<ChargeDto>> GetAll()
         {
@@ -26,28 +19,42 @@ namespace CA.Ticketing.Business.Services.Charges
             return charges.Select(x => _mapper.Map<ChargeDto>(x));
         }
 
-        public async Task<int> Create(ChargeDto entity)
-        {
-            var charge = _mapper.Map<Charge>(entity);
-
-            _context.Charges.Add(charge);
-            await _context.SaveChangesAsync();
-            return charge.Id;
-        }
-
         public async Task Update(ChargeDto entity)
         {
             var charge = await GetCharge(entity.Id);
-
             _mapper.Map(entity, charge);
-
             await _context.SaveChangesAsync();
+            await VerifyRigCharges(charge);
         }
 
-        public async Task Delete(int id)
+        private async Task VerifyRigCharges(Charge charge)
         {
-            var charge = await GetCharge(id);
-            _context.Charges.Remove(charge);
+            var equipmentCharges = await _context.EquipmentCharges
+                .Where(x => x.ChargeId == charge.Id)
+                .ToListAsync();
+
+            if (!charge.IsRigSpecific && equipmentCharges.Any())
+            {
+                _context.EquipmentCharges.RemoveRange(equipmentCharges);
+            }
+
+            if (charge.IsRigSpecific && !equipmentCharges.Any())
+            {
+                var allRigs = await _context.Equipment
+                    .Where(x => x.Category == EquipmentCategory.Rig)
+                    .ToListAsync();
+
+                foreach (var rig in allRigs)
+                {
+                    _context.EquipmentCharges.Add(new EquipmentCharge 
+                    { 
+                        ChargeId = charge.Id,
+                        EquipmentId = rig.Id,
+                        Rate = charge.DefaultRate
+                    });
+                }
+            }
+
             await _context.SaveChangesAsync();
         }
 

@@ -13,6 +13,7 @@ namespace CA.Ticketing.Business.Services.Employees
     public class EmployeeService : EntityServiceBase, IEmployeeService
     {
         private readonly IAccountsService _accountsService;
+
         public EmployeeService(CATicketingContext context, IMapper mapper, IAccountsService accountsService) : base(context, mapper)
         {
             _accountsService = accountsService;
@@ -63,7 +64,7 @@ namespace CA.Ticketing.Business.Services.Employees
             var employees = new List<Employee>();
             foreach (var employee in employeesUnfiltered)
             {
-                if (isWithinMonth(employee.DoB))
+                if (IsWithinMonth(employee.DoB))
                     employees.Add(employee);
 
             }
@@ -76,14 +77,14 @@ namespace CA.Ticketing.Business.Services.Employees
             var employees = new List<Employee>();
             foreach (var employee in employeesUnfiltered)
             {
-                if (isWithinMonth(employee.HireDate))
+                if (IsWithinMonth(employee.HireDate))
                     employees.Add(employee);
 
             }
             return employees.Select(x => _mapper.Map<EmployeeDateDto>(x));
         }
 
-        private bool isWithinMonth(DateTime? date)
+        private bool IsWithinMonth(DateTime? date)
         {
             if (date != null)
             {

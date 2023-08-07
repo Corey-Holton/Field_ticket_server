@@ -1,0 +1,16 @@
+﻿using AutoMapper;
+using CA.Ticketing.Business.Services.Settings.Dto;
+using CA.Ticketing.Persistance.Models;
+
+namespace CA.Ticketing.Business.Mappers
+{
+    public class SettingsMapper : Profile
+    {
+        public SettingsMapper()
+        {
+            CreateMap<Setting, SettingDto>();
+
+            CreateMap<SettingDto, Setting>();
+        }
+    }
+}

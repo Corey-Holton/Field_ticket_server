@@ -14,14 +14,18 @@ namespace CA.Ticketing.Persistance.Models
 
         public string Description { get; set; }
 
-        public int Year { get; set; }
+        public int? Year { get; set; }
 
         public string VinNumber { get; set; }
 
         public string PermitNumber { get; set; }
 
-        public DateTime PermitExpirationDate { get; set; }
+        public DateTime? PermitExpirationDate { get; set; }
 
-        public DateTime LastMaintenance { get; set; }
+        public DateTime? LastMaintenance { get; set; }
+
+        public double FuelConsumption { get; set; }
+
+        public virtual ICollection<EquipmentCharge> Charges { get; set; } = new List<EquipmentCharge>();
     }
 }

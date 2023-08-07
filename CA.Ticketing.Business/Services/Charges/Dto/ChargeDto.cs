@@ -1,16 +1,24 @@
 ﻿using CA.Ticketing.Business.Services.Base;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using CA.Ticketing.Common.Enums;
 
 namespace CA.Ticketing.Business.Services.Charges.Dto
 {
     public class ChargeDto : EntityDtoBase<int>
     {
+        public int Order { get; set; }
+
         public string Name { get; set; }
 
-        public string ChargeType { get; set; }
+        public UnitOfMeasure UoM { get; set; }
+
+        public double DefaultRate { get; set; }
+
+        public bool IsRigSpecific { get; set; }
+
+        public bool IncludeInTicketSpecs { get; set; }
+
+        public bool AllowUoMChange { get; set; }
+
+        public bool AllowRateAdjustment { get; set; }
     }
 }

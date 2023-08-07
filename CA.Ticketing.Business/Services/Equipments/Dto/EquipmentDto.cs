@@ -1,10 +1,11 @@
 ﻿using CA.Ticketing.Business.Services.Base;
+using CA.Ticketing.Common.Enums;
 
 namespace CA.Ticketing.Business.Services.Equipments.Dto
 {
     public class EquipmentDto : EntityDtoBase<int>
     {
-        public string Category { get; set; }
+        public EquipmentCategory Category { get; set; }
 
         public string Name { get; set; }
 

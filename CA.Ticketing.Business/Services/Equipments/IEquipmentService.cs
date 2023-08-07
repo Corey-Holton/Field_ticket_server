@@ -18,8 +18,6 @@ namespace CA.Ticketing.Business.Services.Equipments
 
         Task<IEnumerable<EquipmentChargeDto>> GetEquipmentCharges(int id);
 
-        Task<int> CreateEquipmentCharge(EquipmentChargeDto entity);
-
-        Task UpdateEquipmentCharge(EquipmentChargeDto entity);
+        Task UpdateEquipmentCharges(IEnumerable<EquipmentChargeDto> charges);
     }
 }

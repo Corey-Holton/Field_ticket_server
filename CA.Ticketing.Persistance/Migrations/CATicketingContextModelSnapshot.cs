@@ -81,6 +81,10 @@ namespace CA.Ticketing.Persistance.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("TicketIdentifier")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
@@ -117,12 +121,30 @@ namespace CA.Ticketing.Persistance.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("ChargeType")
-                        .HasColumnType("int");
+                    b.Property<bool>("AllowRateAdjustment")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("AllowUoMChange")
+                        .HasColumnType("bit");
+
+                    b.Property<double>("DefaultRate")
+                        .HasColumnType("float");
+
+                    b.Property<bool>("IncludeInTicketSpecs")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsRigSpecific")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UoM")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -242,6 +264,9 @@ namespace CA.Ticketing.Persistance.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("AssignedRigId")
+                        .HasColumnType("int");
+
                     b.Property<string>("City")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -250,6 +275,7 @@ namespace CA.Ticketing.Persistance.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("EmployeeNumber")
@@ -297,6 +323,8 @@ namespace CA.Ticketing.Persistance.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AssignedRigId");
+
                     b.ToTable("Employees");
                 });
 
@@ -315,14 +343,17 @@ namespace CA.Ticketing.Persistance.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("LastMaintenance")
+                    b.Property<double>("FuelConsumption")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime?>("LastMaintenance")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("PermitExpirationDate")
+                    b.Property<DateTime?>("PermitExpirationDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("PermitNumber")
@@ -333,7 +364,7 @@ namespace CA.Ticketing.Persistance.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Year")
+                    b.Property<int?>("Year")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -355,10 +386,6 @@ namespace CA.Ticketing.Persistance.Migrations
                     b.Property<int>("EquipmentId")
                         .HasColumnType("int");
 
-                    b.Property<string>("ItemName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<double>("Rate")
                         .HasColumnType("float");
 
@@ -379,14 +406,14 @@ namespace CA.Ticketing.Persistance.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("CustomerId")
+                    b.Property<int?>("CustomerId")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("EndTime")
+                    b.Property<DateTime?>("EndTime")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("EquipmentId")
@@ -395,10 +422,21 @@ namespace CA.Ticketing.Persistance.Migrations
                     b.Property<DateTime>("ExecutionDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("FileIndicatorCustomer")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileIndicatorGenerated")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("HasCustomerSignature")
+                        .HasColumnType("bit");
+
                     b.Property<int?>("InvoiceId")
                         .HasColumnType("int");
 
-                    b.Property<int>("LocationId")
+                    b.Property<int?>("LocationId")
                         .HasColumnType("int");
 
                     b.Property<double>("Mileage")
@@ -407,15 +445,18 @@ namespace CA.Ticketing.Persistance.Migrations
                     b.Property<int>("ServiceType")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Signature")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("StartTime")
+                    b.Property<DateTime?>("StartTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("TicketIdentifier")
+                    b.Property<double>("TaxRate")
+                        .HasColumnType("float");
+
+                    b.Property<string>("TicketId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("WellType")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -454,6 +495,42 @@ namespace CA.Ticketing.Persistance.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Invoices");
+                });
+
+            modelBuilder.Entity("CA.Ticketing.Persistance.Models.PayrollData", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("EmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("FieldTicketId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("RigHours")
+                        .HasColumnType("float");
+
+                    b.Property<double>("RoustaboutHours")
+                        .HasColumnType("float");
+
+                    b.Property<double>("TravelHours")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.HasIndex("FieldTicketId");
+
+                    b.ToTable("PayrollData");
                 });
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.Scheduling", b =>
@@ -495,6 +572,31 @@ namespace CA.Ticketing.Persistance.Migrations
                     b.ToTable("Scheduling");
                 });
 
+            modelBuilder.Entity("CA.Ticketing.Persistance.Models.Setting", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<double>("FuelCalculationMultiplier")
+                        .HasColumnType("float");
+
+                    b.Property<int>("MileageCost")
+                        .HasColumnType("int");
+
+                    b.Property<double>("OvertimePercentageIncrease")
+                        .HasColumnType("float");
+
+                    b.Property<double>("TaxRate")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Settings");
+                });
+
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.TicketSpecification", b =>
                 {
                     b.Property<int>("Id")
@@ -503,8 +605,9 @@ namespace CA.Ticketing.Persistance.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("EquipmentChargeId")
-                        .HasColumnType("int");
+                    b.Property<string>("Charge")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("FieldTicketId")
                         .HasColumnType("int");
@@ -512,9 +615,16 @@ namespace CA.Ticketing.Persistance.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.Property<double>("Rate")
+                        .HasColumnType("float");
 
-                    b.HasIndex("EquipmentChargeId");
+                    b.Property<double>("Total")
+                        .HasColumnType("float");
+
+                    b.Property<int>("UoM")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("FieldTicketId");
 
@@ -691,6 +801,15 @@ namespace CA.Ticketing.Persistance.Migrations
                     b.Navigation("Customer");
                 });
 
+            modelBuilder.Entity("CA.Ticketing.Persistance.Models.Employee", b =>
+                {
+                    b.HasOne("CA.Ticketing.Persistance.Models.Equipment", "AssignedRig")
+                        .WithMany()
+                        .HasForeignKey("AssignedRigId");
+
+                    b.Navigation("AssignedRig");
+                });
+
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.EquipmentCharge", b =>
                 {
                     b.HasOne("CA.Ticketing.Persistance.Models.Charge", "Charge")
@@ -700,7 +819,7 @@ namespace CA.Ticketing.Persistance.Migrations
                         .IsRequired();
 
                     b.HasOne("CA.Ticketing.Persistance.Models.Equipment", "Equipment")
-                        .WithMany()
+                        .WithMany("Charges")
                         .HasForeignKey("EquipmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -714,9 +833,7 @@ namespace CA.Ticketing.Persistance.Migrations
                 {
                     b.HasOne("CA.Ticketing.Persistance.Models.Customer", "Customer")
                         .WithMany()
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CustomerId");
 
                     b.HasOne("CA.Ticketing.Persistance.Models.Equipment", "Equipment")
                         .WithMany()
@@ -730,9 +847,7 @@ namespace CA.Ticketing.Persistance.Migrations
 
                     b.HasOne("CA.Ticketing.Persistance.Models.CustomerLocation", "Location")
                         .WithMany("FieldTickets")
-                        .HasForeignKey("LocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("LocationId");
 
                     b.Navigation("Customer");
 
@@ -741,6 +856,19 @@ namespace CA.Ticketing.Persistance.Migrations
                     b.Navigation("Invoice");
 
                     b.Navigation("Location");
+                });
+
+            modelBuilder.Entity("CA.Ticketing.Persistance.Models.PayrollData", b =>
+                {
+                    b.HasOne("CA.Ticketing.Persistance.Models.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId");
+
+                    b.HasOne("CA.Ticketing.Persistance.Models.FieldTicket", null)
+                        .WithMany("PayrollData")
+                        .HasForeignKey("FieldTicketId");
+
+                    b.Navigation("Employee");
                 });
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.Scheduling", b =>
@@ -764,19 +892,11 @@ namespace CA.Ticketing.Persistance.Migrations
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.TicketSpecification", b =>
                 {
-                    b.HasOne("CA.Ticketing.Persistance.Models.EquipmentCharge", "EquipmentCharge")
-                        .WithMany()
-                        .HasForeignKey("EquipmentChargeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("CA.Ticketing.Persistance.Models.FieldTicket", "FieldTicket")
-                        .WithMany()
+                        .WithMany("TicketSpecifications")
                         .HasForeignKey("FieldTicketId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("EquipmentCharge");
 
                     b.Navigation("FieldTicket");
                 });
@@ -852,6 +972,18 @@ namespace CA.Ticketing.Persistance.Migrations
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.Employee", b =>
                 {
                     b.Navigation("ApplicationUser");
+                });
+
+            modelBuilder.Entity("CA.Ticketing.Persistance.Models.Equipment", b =>
+                {
+                    b.Navigation("Charges");
+                });
+
+            modelBuilder.Entity("CA.Ticketing.Persistance.Models.FieldTicket", b =>
+                {
+                    b.Navigation("PayrollData");
+
+                    b.Navigation("TicketSpecifications");
                 });
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.Invoice", b =>

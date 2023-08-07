@@ -26,8 +26,12 @@ namespace CA.Ticketing.Persistance.Context
 
         public DbSet<TicketSpecification> TicketSpecifications { get; set; }
 
+        public DbSet<PayrollData> PayrollData { get; set; }
+
         public DbSet<Scheduling> Scheduling { get; set; }
 
         public DbSet<Invoice> Invoices { get; set; }
+
+        public DbSet<Setting> Settings { get; set; }
     }
 }

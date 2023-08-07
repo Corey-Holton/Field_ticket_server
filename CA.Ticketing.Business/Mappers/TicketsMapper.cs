@@ -16,10 +16,10 @@ namespace CA.Ticketing.Business.Mappers
                 .ForMember(x => x.LocationName, dest => dest.MapFrom(src => src.Location.Name))
                 .ForMember(x => x.Invoice, dest => dest.MapFrom(src => src.InvoiceId != null ? true : false));
 
-            CreateMap<TicketDetailsDto, FieldTicket>();
-
             CreateMap<FieldTicket, TicketDetailsDto>()
-                .ForMember(x => x.ServiceType, dest => dest.MapFrom(src => src.ServiceType.GetServiceType()));
+                .IncludeBase<FieldTicket, TicketDto>();
+
+            CreateMap<TicketDetailsDto, FieldTicket>();
         }
     }
 }

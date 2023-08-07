@@ -8,8 +8,20 @@ namespace CA.Ticketing.Persistance.Models
     [Table(TableNames.Charges)]
     public class Charge : IdentityModel<int>
     {
+        public int Order { get; set; }
+
         public string Name { get; set; }
 
-        public ChargeType ChargeType { get; set; }
+        public UnitOfMeasure UoM { get; set; }
+
+        public double DefaultRate { get; set; }
+
+        public bool IsRigSpecific { get; set; }
+
+        public bool IncludeInTicketSpecs { get; set; }
+
+        public bool AllowUoMChange { get; set; }
+
+        public bool AllowRateAdjustment { get; set; }
     }
 }

@@ -101,7 +101,7 @@ namespace CA.Ticketing.Api.Controllers
         /// Get all equipment charges for related equipment 
         /// </summary>
         /// <returns>List of equipment charges</returns>
-        [Route(ApiRoutes.Equipment.ListEquipmentCharge)]
+        [Route(ApiRoutes.Equipment.ListEquipmentCharges)]
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<EquipmentChargeDto>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetEquipmentCharges(int equipmentId)
@@ -110,30 +110,16 @@ namespace CA.Ticketing.Api.Controllers
             return Ok(equipmentCharges);
         }
 
-        /// <summary>
-        /// Create an equipment charge
-        /// </summary>
-        /// <param name="equipmentChargeModel"></param>
-        /// <returns>Equipment Id</returns>
-        [Route(ApiRoutes.Equipment.CreateEquipmentCharge)]
-        [HttpPost]
-        [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
-        public async Task<IActionResult> CreateEquipmentCharge(EquipmentChargeDto equipmentChargeModel)
-        {
-            var equipmentChargeId = await _equipmentService.CreateEquipmentCharge(equipmentChargeModel);
-            return Ok(equipmentChargeId);
-        }
-
         ///<summary>
         /// Update an equipment charge
         /// </summary>
-        /// <param name="equipmentChargeModel"></param>
-        [Route(ApiRoutes.Equipment.UpdateEquipmentCharge)]
+        /// <param name="equipmentCharges"></param>
+        [Route(ApiRoutes.Equipment.UpdateEquipmentCharges)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> UpdateEquipmentCharge(EquipmentChargeDto equipmentChargeModel)
+        public async Task<IActionResult> UpdateEquipmentCharges(IEnumerable<EquipmentChargeDto> equipmentCharges)
         {
-            await _equipmentService.UpdateEquipmentCharge(equipmentChargeModel);
+            await _equipmentService.UpdateEquipmentCharges(equipmentCharges);
             return Ok();
         }
     }

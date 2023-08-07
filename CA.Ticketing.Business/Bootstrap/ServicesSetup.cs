@@ -8,8 +8,8 @@ using CA.Ticketing.Business.Services.Invoices;
 using CA.Ticketing.Business.Services.Notifications;
 using CA.Ticketing.Business.Services.Notifications.Renderers;
 using CA.Ticketing.Business.Services.Scheduling;
+using CA.Ticketing.Business.Services.Settings;
 using CA.Ticketing.Business.Services.Tickets;
-using CA.Ticketing.Business.Services.TicketSpecifications;
 using CA.Ticketing.Common.Authentication;
 using CA.Ticketing.Persistance.Seed;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,7 +36,7 @@ namespace CA.Ticketing.Business.Bootstrap
             services.AddScoped<ISchedulingService, SchedulingService>();
             services.AddScoped<ITicketService, TicketService>();
             services.AddScoped<IInvoiceService, InvoiceService>();
-            services.AddScoped<ITicketSpecificationService, TicketSpecificationService>();
+            services.AddScoped<ISettingsService, SettingsService>();
         }
 
         private static void RegisterBaseServices(this IServiceCollection services)

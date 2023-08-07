@@ -1,15 +1,14 @@
 ﻿using CA.Ticketing.Business.Services.Base;
+using CA.Ticketing.Common.Enums;
 
 namespace CA.Ticketing.Business.Services.Equipments.Dto
 {
     public class EquipmentChargeDto : EntityDtoBase<int>
     {
-        public int EquipmentId { get; set; }
+        public string Name { get; set; }
 
-        public int ChargeId { get; set; }
-        
+        public UnitOfMeasure UoM { get; set; }
+
         public double Rate { get; set; }
-
-        public string ItemName { get; set; }
     }
 }

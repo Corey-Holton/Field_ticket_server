@@ -1,0 +1,18 @@
+﻿using CA.Ticketing.Common.Constants;
+using CA.Ticketing.Persistance.Models.Abstracts;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace CA.Ticketing.Persistance.Models
+{
+    [Table(TableNames.Settings)]
+    public class Setting : IdentityModel<int>
+    {
+        public double TaxRate { get; set; }
+
+        public double OvertimePercentageIncrease { get; set; }
+
+        public int MileageCost { get; set; }
+
+        public double FuelCalculationMultiplier { get; set; }
+    }
+}

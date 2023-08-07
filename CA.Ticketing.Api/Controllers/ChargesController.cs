@@ -1,8 +1,6 @@
 ﻿using CA.Ticketing.Api.Extensions;
 using CA.Ticketing.Business.Services.Charges;
 using CA.Ticketing.Business.Services.Charges.Dto;
-using CA.Ticketing.Business.Services.Customers;
-using CA.Ticketing.Business.Services.Customers.Dto;
 using CA.Ticketing.Common.Constants;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,20 +28,6 @@ namespace CA.Ticketing.Api.Controllers
             return Ok(charges);
         }
 
-        /// <summary>
-        /// Create a Charges
-        /// </summary>
-        /// <param name="charge">ChargeDto</param>
-        /// <returns>Customer Id</returns>
-        [Route(ApiRoutes.Charges.Create)]
-        [HttpPost]
-        [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
-        public async Task<IActionResult> Create(ChargeDto charge)
-        {
-            var chargeId = await _chargesService.Create(charge);
-            return Ok(chargeId);
-        }
-
         ///<summary>
         /// Edit a charge
         /// </summary>
@@ -54,19 +38,6 @@ namespace CA.Ticketing.Api.Controllers
         public async Task<IActionResult> Update(ChargeDto charge)
         {
             await _chargesService.Update(charge);
-            return Ok();
-        }
-
-        ///<summary>
-        /// Delete a charge
-        /// </summary>
-        /// <param name="chargeId">Charge Id</param>
-        [Route(ApiRoutes.Charges.Delete)]
-        [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> Delete(int chargeId)
-        {
-            await _chargesService.Delete(chargeId);
             return Ok();
         }
     }

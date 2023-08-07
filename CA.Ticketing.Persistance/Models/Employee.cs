@@ -12,7 +12,7 @@ namespace CA.Ticketing.Persistance.Models
 
         public string LastName { get; set; }
 
-        public string? Email { get; set; }
+        public string Email { get; set; }
 
         public string Phone { get; set; }
 
@@ -33,5 +33,10 @@ namespace CA.Ticketing.Persistance.Models
         public double PayRate { get; set; }
 
         public virtual ApplicationUser? ApplicationUser { get; set; }
+
+        [ForeignKey(nameof(AssignedRig))]
+        public int? AssignedRigId { get; set; }
+
+        public virtual Equipment? AssignedRig { get; set; }
     }
 }

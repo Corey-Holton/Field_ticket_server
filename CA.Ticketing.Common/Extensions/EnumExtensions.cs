@@ -34,20 +34,6 @@ namespace CA.Ticketing.Common.Extensions
                 _ => throw new ArgumentNullException(null, nameof(locationType))
             };
         }
-
-        public static string GetCatgeoryName(this EquipmentCategory equipmentCategory)
-        {
-            return equipmentCategory switch
-            {
-                EquipmentCategory.Rig => Business.EquipmentCategory.Rig,
-                EquipmentCategory.Vehicles => Business.EquipmentCategory.Vehicles,
-                EquipmentCategory.Trailers => Business.EquipmentCategory.Trailers,
-                EquipmentCategory.Pumps => Business.EquipmentCategory.Pumps,
-                EquipmentCategory.Tanks => Business.EquipmentCategory.Tanks,
-                EquipmentCategory.Ancillary => Business.EquipmentCategory.Ancillary,
-                _ => throw new ArgumentNullException(null, nameof(equipmentCategory))
-            };
-        }
       
         public static string GetServiceType(this ServiceType serviceType) 
         {
@@ -57,21 +43,10 @@ namespace CA.Ticketing.Common.Extensions
                 ServiceType.PAndA => Business.ServiceType.PAndA,
                 ServiceType.Completion => Business.ServiceType.Completion,
                 ServiceType.Yard => Business.ServiceType.Yard,
-                ServiceType.Workovers => Business.ServiceType.Workovers,
+                ServiceType.Workover => Business.ServiceType.Workovers,
                 ServiceType.StandBy => Business.ServiceType.StandBy,
+                ServiceType.Roustabout => Business.ServiceType.Roustabout,
                 _ => throw new ArgumentNullException(null, nameof(serviceType))
-            };
-        }
-      
-        public static string GetChargeType(this ChargeType chargeType)
-        {
-            return chargeType switch
-            {
-                ChargeType.EA => Business.ChargeTypes.EA,
-                ChargeType.Hourly => Business.ChargeTypes.Hourly,
-                ChargeType.Daily => Business.ChargeTypes.Daily,
-                ChargeType.Gallon => Business.ChargeTypes.Gallon,
-                _ => throw new ArgumentNullException(null, nameof(chargeType))
             };
         }
     }
