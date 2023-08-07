@@ -8,10 +8,6 @@
 
         public string PermitNumber { get; set; }
 
-        public DateTime? PermitExpirationDate { get; set; }
-
-        public DateTime? LastMaintenance { get; set; }
-
         public double FuelConsumption { get; set; }
     }
 }

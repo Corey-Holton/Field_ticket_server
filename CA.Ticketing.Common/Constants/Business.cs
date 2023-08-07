@@ -16,7 +16,7 @@
             public const string Field = "Field";
         }
 
-        public class ServiceType
+        public class ServiceTypes
         {
             public const string RodsAndTubing = "Rods And Tubing";
             public const string Workovers = "Workovers";

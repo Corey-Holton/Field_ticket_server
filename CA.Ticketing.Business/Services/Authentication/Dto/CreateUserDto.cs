@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using CA.Ticketing.Common.Enums;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace CA.Ticketing.Business.Services.Authentication.Dto
@@ -11,8 +12,10 @@ namespace CA.Ticketing.Business.Services.Authentication.Dto
         [Required]
         public string LastName { get; set; }
 
-        [EmailAddress]
         [Required]
+        public string UserName { get; set; }
+
+        [EmailAddress]
         public string Email { get; set; }
 
         [PasswordPropertyText]
@@ -20,6 +23,8 @@ namespace CA.Ticketing.Business.Services.Authentication.Dto
         public string Password { get; set; }
 
         [Required]
-        public string[] Roles { get; set; }
+        public ApplicationRole Role { get; set; }
+
+        public string TicketIdentifier { get; set; }
     }
 }

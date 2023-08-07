@@ -7,6 +7,7 @@ using CA.Ticketing.Common.Enums;
 using CA.Ticketing.Persistance.Context;
 using CA.Ticketing.Persistance.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace CA.Ticketing.Business.Services.Employees
 {
@@ -21,10 +22,17 @@ namespace CA.Ticketing.Business.Services.Employees
 
         public async Task<IEnumerable<EmployeeDto>> GetAll(EmployeeStatus status)
         {
+            var terminationDateCutoff = GetEndofDay(DateTime.Now);
+
+            Expression<Func<Employee, bool>> statusFilter = status == EmployeeStatus.Active ?
+                x => !x.TerminationDate.HasValue || x.TerminationDate > terminationDateCutoff :
+                x => x.TerminationDate.HasValue && x.TerminationDate < terminationDateCutoff;
+
             var employees = await _context.Employees
                 .Include(x => x.ApplicationUser)
-                .Where(x => x.Status == status)
+                .Where(statusFilter)
                 .ToListAsync();
+
             return employees.Select(x => _mapper.Map<EmployeeDto>(x));
         }
 
@@ -84,16 +92,58 @@ namespace CA.Ticketing.Business.Services.Employees
             return employees.Select(x => _mapper.Map<EmployeeDateDto>(x));
         }
 
-        private bool IsWithinMonth(DateTime? date)
+        public async Task AddLogin(AddEmployeeLoginDto addEmployeeLoginModel)
         {
-            if (date != null)
+            var employee = await GetEmployee(addEmployeeLoginModel.Id);
+
+            if (employee.ApplicationUser != null)
             {
-                var birthday = new DateTime(DateTime.Now.Year, date.Value.Month, date.Value.Day);
-                var difference = birthday - DateTime.Now;
-                if (difference.TotalDays <= 30 && difference.TotalDays >= 0)
-                    return true;
-                else return false;
+                throw new Exception("Employee already has a login");
             }
+
+            var createUserDto = _mapper.Map<CreateEmployeeLoginDto>((employee, addEmployeeLoginModel));
+
+            await _accountsService.AddEmployeeLogin(createUserDto);
+        }
+
+        public async Task ResetPassword(ResetEmployeePasswordDto resetEmployeePasswordModel)
+        {
+            var employee = await GetEmployee(resetEmployeePasswordModel.Id);
+            
+            if (employee.ApplicationUser == null)
+            {
+                return;
+            }
+
+            await _accountsService.ResetUserPassword(new ResetUserPasswordDto { UserId = employee.ApplicationUser.Id, Password = resetEmployeePasswordModel.Password });
+        }
+
+        public async Task DeleteLogin(int id)
+        {
+            var employee = await GetEmployee(id);
+
+            if (employee.ApplicationUser == null)
+            {
+                return;
+            }
+
+            await _accountsService.DeleteUser(employee.ApplicationUser.Id);
+        }
+
+        private static bool IsWithinMonth(DateTime? date)
+        {
+            if (date == null)
+            {
+                return false;
+            }
+
+            var birthday = new DateTime(DateTime.Now.Year, date.Value.Month, date.Value.Day);
+            var difference = birthday - DateTime.Now;
+            if (difference.TotalDays <= 30 && difference.TotalDays >= 0)
+            {
+                return true;
+            }
+            
             return false;
         }
 
@@ -101,6 +151,7 @@ namespace CA.Ticketing.Business.Services.Employees
         {
             var employee = await _context.Employees
                 .Include(x => x.ApplicationUser)
+
                 .SingleOrDefaultAsync(x => x.Id == id);
 
             if (employee == null)
@@ -111,23 +162,10 @@ namespace CA.Ticketing.Business.Services.Employees
             return employee!;
         }
 
-        public async Task AddLogin(AddEmployeeLoginDto addEmployeeLoginModel)
+        private DateTime GetEndofDay(DateTime initialDate)
         {
-            var employee = await GetEmployee(addEmployeeLoginModel.Id);
-
-            var createEmployeeLoginModel = _mapper.Map<CreateEmployeeLoginDto>((employee, addEmployeeLoginModel));
-
-            await _accountsService.CreateEmployeeLogin(createEmployeeLoginModel);
-        }
-
-        public async Task ResetPassword(ResetEmployeePasswordDto resetEmployeePasswordModel)
-        {
-            await _accountsService.ResetEmployeePassword(resetEmployeePasswordModel);
-        }
-
-        public async Task DeleteLogin(int id)
-        {
-            await _accountsService.DeleteEmployeeLogin(id);
+            var date = initialDate.AddDays(1);
+            return new DateTime(date.Year, date.Month, date.Day, 0, 0, 0);
         }
     }
 }

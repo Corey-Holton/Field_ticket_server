@@ -10,5 +10,9 @@ namespace CA.Ticketing.Business.Services.Equipments.Dto
         public string Name { get; set; }
 
         public string Description { get; set; }
+
+        public DateTime? PermitExpirationDate { get; set; }
+
+        public DateTime? LastMaintenance { get; set; }
     }
 }

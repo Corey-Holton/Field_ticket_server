@@ -180,5 +180,22 @@
 
             public const string SetPasswordFromLink = $"{_root}/SetPasswordFromLink";
         }
+
+        public class Users
+        {
+            public const string _root = $"{ApiRoutes._root}/users";
+
+            public const string List = $"{_root}/list";
+
+            public const string Get = $"{_root}/{{userId}}";
+
+            public const string Create = $"{_root}/create";
+
+            public const string Update = $"{_root}/update";
+
+            public const string Delete = $"{_root}/delete";
+
+            public const string ResetPassword = $"{_root}/reset-password";
+        }
     }
 }

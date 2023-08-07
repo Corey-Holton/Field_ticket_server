@@ -1,6 +1,5 @@
 ﻿using CA.Ticketing.Business.Services.Authentication.Dto;
 using CA.Ticketing.Business.Services.Customers.Dto;
-using CA.Ticketing.Business.Services.Employees.Dto;
 
 namespace CA.Ticketing.Business.Services.Authentication
 {
@@ -18,11 +17,7 @@ namespace CA.Ticketing.Business.Services.Authentication
 
         Task ChangePassword(ChangePasswordDto changePasswordModel);
 
-        Task CreateEmployeeLogin(CreateEmployeeLoginDto employeeLoginModel);
-
-        Task DeleteEmployeeLogin(int employeeId);
-
-        Task ResetEmployeePassword(ResetEmployeePasswordDto resetEmployeePasswordModel);
+        Task AddEmployeeLogin(CreateEmployeeLoginDto createEmployeeLoginDto);
 
         Task CreateCustomerContactLogin(CreateCustomerContactLoginDto customerContactLoginModel);
 
@@ -33,6 +28,15 @@ namespace CA.Ticketing.Business.Services.Authentication
         Task ResetCustomerContactPassword(ResetCustomerContactPasswordDto resetCustomerContactPasswordModel);
 
         Task DeleteCustomerContactLogin(int customerContactId);
-        
+
+        Task<IEnumerable<UserDto>> GetUsers();
+
+        Task UpdateUser(UpdateUserDto userDto);
+
+        Task<string> CreateUser(CreateUserDto createUserDto);
+
+        Task DeleteUser(string userId);
+
+        Task ResetUserPassword(ResetUserPasswordDto resetUserPasswordDto);
     }
 }

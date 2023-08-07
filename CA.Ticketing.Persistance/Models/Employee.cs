@@ -20,8 +20,6 @@ namespace CA.Ticketing.Persistance.Models
 
         public JobTitle JobTitle { get; set; }
 
-        public EmployeeStatus Status { get; set; }
-
         public string EmployeeNumber { get; set; }
 
         public string SSN { get; set; }

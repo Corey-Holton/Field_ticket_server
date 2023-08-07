@@ -27,5 +27,7 @@ namespace CA.Ticketing.Persistance.Models
         public double FuelConsumption { get; set; }
 
         public virtual ICollection<EquipmentCharge> Charges { get; set; } = new List<EquipmentCharge>();
+
+        public virtual ICollection<Employee> Crew { get; set; } = new List<Employee>();
     }
 }
