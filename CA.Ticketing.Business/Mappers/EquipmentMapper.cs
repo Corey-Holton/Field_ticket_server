@@ -16,6 +16,8 @@ namespace CA.Ticketing.Business.Mappers
 
             CreateMap<EquipmentDetailsDto, Equipment>();
 
+            CreateMap<EquipmentCharge, EquipmentCharge>();
+
             CreateMap<EquipmentCharge, EquipmentChargeDto>()
                 .ForMember(x => x.Name, dest => dest.MapFrom(src => src.Charge.Name))
                 .ForMember(x => x.UoM, dest => dest.MapFrom(src => src.Charge.UoM));

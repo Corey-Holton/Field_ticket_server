@@ -112,7 +112,7 @@ namespace CA.Ticketing.Persistance.Seed
                 }
                 else
                 {
-                    _mapper.Map(charge, existingCharges);
+                    _mapper.Map(charge, existingCharge);
                 }
             }
 
