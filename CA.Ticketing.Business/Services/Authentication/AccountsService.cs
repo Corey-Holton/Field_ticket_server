@@ -306,7 +306,7 @@ namespace CA.Ticketing.Business.Services.Authentication
             var resetPasswordToken = await _userManager.GeneratePasswordResetTokenAsync(user);
             var resetPasswordResult = await _userManager.ResetPasswordAsync(user, resetPasswordToken, resetUserPasswordDto.Password);
 
-            if (resetPasswordResult.Succeeded)
+            if (!resetPasswordResult.Succeeded)
             {
                 throw new Exception($"There was an error while resetting user password. {string.Join("; ", resetPasswordResult.Errors.Select(x => x.Description))}.");
             }
