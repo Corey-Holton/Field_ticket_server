@@ -1,5 +1,6 @@
 ﻿using CA.Ticketing.Business.Services.Base;
 using CA.Ticketing.Common.Enums;
+using Newtonsoft.Json;
 
 namespace CA.Ticketing.Business.Services.Equipments.Dto
 {

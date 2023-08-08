@@ -243,7 +243,7 @@ namespace CA.Ticketing.Business.Services.Authentication
         public async Task AddEmployeeLogin(CreateEmployeeLoginDto createEmployeeLoginDto)
         {
             var user = _mapper.Map<ApplicationUser>(createEmployeeLoginDto);
-            await CreateUserInternal(user, createEmployeeLoginDto.Password, RoleNames.Customer);
+            await CreateUserInternal(user, createEmployeeLoginDto.Password, RoleNames.ToolPusher);
         }
 
         public async Task<IEnumerable<UserDto>> GetUsers()

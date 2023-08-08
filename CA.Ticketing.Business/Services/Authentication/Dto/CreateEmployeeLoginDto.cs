@@ -22,6 +22,9 @@ namespace CA.Ticketing.Business.Services.Authentication.Dto
         [Required]
         public string Password { get; set; }
 
+        [EmailAddress]
+        public string Email { get; set; }
+
         public string TicketIdentifier { get; set; }
     }
 }

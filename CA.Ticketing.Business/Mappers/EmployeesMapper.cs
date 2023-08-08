@@ -24,6 +24,7 @@ namespace CA.Ticketing.Business.Mappers
                 .ForMember(x => x.EmployeeId, dest => dest.MapFrom(src => src.Employee.Id))
                 .ForMember(x => x.FirstName, dest => dest.MapFrom(src => src.Employee.FirstName))
                 .ForMember(x => x.LastName, dest => dest.MapFrom(src => src.Employee.LastName))
+                .ForMember(x => x.Email, dest => dest.MapFrom(src => src.Employee.Email))
                 .ForMember(x => x.UserName, dest => dest.MapFrom(src => src.AddEmployeeLoginModel.Username))
                 .ForMember(x => x.Password, dest => dest.MapFrom(src => src.AddEmployeeLoginModel.Password))
                 .ForMember(x => x.TicketIdentifier, dest => dest.MapFrom(src => src.AddEmployeeLoginModel.TicketIdentifier));

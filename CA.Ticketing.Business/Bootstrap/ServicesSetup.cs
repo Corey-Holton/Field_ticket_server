@@ -7,6 +7,7 @@ using CA.Ticketing.Business.Services.Equipments;
 using CA.Ticketing.Business.Services.Invoices;
 using CA.Ticketing.Business.Services.Notifications;
 using CA.Ticketing.Business.Services.Notifications.Renderers;
+using CA.Ticketing.Business.Services.Pdf;
 using CA.Ticketing.Business.Services.Scheduling;
 using CA.Ticketing.Business.Services.Settings;
 using CA.Ticketing.Business.Services.Tickets;
@@ -37,6 +38,7 @@ namespace CA.Ticketing.Business.Bootstrap
             services.AddScoped<ITicketService, TicketService>();
             services.AddScoped<IInvoiceService, InvoiceService>();
             services.AddScoped<ISettingsService, SettingsService>();
+            services.AddScoped<IPdfGeneratorService, PdfGeneratorService>();
         }
 
         private static void RegisterBaseServices(this IServiceCollection services)
