@@ -43,8 +43,6 @@
 
             public const string Delete = $"{_root}/delete";
 
-            public const string LocationList = $"{_root}/location-list/{{customerId}}";
-
             public const string AddLocation = $"{_root}/add-location";
 
             public const string UpdateLocation = $"{_root}/update-location";
@@ -59,7 +57,7 @@
 
             public const string AddLogin = $"{_root}/add-login";
 
-            public const string AddPassword = $"{_root}/add-password";
+            public const string ResendInvite = $"{_root}/resend-invite";
 
             public const string ResetPassword = $"{_root}/reset-password";
 

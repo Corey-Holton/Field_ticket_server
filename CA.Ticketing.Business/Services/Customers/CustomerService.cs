@@ -6,7 +6,6 @@ using CA.Ticketing.Business.Services.Customers.Dto;
 using CA.Ticketing.Persistance.Context;
 using CA.Ticketing.Persistance.Models;
 using Microsoft.EntityFrameworkCore;
-using static CA.Ticketing.Common.Constants.ApiRoutes;
 
 namespace CA.Ticketing.Business.Services.Customers
 {
@@ -18,12 +17,11 @@ namespace CA.Ticketing.Business.Services.Customers
             _accountsService = accountsService;
         }
 
-        public async Task<IEnumerable<CustomerDetailsDto>> GetAll()
+        public async Task<IEnumerable<CustomerDto>> GetAll()
         {
             var customers = await _context.Customers
-                .Include(x => x.Locations.Where(x => (int)x.LocationType == 1))
                 .ToListAsync();
-            return customers.Select(x => _mapper.Map<CustomerDetailsDto>(x));
+            return customers.Select(x => _mapper.Map<CustomerDto>(x));
         }
 
         public async Task<CustomerDetailsDto> GetById(int id)
@@ -35,21 +33,15 @@ namespace CA.Ticketing.Business.Services.Customers
         public async Task<int> Create(CustomerDetailsDto entity)
         {
             var customer = _mapper.Map<Customer>(entity);
-
-            if (entity.Locations != null)
-                customer.Locations = _mapper.Map<List<CustomerLocation>>(entity.Locations);
-
             _context.Customers.Add(customer);
             await _context.SaveChangesAsync();
             return customer.Id;
         }
 
-        public async Task Update(CustomerDto entity)
+        public async Task Update(CustomerDetailsDto entity)
         {
             var customer = await GetCustomer(entity.Id);
-
             _mapper.Map(entity, customer);
-
             await _context.SaveChangesAsync();
         }
 
@@ -60,31 +52,15 @@ namespace CA.Ticketing.Business.Services.Customers
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<CustomerLocationDto>> GetCustomerLocations(int id)
+        public async Task<int> AddLocation(CustomerLocationDto entity)
         {
-            var locations = await _context.CustomerLocations
-                .Where(x => x.CustomerId == id)
-                .ToListAsync();
-            return locations.Select(x => _mapper.Map<CustomerLocationDto>(x));
-        }
-
-        public async Task<int> AddLocation(AddLocationDto entity)
-        {
-            var customer = await GetCustomer(entity.CustomerId);
-        
             var location = _mapper.Map<CustomerLocation>(entity);
-
-            if (customer.Locations.Any(x => x.LocationType == Common.Enums.LocationType.HQ))
-            {
-                location.LocationType = Common.Enums.LocationType.Field;
-            } 
-
             _context.CustomerLocations.Add(location);
             await _context.SaveChangesAsync();
             return location.Id;
         }
 
-        public async Task UpdateLocation(AddLocationDto entity)
+        public async Task UpdateLocation(CustomerLocationDto entity)
         {
             var location = await GetLocation(entity.Id);
             _mapper.Map(entity, location);
@@ -98,7 +74,7 @@ namespace CA.Ticketing.Business.Services.Customers
             await _context.SaveChangesAsync();
         }
 
-        public async Task<int> AddContact(AddContactDto entity)
+        public async Task<int> AddContact(CustomerContactDto entity)
         {
             var contact = _mapper.Map<CustomerContact>(entity);
             _context.CustomerContacts.Add(contact);
@@ -106,7 +82,7 @@ namespace CA.Ticketing.Business.Services.Customers
             return contact.Id;
         }
 
-        public async Task UpdateContact(AddContactDto entity)
+        public async Task UpdateContact(CustomerContactDto entity)
         {
             var contact = await GetCustomerContact(entity.Id);
             _mapper.Map(entity, contact);
@@ -120,33 +96,25 @@ namespace CA.Ticketing.Business.Services.Customers
             await _context.SaveChangesAsync();
         }
 
-        public async Task AddLogin(AddCustomerLoginDto loginDto)
+        public async Task AddLogin(CustomerLoginDto customerLoginDto)
         {
-            var customerContact = await GetCustomerContact(loginDto.customerContactId);
-            if (!customerContact.InviteSent)
-            {
-                var customerAddLoginModel = _mapper.Map<CreateCustomerContactLoginDto>(customerContact);
-                customerAddLoginModel.RedirectUrl = loginDto.redirectUrl;
-                await _accountsService.CreateCustomerContactLogin(customerAddLoginModel);
-                customerContact.InviteSent = true;
-                customerContact.InviteSentOn = DateTime.Now;
-            }
-            else if(customerContact.InviteSent)
-            {
-                ResendInviteDto inviteDto = new ResendInviteDto();
-                inviteDto.RedirectUrl = loginDto.redirectUrl;
-                inviteDto.CustomerContactId = customerContact.Id;
-                await _accountsService.ResendCustomerContactEmail(inviteDto);
-                customerContact.InviteSentOn = DateTime.Now;
-            }
+            var customerContact = await GetCustomerContact(customerLoginDto.CustomerContactId);
+
+            var customerAddLoginModel = _mapper.Map<CreateCustomerContactLoginDto>(customerContact);
+            customerAddLoginModel.RedirectUrl = customerLoginDto.RedirectUrl;
+            await _accountsService.CreateCustomerContactLogin(customerAddLoginModel);
+            customerContact.InviteSent = true;
+            customerContact.InviteSentOn = DateTime.Now;
                 
             await _context.SaveChangesAsync();
         }
 
-        public async Task AddPassword(AddCustomerContactPasswordDto addCustomerContactPasswordModel)
+        public async Task ResendInvitation(CustomerLoginDto customerLoginDto)
         {
-            var customerAddPasswordModel = _mapper.Map<SetCustomerPasswordDto>(addCustomerContactPasswordModel);
-            await _accountsService.SetCustomerPassword(customerAddPasswordModel);
+            var customerContact = await GetCustomerContact(customerLoginDto.CustomerContactId);
+            await _accountsService.ResendCustomerContactEmail(customerLoginDto);
+            customerContact.InviteSentOn = DateTime.Now;
+            await _context.SaveChangesAsync();
         }
 
         public async Task ResetPassword(ResetCustomerContactPasswordDto resetCustomerContactPasswordModel)
@@ -156,14 +124,16 @@ namespace CA.Ticketing.Business.Services.Customers
 
         public async Task DeleteLogin(int customerContactId)
         {
-            await _accountsService.DeleteCustomerContactLogin(customerContactId);
+            var customerContact = await GetCustomerContact(customerContactId);
+            await _accountsService.DeleteUser(customerContact.ApplicationUser!.Id);
         }
 
         private async Task<Customer> GetCustomer(int id)
         {
             var customer = await _context.Customers
                 .Include(x => x.Locations)
-                .ThenInclude(x => x.Contacts)
+                .Include(x => x.Contacts)
+                    .ThenInclude(x => x.ApplicationUser)
                 .SingleOrDefaultAsync(x => x.Id == id);
 
             if (customer == null)
@@ -171,7 +141,7 @@ namespace CA.Ticketing.Business.Services.Customers
                 throw new KeyNotFoundException(nameof(Customer));
             }
 
-            return customer!;
+            return customer;
         }
 
         private async Task<CustomerLocation> GetLocation(int id)
@@ -190,6 +160,7 @@ namespace CA.Ticketing.Business.Services.Customers
         private async Task<CustomerContact> GetCustomerContact(int id)
         {
             var customerContact = await _context.CustomerContacts
+                .Include(x => x.ApplicationUser)
                 .SingleOrDefaultAsync(x => x.Id == id);
             if (customerContact == null)
             {

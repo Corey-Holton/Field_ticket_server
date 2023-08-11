@@ -31,7 +31,6 @@ namespace CA.Ticketing.Persistance.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Order = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DisplayName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UoM = table.Column<int>(type: "int", nullable: false),
                     DefaultRate = table.Column<double>(type: "float", nullable: false),
                     IsRigSpecific = table.Column<bool>(type: "bit", nullable: false),
@@ -51,7 +50,11 @@ namespace CA.Ticketing.Persistance.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    NetTerm = table.Column<int>(type: "int", nullable: false)
+                    NetTerm = table.Column<int>(type: "int", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    City = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Zip = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    State = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -139,12 +142,12 @@ namespace CA.Ticketing.Persistance.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CustomerId = table.Column<int>(type: "int", nullable: false),
-                    LocationType = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    City = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Zip = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    State = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Lease = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Well = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Field = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    County = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Lattitude = table.Column<double>(type: "float", nullable: true),
+                    Longitude = table.Column<double>(type: "float", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -169,7 +172,6 @@ namespace CA.Ticketing.Persistance.Migrations
                     Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DoB = table.Column<DateTime>(type: "datetime2", nullable: true),
                     JobTitle = table.Column<int>(type: "int", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
                     EmployeeNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SSN = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     HireDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -255,7 +257,8 @@ namespace CA.Ticketing.Persistance.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CustomerLocationId = table.Column<int>(type: "int", nullable: false),
+                    CustomerId = table.Column<int>(type: "int", nullable: false),
+                    CustomerLocationId = table.Column<int>(type: "int", nullable: true),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -270,6 +273,11 @@ namespace CA.Ticketing.Persistance.Migrations
                         name: "FK_CustomerContacts_CustomerLocations_CustomerLocationId",
                         column: x => x.CustomerLocationId,
                         principalTable: "CustomerLocations",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_CustomerContacts_Customers_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Customers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -286,12 +294,13 @@ namespace CA.Ticketing.Persistance.Migrations
                     ServiceType = table.Column<int>(type: "int", nullable: false),
                     WellType = table.Column<int>(type: "int", nullable: false),
                     TaxRate = table.Column<double>(type: "float", nullable: false),
-                    EquipmentId = table.Column<int>(type: "int", nullable: false),
+                    EquipmentId = table.Column<int>(type: "int", nullable: true),
                     CustomerId = table.Column<int>(type: "int", nullable: true),
                     LocationId = table.Column<int>(type: "int", nullable: true),
                     StartTime = table.Column<DateTime>(type: "datetime2", nullable: true),
                     EndTime = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Mileage = table.Column<double>(type: "float", nullable: false),
+                    CompanyHours = table.Column<double>(type: "float", nullable: false),
                     HasCustomerSignature = table.Column<bool>(type: "bit", nullable: false),
                     InvoiceId = table.Column<int>(type: "int", nullable: true),
                     FileIndicatorGenerated = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -314,8 +323,7 @@ namespace CA.Ticketing.Persistance.Migrations
                         name: "FK_FieldTickets_Equipment_EquipmentId",
                         column: x => x.EquipmentId,
                         principalTable: "Equipment",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_FieldTickets_Invoices_InvoiceId",
                         column: x => x.InvoiceId,
@@ -552,6 +560,11 @@ namespace CA.Ticketing.Persistance.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CustomerContacts_CustomerId",
+                table: "CustomerContacts",
+                column: "CustomerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CustomerContacts_CustomerLocationId",

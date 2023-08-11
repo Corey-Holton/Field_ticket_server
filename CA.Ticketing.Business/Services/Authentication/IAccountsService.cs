@@ -21,13 +21,9 @@ namespace CA.Ticketing.Business.Services.Authentication
 
         Task CreateCustomerContactLogin(CreateCustomerContactLoginDto customerContactLoginModel);
 
-        Task ResendCustomerContactEmail(ResendInviteDto resendInviteModel);
-
-        Task<AuthenticationResultDto> SetCustomerPassword(SetCustomerPasswordDto setCustomerPasswordModel);
+        Task ResendCustomerContactEmail(CustomerLoginDto customerLoginDto);
 
         Task ResetCustomerContactPassword(ResetCustomerContactPasswordDto resetCustomerContactPasswordModel);
-
-        Task DeleteCustomerContactLogin(int customerContactId);
 
         Task<IEnumerable<UserDto>> GetUsers();
 

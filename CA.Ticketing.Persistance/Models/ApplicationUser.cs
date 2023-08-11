@@ -22,6 +22,6 @@ namespace CA.Ticketing.Persistance.Models
 
         public virtual CustomerContact? CustomerContact { get; set; }
 
-        public string TicketIdentifier { get; set; }
+        public string TicketIdentifier { get; set; } = string.Empty;
     }
 }

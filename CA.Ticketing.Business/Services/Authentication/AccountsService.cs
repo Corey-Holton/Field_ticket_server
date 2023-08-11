@@ -140,34 +140,21 @@ namespace CA.Ticketing.Business.Services.Authentication
 
             var userAdded = _mapper.Map<ApplicationUser>(customerContactLoginModel);
 
-            var createUserResult = await _userManager.CreateAsync(userAdded);
-
-            if (!createUserResult.Succeeded)
-            {
-                throw new Exception($"Could not create user. {string.Join("; ", createUserResult.Errors.Select(x => x.Description))}");
-            }
-
-            var addRoleResult = await _userManager.AddToRoleAsync(userAdded, RoleNames.Customer);
-
-            if (!addRoleResult.Succeeded)
-            {
-                await _userManager.DeleteAsync(userAdded);
-                throw new Exception($"Could not add role to user. {string.Join("; ", addRoleResult.Errors.Select(x => x.Description))}");
-            }
+            await CreateUserInternal(userAdded, string.Empty, RoleNames.Customer);
 
             await SendUserInvite(userAdded, customerContactLoginModel.RedirectUrl);
         }
 
-        public async Task ResendCustomerContactEmail(ResendInviteDto resendInviteModel)
+        public async Task ResendCustomerContactEmail(CustomerLoginDto customerLoginDto)
         {
-            var user = await _userManager.FindByCustomerContactIdAsync(resendInviteModel.CustomerContactId);
+            var user = await _userManager.FindByCustomerContactIdAsync(customerLoginDto.CustomerContactId);
 
             if (user == null)
             {
-                throw new Exception($"User with id {resendInviteModel.CustomerContactId} was not found");
+                throw new Exception($"User with id {customerLoginDto.CustomerContactId} was not found");
             }
 
-            await SendUserInvite(user, resendInviteModel.RedirectUrl);
+            await SendUserInvite(user, customerLoginDto.RedirectUrl);
         }
 
         public async Task<AuthenticationResultDto> SetCustomerPassword(SetCustomerPasswordDto setCustomerPasswordModel)
@@ -205,14 +192,10 @@ namespace CA.Ticketing.Business.Services.Authentication
             return new AuthenticationResultDto(authenticatedUser);
         }
 
-        public Task ResetCustomerContactPassword(ResetCustomerContactPasswordDto resetCustomerContactPasswordModel)
+        public async Task ResetCustomerContactPassword(ResetCustomerContactPasswordDto resetCustomerContactPasswordModel)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task DeleteCustomerContactLogin(int customerContactId)
-        {
-            throw new NotImplementedException();
+            var user = await _userManager.FindByCustomerContactIdAsync(resetCustomerContactPasswordModel.CustomerContactId);
+            await ResetUserPasswordInternal(user!, resetCustomerContactPasswordModel.Password);
         }
 
         public async Task ResetPassword(ResetPasswordDto resetPasswordModel)
@@ -303,13 +286,7 @@ namespace CA.Ticketing.Business.Services.Authentication
         public async Task ResetUserPassword(ResetUserPasswordDto resetUserPasswordDto)
         {
             var user = await _userManager.FindByIdAsync(resetUserPasswordDto.UserId);
-            var resetPasswordToken = await _userManager.GeneratePasswordResetTokenAsync(user);
-            var resetPasswordResult = await _userManager.ResetPasswordAsync(user, resetPasswordToken, resetUserPasswordDto.Password);
-
-            if (!resetPasswordResult.Succeeded)
-            {
-                throw new Exception($"There was an error while resetting user password. {string.Join("; ", resetPasswordResult.Errors.Select(x => x.Description))}.");
-            }
+            await ResetUserPasswordInternal(user, resetUserPasswordDto.Password);
         }
 
         private async Task<IEnumerable<Claim>> GetUserClaims(ApplicationUser user)
@@ -367,7 +344,9 @@ namespace CA.Ticketing.Business.Services.Authentication
 
         private async Task<string> CreateUserInternal(ApplicationUser user, string password, string role)
         {
-            var userCreateResult = await _userManager.CreateAsync(user, password);
+            var userCreateResult = !string.IsNullOrEmpty(password) ? 
+                await _userManager.CreateAsync(user, password) : 
+                await _userManager.CreateAsync(user);
 
             if (!userCreateResult.Succeeded)
             {
@@ -383,6 +362,17 @@ namespace CA.Ticketing.Business.Services.Authentication
             }
 
             return user.Id;
+        }
+
+        private async Task ResetUserPasswordInternal(ApplicationUser user, string password)
+        {
+            var resetPasswordToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var resetPasswordResult = await _userManager.ResetPasswordAsync(user, resetPasswordToken, password);
+
+            if (!resetPasswordResult.Succeeded)
+            {
+                throw new Exception($"There was an error while resetting user password. {string.Join("; ", resetPasswordResult.Errors.Select(x => x.Description))}.");
+            }
         }
     }
 }

@@ -28,21 +28,7 @@ namespace CA.Ticketing.Api.Controllers
         }
 
         /// <summary>
-        /// Get Scheduling by id
-        /// </summary>
-        /// <param name="schedulingId">Scheduling Id</param>
-        /// <returns>SchedulingDto</returns>
-        [Route(ApiRoutes.Scheduling.Get)]
-        [HttpGet]
-        [ProducesResponseType(typeof(SchedulingDto), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetById(int schedulingId)
-        {
-            var scheduling = await _schedulingService.GetById(schedulingId);
-            return Ok(scheduling);
-        }
-
-        /// <summary>
-        /// Create an Scheduling
+        /// Create a Scheduling
         /// </summary>
         /// <param name="scheduling">SchedulingDto</param>
         /// <returns>Scheduling Id</returns>
@@ -56,7 +42,7 @@ namespace CA.Ticketing.Api.Controllers
         }
 
         ///<summary>
-        /// Edit an scheduling
+        /// Edit a scheduling
         /// </summary>
         /// <param name="scheduling">SchedulingDto</param>
         [Route(ApiRoutes.Scheduling.Update)]
@@ -69,7 +55,7 @@ namespace CA.Ticketing.Api.Controllers
         }
 
         ///<summary>
-        /// Delete an Scheduling
+        /// Delete a Scheduling
         /// </summary>
         /// <param name="schedulingId">Scheduling Id</param>
         [Route(ApiRoutes.Scheduling.Delete)]

@@ -1,4 +1,5 @@
 ﻿using CA.Ticketing.Business.Services.Base;
+using CA.Ticketing.Common.Enums;
 
 namespace CA.Ticketing.Business.Services.Customers.Dto
 {
@@ -6,18 +7,20 @@ namespace CA.Ticketing.Business.Services.Customers.Dto
     {
         public int CustomerId { get; set; }
 
-        public string Name { get; set; }
+        public string DisplayName { get; set; }
 
-        public string Address { get; set; }
+        public string Lease { get; set; }
 
-        public string City { get; set; }
+        public string Field { get; set; }
 
-        public string Zip { get; set; }
+        public string Well { get; set; }
 
-        public string State { get; set; }
+        public string County { get; set; }
 
-        public string LocationType { get; set; }
+        public WellType WellType { get; set; }
 
-        public List<CustomerContactDto> Contacts { get; set; }
+        public double? Lattitude { get; set; }
+
+        public double? Longitude { get; set; }
     }
 }

@@ -6,19 +6,38 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace CA.Ticketing.Persistance.Models
 {
     [Table(TableNames.CustomerLocations)]
-    public class CustomerLocation : IdentityModelWithAddress<int>
+    public class CustomerLocation : IdentityModel<int>
     {
         [ForeignKey(nameof(Customer))]
         public int CustomerId { get; set; }
 
         public virtual Customer Customer { get; set; }
 
-        public LocationType LocationType { get; set; }
+        public string Lease { get; set; }
 
-        public string Name { get; set; }
+        public string Well { get; set; }
+
+        public string Field { get; set; }
+
+        public string County { get; set; }
+
+        public double? Lattitude { get; set; }
+
+        public double? Longitude { get; set; }
+
+        public WellType WellType { get; set; }
 
         public virtual ICollection<CustomerContact> Contacts { get; set; } = new List<CustomerContact>();
 
         public virtual ICollection<FieldTicket> FieldTickets { get; set; } = new List<FieldTicket>();
+
+        [NotMapped]
+        public string DisplayName 
+        {
+            get
+            {
+                return $"{Lease} {Well}";
+            } 
+        }
     }
 }

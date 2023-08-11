@@ -4,11 +4,7 @@ using CA.Ticketing.Business.Services.Base;
 using CA.Ticketing.Business.Services.Tickets.Dto;
 using CA.Ticketing.Persistance.Context;
 using CA.Ticketing.Persistance.Models;
-using Microsoft.AspNetCore.Connections.Features;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
-using System.Runtime.CompilerServices;
 
 namespace CA.Ticketing.Business.Services.Tickets
 {
@@ -37,7 +33,7 @@ namespace CA.Ticketing.Business.Services.Tickets
         public async Task<IEnumerable<TicketDto>> GetByLocation(string locationName)
         {
             var locationIds = await _context.CustomerLocations
-                .Where(x => x.Name.Contains(locationName))
+                .Where(x => x.Field.Contains(locationName))
                 .Select(x => x.Id)
                 .ToListAsync();
 
@@ -60,8 +56,6 @@ namespace CA.Ticketing.Business.Services.Tickets
             {
                 ExecutionDate = DateTime.UtcNow
             };
-
-            var charges = 
 
             _context.FieldTickets.Add(ticket);
             await _context.SaveChangesAsync();

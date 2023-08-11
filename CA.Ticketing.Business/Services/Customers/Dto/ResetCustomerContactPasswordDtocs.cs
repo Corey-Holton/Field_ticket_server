@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CA.Ticketing.Business.Services.Customers.Dto
 {
     public class ResetCustomerContactPasswordDto
     {
         [Required]
-        public int Id { get; set; }
+        public int CustomerContactId { get; set; }
 
         [PasswordPropertyText]
         [Required]

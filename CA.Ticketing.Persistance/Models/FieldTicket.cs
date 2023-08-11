@@ -21,9 +21,9 @@ namespace CA.Ticketing.Persistance.Models
         public double TaxRate { get; set; }
 
         [ForeignKey(nameof(Equipment))]
-        public int EquipmentId { get; set; }
+        public int? EquipmentId { get; set; }
 
-        public virtual Equipment Equipment { get; set; }
+        public virtual Equipment? Equipment { get; set; }
 
         [ForeignKey(nameof(Customer))]
         public int? CustomerId { get; set; }
@@ -40,6 +40,8 @@ namespace CA.Ticketing.Persistance.Models
         public DateTime? EndTime { get; set; }
 
         public double Mileage { get; set; }
+
+        public double CompanyHours { get; set; }
 
         public bool HasCustomerSignature { get; set; }
 

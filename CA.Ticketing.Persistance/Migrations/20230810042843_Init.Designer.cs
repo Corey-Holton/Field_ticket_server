@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CA.Ticketing.Persistance.Migrations
 {
     [DbContext(typeof(CATicketingContext))]
-    [Migration("20230807183442_EmployeesUpdate")]
-    partial class EmployeesUpdate
+    [Migration("20230810042843_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -161,12 +161,28 @@ namespace CA.Ticketing.Persistance.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("NetTerm")
                         .HasColumnType("int");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Zip")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -181,7 +197,10 @@ namespace CA.Ticketing.Persistance.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("CustomerLocationId")
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CustomerLocationId")
                         .HasColumnType("int");
 
                     b.Property<string>("Email")
@@ -208,6 +227,8 @@ namespace CA.Ticketing.Persistance.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CustomerId");
+
                     b.HasIndex("CustomerLocationId");
 
                     b.ToTable("CustomerContacts");
@@ -221,29 +242,28 @@ namespace CA.Ticketing.Persistance.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("City")
+                    b.Property<string>("County")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
-                    b.Property<int>("LocationType")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
+                    b.Property<string>("Field")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("State")
+                    b.Property<double?>("Lattitude")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Lease")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Zip")
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Well")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -405,6 +425,9 @@ namespace CA.Ticketing.Persistance.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<double>("CompanyHours")
+                        .HasColumnType("float");
+
                     b.Property<int?>("CustomerId")
                         .HasColumnType("int");
 
@@ -415,7 +438,7 @@ namespace CA.Ticketing.Persistance.Migrations
                     b.Property<DateTime?>("EndTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("EquipmentId")
+                    b.Property<int?>("EquipmentId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("ExecutionDate")
@@ -780,11 +803,17 @@ namespace CA.Ticketing.Persistance.Migrations
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.CustomerContact", b =>
                 {
-                    b.HasOne("CA.Ticketing.Persistance.Models.CustomerLocation", "CustomerLocation")
+                    b.HasOne("CA.Ticketing.Persistance.Models.Customer", "Customer")
                         .WithMany("Contacts")
-                        .HasForeignKey("CustomerLocationId")
+                        .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("CA.Ticketing.Persistance.Models.CustomerLocation", "CustomerLocation")
+                        .WithMany("Contacts")
+                        .HasForeignKey("CustomerLocationId");
+
+                    b.Navigation("Customer");
 
                     b.Navigation("CustomerLocation");
                 });
@@ -836,9 +865,7 @@ namespace CA.Ticketing.Persistance.Migrations
 
                     b.HasOne("CA.Ticketing.Persistance.Models.Equipment", "Equipment")
                         .WithMany()
-                        .HasForeignKey("EquipmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("EquipmentId");
 
                     b.HasOne("CA.Ticketing.Persistance.Models.Invoice", "Invoice")
                         .WithMany("Tickets")
@@ -953,6 +980,8 @@ namespace CA.Ticketing.Persistance.Migrations
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.Customer", b =>
                 {
+                    b.Navigation("Contacts");
+
                     b.Navigation("Locations");
                 });
 

@@ -16,5 +16,7 @@ namespace CA.Ticketing.Business.Services.Tickets.Dto
         public DateTime EndTime { get; set; }
 
         public double Mileage { get; set; }
+
+
     }
 }

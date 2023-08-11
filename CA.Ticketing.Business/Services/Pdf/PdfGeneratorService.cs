@@ -12,10 +12,10 @@ namespace CA.Ticketing.Business.Services.Pdf
             converter.Options.PdfPageSize = PdfPageSize.Letter;
             converter.Options.CssMediaType = HtmlToPdfCssMediaType.Print;
 
-            converter.Options.MarginLeft = 30;
-            converter.Options.MarginRight = 30;
-            converter.Options.MarginBottom = 40;
-            converter.Options.MarginTop = 40;
+            converter.Options.MarginLeft = 0;
+            converter.Options.MarginRight = 0;
+            converter.Options.MarginBottom = 0;
+            converter.Options.MarginTop = 0;
 
             converter.Options.WebPageWidth = 0;
             converter.Options.WebPageHeight = 0;

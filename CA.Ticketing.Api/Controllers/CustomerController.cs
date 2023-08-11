@@ -64,7 +64,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Customers.Update)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> Update(CustomerDto customer)
+        public async Task<IActionResult> Update(CustomerDetailsDto customer)
         {
             await _customerService.Update(customer);
             return Ok();
@@ -84,26 +84,13 @@ namespace CA.Ticketing.Api.Controllers
         }
 
         ///<summary>
-        /// Get location list for customer
-        /// </summary>
-        /// <param name="customerId">Customer id</param>
-        [Route(ApiRoutes.Customers.LocationList)]
-        [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<CustomerLocationDto>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetCustomerLocations(int customerId)
-        {
-            var locations = await _customerService.GetCustomerLocations(customerId);
-            return Ok(locations);
-        }
-
-        ///<summary>
         /// Add a Customer Location
         /// </summary>
         /// <param name="customerLocation">CustomerLocationDto</param>
         [Route(ApiRoutes.Customers.AddLocation)]
         [HttpPost]
         [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
-        public async Task<IActionResult> AddLocation(AddLocationDto customerLocation)
+        public async Task<IActionResult> AddLocation(CustomerLocationDto customerLocation)
         {
             var locationId =await _customerService.AddLocation(customerLocation);
             return Ok(locationId);
@@ -116,7 +103,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Customers.UpdateLocation)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> UpdateLocation(AddLocationDto customerLocation)
+        public async Task<IActionResult> UpdateLocation(CustomerLocationDto customerLocation)
         {
             await _customerService.UpdateLocation(customerLocation);
             return Ok();
@@ -142,7 +129,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Customers.AddContact)]
         [HttpPost]
         [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
-        public async Task<IActionResult> AddContact(AddContactDto customerContact)
+        public async Task<IActionResult> AddContact(CustomerContactDto customerContact)
         {
             var customerId = await _customerService.AddContact(customerContact);
             return Ok(customerId);
@@ -155,7 +142,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Customers.UpdateContact)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> UpdateContact(AddContactDto customerContact)
+        public async Task<IActionResult> UpdateContact(CustomerContactDto customerContact)
         {
             await _customerService.UpdateContact(customerContact);
             return Ok();
@@ -181,22 +168,22 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Customers.AddLogin)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> AddLogin(AddCustomerLoginDto loginDto)
+        public async Task<IActionResult> AddLogin(CustomerLoginDto loginDto)
         {
             await _customerService.AddLogin(loginDto);
             return Ok();
         }
 
         ///<summary>
-        /// Invited user password setup
+        /// Resend invite for customer login
         /// </summary>
-        /// <param name="customerContactPasswordModel">customerContactPasswordModel</param>
-        [Route(ApiRoutes.Customers.AddPassword)]
+        /// <param name="customerLoginDto">Customer Contact Login Dto</param>
+        [Route(ApiRoutes.Customers.ResendInvite)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> AddPassword(AddCustomerContactPasswordDto customerContactPasswordModel)
+        public async Task<IActionResult> ResendCustomerInvite(CustomerLoginDto customerLoginDto)
         {
-            await _customerService.AddPassword(customerContactPasswordModel);
+            await _customerService.ResendInvitation(customerLoginDto);
             return Ok();
         }
 

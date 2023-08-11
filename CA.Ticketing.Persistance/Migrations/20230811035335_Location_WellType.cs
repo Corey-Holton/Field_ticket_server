@@ -4,23 +4,23 @@
 
 namespace CA.Ticketing.Persistance.Migrations
 {
-    public partial class EmployeesUpdate : Migration
+    public partial class Location_WellType : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "Status",
-                table: "Employees");
+            migrationBuilder.AddColumn<int>(
+                name: "WellType",
+                table: "CustomerLocations",
+                type: "int",
+                nullable: false,
+                defaultValue: 0);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<int>(
-                name: "Status",
-                table: "Employees",
-                type: "int",
-                nullable: false,
-                defaultValue: 0);
+            migrationBuilder.DropColumn(
+                name: "WellType",
+                table: "CustomerLocations");
         }
     }
 }
