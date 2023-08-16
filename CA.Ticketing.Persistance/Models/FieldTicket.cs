@@ -12,11 +12,9 @@ namespace CA.Ticketing.Persistance.Models
 
         public DateTime ExecutionDate { get; set; }
 
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
         public ServiceType ServiceType { get; set; }
-
-        public WellType WellType { get; set; }
 
         public double TaxRate { get; set; }
 
@@ -43,16 +41,16 @@ namespace CA.Ticketing.Persistance.Models
 
         public double CompanyHours { get; set; }
 
-        public bool HasCustomerSignature { get; set; }
-
         [ForeignKey(nameof(Invoice))]
         public int? InvoiceId { get; set; }
 
         public virtual Invoice? Invoice { get; set; }
 
-        public string FileIndicatorGenerated { get; set; }
+        public string FileIndicatorGenerated { get; set; } = string.Empty;
 
-        public string FileIndicatorCustomer { get; set; }
+        public string FileIndicatorCustomer { get; set; } = string.Empty;
+
+        public string CreatedBy { get; set; }
 
         public virtual ICollection<TicketSpecification> TicketSpecifications { get; set; } = new List<TicketSpecification>();
 
@@ -62,6 +60,9 @@ namespace CA.Ticketing.Persistance.Models
         public bool IsInvoiced => InvoiceId != null;
 
         [NotMapped]
-        public double Total => TicketSpecifications.Sum(x => x.Total);
+        public double Total => TicketSpecifications.Sum(x => x.Quantity * x.Rate);
+
+        [NotMapped]
+        public bool HasCustomerSignature { get; set; }
     }
 }

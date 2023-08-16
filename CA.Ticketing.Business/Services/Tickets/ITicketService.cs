@@ -1,10 +1,4 @@
 ﻿using CA.Ticketing.Business.Services.Tickets.Dto;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CA.Ticketing.Business.Services.Tickets
 {
@@ -14,14 +8,20 @@ namespace CA.Ticketing.Business.Services.Tickets
 
         Task<IEnumerable<TicketDto>> GetByDates(DateTime startDate, DateTime endDate);
 
-        Task<IEnumerable<TicketDto>> GetByLocation(string search);
-
         Task<TicketDetailsDto> GetById(int id);
 
-        Task<TicketDetailsDto> Create();
+        Task<int> Create(ManageTicketDto manageTicketDto);
 
-        Task Update(TicketDetailsDto entity);
+        Task Update(ManageTicketDto manageTicketDto);
+
+        Task UpdateHours(ManageTicketHoursDto manageTicketHours);
 
         Task Delete(int id);
+
+        Task AddPayroll(PayrollDataDto payrollDataDto);
+
+        Task RemovePayroll(int payrollDataId);
+
+        Task<UpdateTicketSpecResponse> UpdateTicketSpecification(TicketSpecificationDto ticketSpecificationDto);
     }
 }

@@ -22,6 +22,7 @@ namespace CA.Ticketing.Common.Extensions
                 JobTitle.CrewChief => JobTitles.CrewChief,
                 JobTitle.DerrickMan => JobTitles.DerrickMan,
                 JobTitle.FloorHand => JobTitles.FloorHand,
+                JobTitle.Other => JobTitles.Other,
                 _ => throw new ArgumentException(null, nameof(jobTitle))
             };
         }

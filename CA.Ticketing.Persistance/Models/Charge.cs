@@ -23,5 +23,7 @@ namespace CA.Ticketing.Persistance.Models
         public bool AllowUoMChange { get; set; }
 
         public bool AllowRateAdjustment { get; set; }
+
+        public bool AutoCalculated { get; set; }
     }
 }

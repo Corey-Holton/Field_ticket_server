@@ -8,6 +8,7 @@
             public const string CrewChief = "Crew Chief";
             public const string DerrickMan = "Derrick Man";
             public const string FloorHand = "Floor Hand";
+            public const string Other = nameof(Other);
         }
 
         public class LocationTypes

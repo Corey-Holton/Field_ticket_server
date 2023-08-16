@@ -6,6 +6,8 @@ namespace CA.Ticketing.Common.Authentication
     {
         string Id { get; set; }
 
+        string TicketIdentifier { get; set; }
+
         IContextUser FromClaimsIdentity(ClaimsIdentity identity);
     }
 }

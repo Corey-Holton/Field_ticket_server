@@ -111,15 +111,23 @@
 
             public const string ListByDates = $"{_root}/list/startDate={{startDate}}&endDate={{endDate}}";
 
-            public const string ListByLocation = $"{_root}/list/location={{search}}";
-
             public const string Get = $"{_root}/{{ticketId}}";
 
             public const string Create = $"{_root}/create";
 
-            public const string Update = $"{_root}/update";
+            public const string UpdateDetails = $"{_root}/update-details";
+
+            public const string UpdateHours = $"{_root}/update-hours";
+
+            public const string UpdateSpecifications = $"{_root}/update-specs";
+
+            public const string AddPayrollEntry = $"{_root}/payroll/add";
+
+            public const string DeletePayrollEntry = $"{_root}/payroll/delete";
 
             public const string Delete = $"{_root}/delete";
+
+            public const string GeneratePdf = $"{_root}/generate-pdf";
         }
 
         public class TicketSpecifications

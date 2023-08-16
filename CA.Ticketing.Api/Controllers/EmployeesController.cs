@@ -24,7 +24,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Employees.List)]
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<EmployeeDto>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetAll(EmployeeStatus status = EmployeeStatus.Active)
+        public async Task<IActionResult> GetAll(EmployeeStatus? status)
         {
             var employees = await _employeeService.GetAll(status);
             return Ok(employees);

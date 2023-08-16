@@ -36,5 +36,8 @@ namespace CA.Ticketing.Persistance.Models
         public int? AssignedRigId { get; set; }
 
         public virtual Equipment? AssignedRig { get; set; }
+
+        [NotMapped]
+        public string DisplayName => $"{FirstName} {LastName}";
     }
 }

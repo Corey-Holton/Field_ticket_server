@@ -17,10 +17,12 @@ namespace CA.Ticketing.Persistance.Models
 
         public UnitOfMeasure UoM { get; set; }
 
-        public int Quantity { get; set; }
+        public double Quantity { get; set; }
 
         public double Rate { get; set; }
 
-        public double Total { get; set; }
+        public bool AllowUoMChange { get; set; }
+
+        public bool AllowRateAdjustment { get; set; }
     }
 }

@@ -101,6 +101,14 @@ namespace CA.Ticketing.Persistance.Seed
             
             var chargesNames = defaultCharges.Select(x => x.Name).ToList();
 
+            var chargesToRemove = await _context.Charges
+                .Where(x => chargesNames.Contains(x.Name))
+                .ToListAsync();
+
+            _context.Charges.RemoveRange(chargesToRemove);
+
+            await _context.SaveChangesAsync();
+
             var existingCharges = await _context.Charges.ToListAsync();
 
             foreach (var charge in defaultCharges)
@@ -109,10 +117,6 @@ namespace CA.Ticketing.Persistance.Seed
                 if (existingCharge == null)
                 {
                     _context.Charges.Add(charge);
-                }
-                else
-                {
-                    _mapper.Map(charge, existingCharge);
                 }
             }
 

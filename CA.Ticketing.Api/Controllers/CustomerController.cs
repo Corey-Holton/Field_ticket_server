@@ -1,7 +1,6 @@
-﻿ using CA.Ticketing.Api.Extensions;
+﻿using CA.Ticketing.Api.Extensions;
 using CA.Ticketing.Business.Services.Customers;
 using CA.Ticketing.Business.Services.Customers.Dto;
-using CA.Ticketing.Common;
 using CA.Ticketing.Common.Constants;
 using Microsoft.AspNetCore.Mvc;
 

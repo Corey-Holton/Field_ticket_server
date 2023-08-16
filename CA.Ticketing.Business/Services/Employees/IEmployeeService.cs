@@ -5,7 +5,7 @@ namespace CA.Ticketing.Business.Services.Employees
 {
     public interface IEmployeeService
     {
-        Task<IEnumerable<EmployeeDto>> GetAll(EmployeeStatus status);
+        Task<IEnumerable<EmployeeDto>> GetAll(EmployeeStatus? status);
 
         Task<EmployeeDetailsDto> GetById(int id);
 

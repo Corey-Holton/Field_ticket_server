@@ -20,17 +20,23 @@ namespace CA.Ticketing.Business.Services.Employees
             _accountsService = accountsService;
         }
 
-        public async Task<IEnumerable<EmployeeDto>> GetAll(EmployeeStatus status)
+        public async Task<IEnumerable<EmployeeDto>> GetAll(EmployeeStatus? status)
         {
-            var terminationDateCutoff = GetEndofDay(DateTime.Now);
+            IQueryable<Employee> employeesQuery = _context.Employees
+                .Include(x => x.ApplicationUser);
 
-            Expression<Func<Employee, bool>> statusFilter = status == EmployeeStatus.Active ?
-                x => !x.TerminationDate.HasValue || x.TerminationDate > terminationDateCutoff :
-                x => x.TerminationDate.HasValue && x.TerminationDate < terminationDateCutoff;
+            if (status.HasValue)
+            {
+                var terminationDateCutoff = GetEndofDay(DateTime.Now);
+                Expression<Func<Employee, bool>> statusFilter = status == EmployeeStatus.Active ?
+                    x => !x.TerminationDate.HasValue || x.TerminationDate > terminationDateCutoff :
+                    x => x.TerminationDate.HasValue && x.TerminationDate < terminationDateCutoff;
 
-            var employees = await _context.Employees
-                .Include(x => x.ApplicationUser)
-                .Where(statusFilter)
+                employeesQuery = employeesQuery
+                    .Where(statusFilter);
+            }
+
+            var employees = await employeesQuery
                 .ToListAsync();
 
             return employees.Select(x => _mapper.Map<EmployeeDto>(x));

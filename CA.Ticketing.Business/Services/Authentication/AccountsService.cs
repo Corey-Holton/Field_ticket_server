@@ -8,6 +8,7 @@ using CA.Ticketing.Common.Authentication;
 using CA.Ticketing.Common.Constants;
 using CA.Ticketing.Common.Extensions;
 using CA.Ticketing.Common.Setup;
+using CA.Ticketing.Persistance.Context;
 using CA.Ticketing.Persistance.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
@@ -30,6 +31,8 @@ namespace CA.Ticketing.Business.Services.Authentication
 
         private readonly UserManager<ApplicationUser> _userManager;
 
+        private readonly CATicketingContext _context;
+
         private readonly INotificationService _notificationService;
 
         private readonly IUserContext _userContext;
@@ -44,7 +47,8 @@ namespace CA.Ticketing.Business.Services.Authentication
             INotificationService notificationService, 
             IUserContext userContext, 
             MessagesComposer messagesComposer,
-            IOptions<SecuritySettings> securitySettings)
+            IOptions<SecuritySettings> securitySettings,
+            CATicketingContext context)
         {
             _mapper = mapper;
             _userManager = userManager;
@@ -52,6 +56,7 @@ namespace CA.Ticketing.Business.Services.Authentication
             _userContext = userContext;
             _messagesComposer = messagesComposer;
             _securitySettings = securitySettings.Value;
+            _context = context;
         }
 
         public async Task<AuthenticationResultDto> Authenticate(LoginDto loginModel)
@@ -296,7 +301,24 @@ namespace CA.Ticketing.Business.Services.Authentication
             {
                 new Claim(ClaimTypes.Name, user.Id.ToString())
             };
-            userClaims.AddRange(userRoles.Select(x => new Claim(ClaimTypes.Role, x)));
+
+            var role = userRoles.First();
+            userClaims.Add(new Claim(ClaimTypes.Role, role));
+
+            if (role == RoleNames.ToolPusher)
+            {
+                var employee = _context.Employees.Single(x => x.Id == user.EmployeeId);
+                if (employee.AssignedRigId.HasValue)
+                {
+                    userClaims.Add(new Claim(CAClaims.RigId, employee.AssignedRigId.Value.ToString()));
+                }
+            }
+
+            if (!string.IsNullOrEmpty(user.TicketIdentifier))
+            {
+                userClaims.Add(new Claim(CAClaims.TicketIdentifier, user.TicketIdentifier));
+            }
+
             return userClaims;
         }
 

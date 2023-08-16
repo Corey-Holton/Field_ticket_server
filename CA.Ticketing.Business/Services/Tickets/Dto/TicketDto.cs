@@ -4,9 +4,7 @@ namespace CA.Ticketing.Business.Services.Tickets.Dto
 {
     public class TicketDto : EntityDtoBase<int>
     {
-        public string TicketIdentifier { get; set; }
-
-        public string EquipmentName { get; set; }
+        public string TicketId { get; set; }
 
         public string CustomerName { get; set; }
 
@@ -16,10 +14,10 @@ namespace CA.Ticketing.Business.Services.Tickets.Dto
 
         public string ServiceType { get; set; }
 
-        public bool Signature { get; set; }
+        public bool IsInvoiced { get; set; }
 
-        public bool Invoice { get; set; }
+        public double Total { get; set; }
 
-        public int CustomerId { get; set; }
+        public bool HasCustomerSignature { get; set; }
     }
 }

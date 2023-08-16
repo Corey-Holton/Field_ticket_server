@@ -1,5 +1,4 @@
 ﻿using CA.Ticketing.Api.Extensions;
-using CA.Ticketing.Business.Services.Customers.Dto;
 using CA.Ticketing.Business.Services.Tickets;
 using CA.Ticketing.Business.Services.Tickets.Dto;
 using CA.Ticketing.Common.Constants;
@@ -42,19 +41,6 @@ namespace CA.Ticketing.Api.Controllers
             return Ok(tickets);
         }
 
-        /// <summary>
-        /// Get a list of tickets corresponding to location name
-        /// </summary>
-        /// <returns>List of tickets</returns>
-        [Route(ApiRoutes.Tickets.ListByLocation)]
-        [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<TicketDto>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetByLocation(string search)
-        {
-            var tickets = await _ticketService.GetByLocation(search);
-            return Ok(tickets);
-        }
-
         /// <summary> 
         /// Get ticket details
         /// </summary>
@@ -68,30 +54,43 @@ namespace CA.Ticketing.Api.Controllers
             return Ok(ticket);
         }
 
-
         /// <summary>
         /// Create a ticket
         /// </summary>
-        /// <returns>TicketDetailsDto</returns>
+        /// <returns>Ticket Id</returns>
+        /// <param name="manageTicketDto">Manage Ticket Dto</param>
         [Route(ApiRoutes.Tickets.Create)]
         [HttpPost]
-        [ProducesResponseType(typeof(TicketDetailsDto), StatusCodes.Status200OK)]
-        public async Task<IActionResult> Create()
+        [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
+        public async Task<IActionResult> Create(ManageTicketDto manageTicketDto)
         {
-            var ticketDetails = await _ticketService.Create();
-            return Ok(ticketDetails);
+            var ticketId = await _ticketService.Create(manageTicketDto);
+            return Ok(ticketId);
         }
 
         /// <summary>
-        /// Update a ticket
+        /// Update ticket details
         /// </summary>
-        /// <param name="ticket">TicketDetailsDto</param>
-        [Route(ApiRoutes.Tickets.Update)]
+        /// <param name="ticket">ManageTicketDto</param>
+        [Route(ApiRoutes.Tickets.UpdateDetails)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> Update(TicketDetailsDto ticket)
+        public async Task<IActionResult> Update(ManageTicketDto ticket)
         {
             await _ticketService.Update(ticket);
+            return Ok();
+        }
+
+        /// <summary>
+        /// Update ticket hours
+        /// </summary>
+        /// <param name="ticket">ManageTicketHoursDto</param>
+        [Route(ApiRoutes.Tickets.UpdateHours)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> UpdateHours(ManageTicketHoursDto ticket)
+        {
+            await _ticketService.UpdateHours(ticket);
             return Ok();
         }
 
@@ -105,6 +104,45 @@ namespace CA.Ticketing.Api.Controllers
         {
             await _ticketService.Delete(ticketId);
             return Ok();
+        }
+
+        /// <summary>
+        /// Add Payroll data
+        /// </summary>
+        /// <param name="payrollDataDto">PayrollDataDto</param>
+        [Route(ApiRoutes.Tickets.AddPayrollEntry)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> AddPayroll(PayrollDataDto payrollDataDto)
+        {
+            await _ticketService.AddPayroll(payrollDataDto);
+            return Ok();
+        }
+
+        /// <summary>
+        /// Remove Payroll data
+        /// </summary>
+        /// <param name="payrollDataId">PayrollData Id</param>
+        [Route(ApiRoutes.Tickets.DeletePayrollEntry)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> RemovePayroll(int payrollDataId)
+        {
+            await _ticketService.RemovePayroll(payrollDataId);
+            return Ok();
+        }
+
+        /// <summary>
+        /// Update Ticket Specification
+        /// </summary>
+        /// <param name="ticketSpecificationDto">TicketSpecificationDto</param>
+        [Route(ApiRoutes.Tickets.UpdateSpecifications)]
+        [HttpPost]
+        [ProducesResponseType(typeof(UpdateTicketSpecResponse), StatusCodes.Status200OK)]
+        public async Task<IActionResult> UpdateSpecs(TicketSpecificationDto ticketSpecificationDto)
+        {
+            var result = await _ticketService.UpdateTicketSpecification(ticketSpecificationDto);
+            return Ok(result);
         }
     }
 }

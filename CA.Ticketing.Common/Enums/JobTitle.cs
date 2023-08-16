@@ -5,6 +5,7 @@
         ToolPusher = 1,
         CrewChief = 2,
         DerrickMan = 3,
-        FloorHand = 4
+        FloorHand = 4,
+        Other = 5
     }
 }

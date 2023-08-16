@@ -58,4 +58,17 @@
 
         public const string Labor = nameof(Labor);
     }
+
+    public class ChargesInfo
+    {
+        private static List<string> _readonlyCharges = new List<string>() 
+        { 
+            ChargeNames.Rig,
+            ChargeNames.Fuel,
+            ChargeNames.ToolPusher,
+            ChargeNames.Labor
+        };
+        
+        public static List<string> ReadonlyCharges => _readonlyCharges;
+    }
 }
