@@ -49,7 +49,7 @@ namespace CA.Ticketing.Business.Services.Pdf.Dto
 
         public double Subtotal => _fieldTicket.TicketSpecifications.Select(x => new { Total = x.Quantity * x.Rate }).Sum(x => x.Total);
 
-        public string TaxRate => $"{_fieldTicket.TaxRate:D2}%";
+        public string TaxRate => $"{_fieldTicket.TaxRate:#.##}%";
 
         public double Total => _fieldTicket.TaxRate > 0 ? Subtotal * (1 + _fieldTicket.TaxRate / 100) : Subtotal;
 
@@ -126,9 +126,9 @@ namespace CA.Ticketing.Business.Services.Pdf.Dto
 
             Item = ticketSpecification.Charge;
             UoM = ticketSpecification.UoM.ToString();
-            Rate = ticketSpecification.Rate.ToString("D2");
+            Rate = ticketSpecification.Rate.ToString("#.##");
             Quantity = ticketSpecification.Quantity.ToString();
-            Amount = (ticketSpecification.Quantity * ticketSpecification.Rate).ToString("D2");
+            Amount = (ticketSpecification.Quantity * ticketSpecification.Rate).ToString("#.##");
         }
     }
 
