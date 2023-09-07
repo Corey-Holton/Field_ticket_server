@@ -50,17 +50,17 @@ namespace CA.Ticketing.Persistance.Models
 
         public DateTime? SignedOn { get; set; }
 
-        public string SignedBy { get; set; }
+        public string SignedBy { get; set; } = string.Empty;
 
-        public string EmployeePrintedName { get; set; }
+        public string EmployeePrintedName { get; set; } = string.Empty;
 
-        public string EmployeeSignature { get; set; }
+        public string EmployeeSignature { get; set; } = string.Empty;
 
         public DateTime? CustomerSignedOn { get; set; }
 
-        public string CustomerPrintedName { get; set; }
+        public string CustomerPrintedName { get; set; } = string.Empty;
 
-        public string CustomerSignedBy { get; set; }
+        public string CustomerSignedBy { get; set; } = string.Empty;
 
         public virtual ICollection<TicketSpecification> TicketSpecifications { get; set; } = new List<TicketSpecification>();
 

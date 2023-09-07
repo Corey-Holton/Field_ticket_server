@@ -9,6 +9,9 @@ namespace CA.Ticketing.Business.Services.Payroll.Dto
 
         public string Employee { get; set; }
 
+        [JsonIgnore]
+        public int EmployeeId { get; set; }
+
         public double RegularHours { get; set; }
 
         public double OvertimeHours { get; set; }
