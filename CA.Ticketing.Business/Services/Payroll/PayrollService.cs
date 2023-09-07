@@ -27,13 +27,11 @@ namespace CA.Ticketing.Business.Services.Payroll
 
             var tickets = await GetTicketDetailsByDates(startTime, endTime);
 
-            var payrollData = ExtractPayrollData(tickets.ToList());
+            var payrollData = await ExtractPayrollData(tickets.ToList());
 
-            var groupedPayrollData = GroupPayrollDataByEmployee(payrollData);
+            var groupedPayrollData = GroupPayrollDataByEmployee(payrollData.ToList());
 
-            var finalList = await CalculateTotals(groupedPayrollData.ToList());
-
-            return finalList.ToList();
+            return groupedPayrollData.ToList();
         }
 
         private async Task<IEnumerable<TicketDetailsDto>> GetTicketDetailsByDates(DateTime startDate, DateTime endDate)
@@ -47,14 +45,16 @@ namespace CA.Ticketing.Business.Services.Payroll
             return tickets.Select(x => _mapper.Map<TicketDetailsDto>(x));
         }
 
-        private List<EmployeePayrollDataDto> ExtractPayrollData(List<TicketDetailsDto> tickets)
+        private async Task<IEnumerable<EmployeePayrollDataDto>> ExtractPayrollData(List<TicketDetailsDto> tickets)
         {
             var payrollData = new List<EmployeePayrollDataDto>();
+            var settings = await GetSettings();
 
             foreach (var ticket in tickets)
             {
                 foreach (var payrollItem in ticket.PayrollData)
                 {
+                    var employee = await GetEmployee((int)payrollItem.EmployeeId);
                     payrollData.Add(new EmployeePayrollDataDto
                     {
                         ExecutionTime = ticket.ExecutionDate,
@@ -63,9 +63,9 @@ namespace CA.Ticketing.Business.Services.Payroll
                         RegularHours = ticket.CompanyHours,
                         OvertimeHours = 0,
                         Mileage = ticket.Mileage,
-                        TotalHours = 0,
-                        TotalMileage = 0,
-                        TotalAmount = 0
+                        TotalHours = ticket.CompanyHours * employee.PayRate,
+                        TotalMileage = ticket.Mileage * settings.MileageCost,
+                        TotalAmount = ticket.CompanyHours * employee.PayRate + ticket.Mileage * settings.MileageCost
                     });
                 }
             }
@@ -81,7 +81,10 @@ namespace CA.Ticketing.Business.Services.Payroll
                     EmployeeId = group.Key,
                     Employee = group.First().Employee,
                     RegularHours = group.Sum(item => item.RegularHours),
-                    Mileage = group.Sum(item => item.Mileage)
+                    Mileage = group.Sum(item => item.Mileage),
+                    TotalHours = group.Sum(item => item.TotalHours),
+                    TotalMileage = group.Sum(item => item.TotalMileage),
+                    TotalAmount = group.Sum(item => item.TotalAmount)
                 });
         }
 
@@ -102,22 +105,6 @@ namespace CA.Ticketing.Business.Services.Payroll
             }
 
             return employee!;
-        }
-
-
-        private async Task<IEnumerable<EmployeePayrollDataDto>> CalculateTotals(List<EmployeePayrollDataDto> data)
-        {
-            var settings = await GetSettings();
-            var list = data.Select(async item =>
-            {
-                var employee = await GetEmployee(item.EmployeeId);
-                item.TotalMileage = settings.MileageCost * item.Mileage;
-                item.TotalHours = item.RegularHours * employee.PayRate;
-                item.TotalAmount = item.TotalHours + item.TotalMileage;
-                return item;
-            }).ToList();
-            await Task.WhenAll(list);
-            return list.Select(x => x.Result);
         }
     }
 }
