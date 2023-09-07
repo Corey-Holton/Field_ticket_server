@@ -7,5 +7,9 @@ namespace CA.Ticketing.Business.Services.Settings
         Task<SettingDto> Get();
 
         Task Update(SettingDto setting);
+
+        Task<ProfileDto> GetProfile();
+
+        Task UpdateProfile(ProfileDto profile);
     }
 }

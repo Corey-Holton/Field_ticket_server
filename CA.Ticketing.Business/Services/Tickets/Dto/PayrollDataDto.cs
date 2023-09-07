@@ -12,5 +12,9 @@ namespace CA.Ticketing.Business.Services.Tickets.Dto
         public EmployeeDto? Employee { get; set; }
 
         public string Name { get; set; }
+
+        public double YardHours { get; set; }
+
+        public double RoustaboutHours { get; set; }
     }
 }

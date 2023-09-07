@@ -80,6 +80,10 @@
             public const string Get = _root;
 
             public const string Update = $"{_root}/update";
+
+            public const string GetProfile = $"{_root}/profile";
+
+            public const string UpdateProfile = $"{_root}/profile/update";
         }
 
         public class Equipment
@@ -123,20 +127,30 @@
 
             public const string AddPayrollEntry = $"{_root}/payroll/add";
 
+            public const string UpdatePayrollEntry = $"{_root}/payroll/update";
+
             public const string DeletePayrollEntry = $"{_root}/payroll/delete";
 
             public const string Delete = $"{_root}/delete";
 
-            public const string GeneratePdf = $"{_root}/generate-pdf";
+            public const string Preview = $"{_root}/preview";
+
+            public const string EmployeeSignature = $"{_root}/sign";
+
+            public const string CustomerSignature = $"{_root}/customer-sign";
+
+            public const string CustomerUpload = $"{_root}/upload";
+
+            public const string Download = $"{_root}/download";
+
+            public const string Reset = $"{_root}/reset";
         }
 
-        public class TicketSpecifications
+        public class Payrolls
         {
-            public const string Create = $"{_root}/create";
+            public const string _root = $"{ApiRoutes._root}/payrolls";
 
-            public const string Update = $"{_root}/update";
-
-            public const string Delete = $"{_root}/delete";
+            public const string GetPayrolls = $"{_root}/list";
         }
 
         public class Invoices
@@ -185,6 +199,8 @@
             public const string GenerateResetPasswordLink = $"{_root}/GenerateResetPasswordLink";
 
             public const string SetPasswordFromLink = $"{_root}/SetPasswordFromLink";
+
+            public const string ChangePassword = $"{_root}/account/change-password";
         }
 
         public class Users

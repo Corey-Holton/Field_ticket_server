@@ -18,5 +18,9 @@ namespace CA.Ticketing.Persistance.Models
         public virtual Employee? Employee { get; set; }
 
         public string Name { get; set; }
+
+        public double YardHours { get; set; }
+
+        public double RoustaboutHours { get; set; }
     }
 }

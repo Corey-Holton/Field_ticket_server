@@ -1,0 +1,298 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CA-TICKETING-PDF-REPORT</title>
+</head>
+<style>
+
+    p, div {
+        font-family: Arial, sans-serif;
+        padding: 0;
+        margin: 0;
+    }
+
+    .mt-4 {
+        margin-top: 14px;
+    }
+
+    .mb-1 {
+        margin-bottom: 4px;
+    }
+
+    .mb-2 {
+        margin-bottom: 8px;
+    }
+
+
+    .mb-3 {
+        margin-bottom: 10px;
+    }
+
+    .ml-10 {
+        margin-left: 100px;
+    }
+
+    .pt-2 {
+        padding-top: 8px;
+    }
+
+    .pl-4 {
+        padding-left: 10px;
+    }
+
+    .pl-10 {
+        padding-left: 40px;
+    }
+
+    html {
+        width: 30cm;
+        height: 38.5cm;
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+        padding: 30px;
+        margin: 0;
+    }
+
+    .wrapper {
+        height: 100%;
+        position: relative;
+    }
+
+    .header-info {
+        position: relative;
+    }
+
+    .daily-report {
+        margin-top: 14px;
+    }
+
+    .description-info, .equipment-charges {
+        margin-top: 14px;
+    }
+
+    .legal {
+        margin-top: 50px;
+        clear: both;
+        border-top: 1px solid #adadad;
+        padding-top: 10px;
+    }
+
+    .legal-info, .acceptance {
+        width: 50%;
+    }
+
+    .legal-info {
+        float: left;
+        text-align: left;
+    }
+
+        .legal-info .text-info {
+            height: auto;
+            padding-right: 5%;
+        }
+
+    .acceptance {
+        text-align: left;
+    }
+
+        .acceptance .text-info {
+            height: auto;
+            padding-left: 5%;
+        }
+
+    .signatures {
+        position: absolute;
+        width: 100%;
+        clear: both;
+    }
+
+    .upper {
+        bottom: 200px;
+    }
+
+    .lower {
+        bottom: 0;
+    }
+
+
+    .left-signature, .right-signature {
+        width: 50%;
+    }
+
+    .left-signature {
+        float: left;
+        text-align: left;
+    }
+
+        .left-signature .text-info {
+            height: auto;
+            padding-right: 5%;
+        }
+
+    .right-signature {
+        text-align: left;
+    }
+
+        .right-signature .text-info {
+            height: auto;
+            padding-left: 5%;
+        }
+
+    .upper-part {
+        width: 100%;
+        display: inline-block;
+        border-bottom: 1px solid #adadad;
+        padding-bottom: 6px;
+        margin-bottom: 4px;
+    }
+
+        .upper-part p {
+            display: inline-block;
+        }
+
+    .customer {
+        width: 118.4px;
+        height: 60px;
+    }
+
+    .representative {
+        width: 54%;
+    }
+
+    .signature {
+        width: 22%;
+    }
+
+    .date {
+        width: 22%;
+    }
+
+    .lower-part {
+        width: 100%;
+        display: inline-block;
+    }
+
+        .lower-part p {
+            display: inline-block;
+        }
+
+    table {
+        font-family: Arial, sans-serif;
+    }
+
+    .equipment-header {
+        background: #adadad;
+        height: 20px;
+    }
+
+    .charges-table, .charges-table td {
+        border: 1px solid #adadad;
+        border-collapse: collapse;
+    }
+
+    .equipment-header th {
+        color: white;
+        font-weight: normal;
+        text-align: left;
+        font-size: 12px;
+        padding: 0 0 0 10px;
+    }
+
+    .equipment-row {
+        height: 24px;
+    }
+
+    .no-border {
+        border-left: 1px solid transparent !important;
+        border-bottom: 1px solid transparent !important;
+    }
+
+    .equipment-row td {
+        font-size: 12px;
+        font-weight: normal;
+        padding: 0 0 0 10px;
+    }
+
+
+    td.additional-field {
+        font-weight: bold;
+    }
+
+    .work-description {
+        margin-top: 4px;
+        height: auto;
+        padding: 4px;
+        border: 2px solid;
+        font-family: Arial, sans-serif;
+        font-size: 12px;
+        line-height: 18px;
+    }
+
+    .report-number {
+        position: absolute;
+        top: 50px;
+        right: 0;
+        font-size: 18px;
+        text-transform: uppercase;
+    }
+
+    .title {
+        font-size: 16px;
+        font-weight: bolder;
+    }
+
+    .subtitle {
+        font-size: 13px;
+        font-weight: bold;
+    }
+
+    .regular-text {
+        font-size: 12px;
+        font-weight: lighter;
+    }
+
+    .contact-list {
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    .center {
+        text-align: center;
+    }
+
+    .inline {
+        display: inline-block;
+    }
+
+    .uppercase {
+        text-transform: uppercase;
+    }
+
+    .w-70 {
+        width: 70%;
+    }
+
+    .w-90 {
+        width: 90%;
+    }
+
+    .w-100 {
+        width: 100%;
+    }
+
+    .underline {
+        border-bottom: 1px solid;
+        padding-left: 10px;
+    }
+    .bold {
+        font-weight: bold !important;
+    }
+</style>
+<body>
+    @RenderBody()
+</body>
+</html>

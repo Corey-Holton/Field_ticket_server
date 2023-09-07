@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Routing;
 
-namespace CA.Ticketing.Business.Services.Notifications.Renderers
+namespace CA.Ticketing.Business.Extensions
 {
     public class RazorViewToStringRenderer : IRazorViewToStringRenderer
     {
@@ -33,7 +33,7 @@ namespace CA.Ticketing.Business.Services.Notifications.Renderers
         {
             var httpContext = new DefaultHttpContext { RequestServices = _serviceProvider };
             var actionContext = new ActionContext(httpContext, new RouteData(), new ActionDescriptor());
-            
+
             var view = FindView(actionContext, viewName);
 
             using var output = new StringWriter();

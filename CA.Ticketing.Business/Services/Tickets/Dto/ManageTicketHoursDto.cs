@@ -11,5 +11,7 @@
         public double Mileage { get; set; }
 
         public double CompanyHours { get; set; }
+
+        public string Description { get; set; }
     }
 }

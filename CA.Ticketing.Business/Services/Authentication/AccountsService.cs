@@ -319,6 +319,11 @@ namespace CA.Ticketing.Business.Services.Authentication
                 userClaims.Add(new Claim(CAClaims.TicketIdentifier, user.TicketIdentifier));
             }
 
+            if (role == RoleNames.Customer && user.CustomerContactId.HasValue)
+            {
+                userClaims.Add(new Claim(CAClaims.CustomerContactId, user.CustomerContactId.Value.ToString()));
+            }
+
             return userClaims;
         }
 

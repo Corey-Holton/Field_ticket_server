@@ -1,11 +1,6 @@
 ﻿using CA.Ticketing.Common.Constants;
 using CA.Ticketing.Persistance.Models.Abstracts;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CA.Ticketing.Persistance.Models
 {
@@ -14,9 +9,16 @@ namespace CA.Ticketing.Persistance.Models
     {
         public string InvoiceIdentifier { get; set; }
 
+        [ForeignKey(nameof(Customer))]
+        public int CustomerId { get; set; }
+
+        public virtual Customer Customer { get; set; }
+
         public DateTime InvoiceDate { get; set; }
 
         public DateTime DueDate { get; set; }
+
+        public DateTime? SentToCustomer { get; set; }
 
         public bool Paid { get; set; }
 

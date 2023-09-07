@@ -1,5 +1,9 @@
 ﻿using AutoMapper;
+using CA.Ticketing.Business.Extensions;
 using CA.Ticketing.Business.Services.Base;
+using CA.Ticketing.Business.Services.FileManager;
+using CA.Ticketing.Business.Services.Pdf;
+using CA.Ticketing.Business.Services.Pdf.Dto;
 using CA.Ticketing.Business.Services.Tickets.Dto;
 using CA.Ticketing.Common.Authentication;
 using CA.Ticketing.Common.Constants;
@@ -8,6 +12,7 @@ using CA.Ticketing.Persistance.Context;
 using CA.Ticketing.Persistance.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
+using System.Linq.Expressions;
 
 namespace CA.Ticketing.Business.Services.Tickets
 {
@@ -15,14 +20,49 @@ namespace CA.Ticketing.Business.Services.Tickets
     {
         private readonly IUserContext _userContext;
 
-        public TicketService(CATicketingContext context, IMapper mapper, IUserContext userContext) : base(context, mapper)
+        private readonly IRazorViewToStringRenderer _viewRenderer;
+
+        private readonly IPdfGeneratorService _pdfGeneratorService;
+
+        private readonly IFileManagerService _fileManagerService;
+
+        private readonly string _ticketTemplate = "/Views/Tickets/TicketTemplate.cshtml";
+
+        public TicketService(
+            CATicketingContext context, 
+            IMapper mapper, 
+            IUserContext userContext,
+            IRazorViewToStringRenderer viewRenderer,
+            IPdfGeneratorService pdfGeneratorService,
+            IFileManagerService fileManagerService) : base(context, mapper)
         {
             _userContext = userContext;
+            _viewRenderer = viewRenderer;
+            _pdfGeneratorService = pdfGeneratorService;
+            _fileManagerService = fileManagerService;
         }
         
         public async Task<IEnumerable<TicketDto>> GetAll()
         {
-            var tickets = await GetTicketIncludes().ToListAsync();
+            Expression<Func<FieldTicket, bool>> ticketsFilter = x => true;
+
+            if (_userContext.User!.Role == ApplicationRole.ToolPusher)
+            {
+                ticketsFilter = x => x.CreatedBy == _userContext.User.Id;
+            }
+
+            if (_userContext.User!.Role == ApplicationRole.Customer)
+            {
+                var customerId = (await _context.CustomerContacts
+                    .FirstAsync(x => x.Id == _userContext.User.CustomerContactId)).CustomerId;
+
+                ticketsFilter = x => x.CustomerId == customerId;
+            }
+
+            var tickets = await GetTicketIncludes()
+                .Where(ticketsFilter)
+                .ToListAsync();
+
             return tickets.Select(x => _mapper.Map<TicketDto>(x));
         }
 
@@ -83,6 +123,8 @@ namespace CA.Ticketing.Business.Services.Tickets
         {
             var ticket = await GetTicket(manageTicketDto.Id);
 
+            VerifyCanUpdateTicket(ticket);
+
             VerifyCharges(ticket, manageTicketDto);
 
             _mapper.Map(manageTicketDto, ticket);
@@ -95,6 +137,9 @@ namespace CA.Ticketing.Business.Services.Tickets
         public async Task UpdateHours(ManageTicketHoursDto manageTicketHours)
         {
             var ticket = await GetTicket(manageTicketHours.TicketId);
+
+            VerifyCanUpdateTicket(ticket);
+
             _mapper.Map(manageTicketHours, ticket);
 
             CalculateCharges(ticket);
@@ -105,6 +150,9 @@ namespace CA.Ticketing.Business.Services.Tickets
         public async Task Delete(int id)
         {
             var ticket = await GetTicket(id);
+
+            VerifyCanUpdateTicket(ticket);
+
             _context.FieldTickets.Remove(ticket);
             await _context.SaveChangesAsync();
         }
@@ -119,6 +167,8 @@ namespace CA.Ticketing.Business.Services.Tickets
             {
                 throw new KeyNotFoundException(nameof(FieldTicket));
             }
+
+            VerifyCanUpdateTicket(ticket);
 
             var alreadyExists = payrollDataDto.EmployeeId.HasValue ? 
                 ticket.PayrollData
@@ -136,15 +186,37 @@ namespace CA.Ticketing.Business.Services.Tickets
             await _context.SaveChangesAsync();
         }
 
+        public async Task UpdatePayrollData(PayrollDataDto payrollDataDto)
+        {
+            var payrollData = await _context.PayrollData
+                .Include(x => x.FieldTicket)
+                .SingleOrDefaultAsync(x => x.Id == payrollDataDto.Id);
+
+            if (payrollData == null)
+            {
+                throw new KeyNotFoundException(nameof(PayrollData));
+            }
+
+            VerifyCanUpdateTicket(payrollData.FieldTicket);
+
+            payrollData.RoustaboutHours = payrollDataDto.RoustaboutHours;
+            payrollData.YardHours = payrollDataDto.YardHours;
+
+            await _context.SaveChangesAsync();
+        }
+
         public async Task RemovePayroll(int payrollDataId)
         {
             var payrollData = _context.PayrollData
+                .Include(x => x.FieldTicket)
                 .SingleOrDefault(x => x.Id == payrollDataId);
 
             if (payrollData == null)
             {
                 throw new KeyNotFoundException(nameof(PayrollData));
             }
+
+            VerifyCanUpdateTicket(payrollData.FieldTicket);
 
             _context.Entry(payrollData).State = EntityState.Deleted;
 
@@ -154,6 +226,7 @@ namespace CA.Ticketing.Business.Services.Tickets
         public async Task<UpdateTicketSpecResponse> UpdateTicketSpecification(TicketSpecificationDto ticketSpecificationDto)
         {
             var ticketSpec = await _context.TicketSpecifications
+                .Include(x => x.FieldTicket)
                 .SingleOrDefaultAsync(x => x.Id == ticketSpecificationDto.Id);
 
             if (ticketSpec == null)
@@ -176,6 +249,8 @@ namespace CA.Ticketing.Business.Services.Tickets
                 throw new Exception("This is a readonly charge");
             }
 
+            VerifyCanUpdateTicket(ticketSpec.FieldTicket);
+
             _mapper.Map(ticketSpecificationDto, ticketSpec);
 
             await _context.SaveChangesAsync();
@@ -192,7 +267,122 @@ namespace CA.Ticketing.Business.Services.Tickets
             };
         }
 
-        private void VerifyCharges(FieldTicket ticket, ManageTicketDto manageTicketDto)
+        public async Task EmployeeSignature(SignatureBaseDto signature)
+        {
+            var fieldTicket = await GetTicket(signature.TicketId);
+
+            if (fieldTicket.SignedOn.HasValue)
+            {
+                throw new Exception("This document is already signed.");
+            }
+
+            var user = await _context.Users.SingleAsync(x => x.Id == _userContext.User!.Id);
+
+            if (!string.IsNullOrEmpty(user.Signature) && string.IsNullOrEmpty(signature.Signature))
+            {
+                throw new Exception("User has no signature defined");
+            }
+
+            if (!string.IsNullOrEmpty(signature.Signature))
+            {
+                user.Signature = signature.Signature;
+            }
+
+            fieldTicket.SignedBy = _userContext.User!.Id;
+            fieldTicket.SignedOn = DateTime.UtcNow;
+            fieldTicket.EmployeeSignature = user.Signature;
+            fieldTicket.EmployeePrintedName = user.DisplayName;
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<string> PreviewTicket(int ticketId)
+        {
+            var fieldTicket = await GetTicket(ticketId);
+
+            if (fieldTicket.CustomerSignedOn.HasValue)
+            {
+                throw new Exception("This document is already signed");
+            }
+
+            var model = new TicketReport(fieldTicket);
+            var ticketPreviewHtml = await _viewRenderer.RenderViewToStringAsync(_ticketTemplate, model);
+            return ticketPreviewHtml;
+        }
+
+        public async Task CustomerSignature(CustomerSignatureDto customerSignatureDto)
+        {
+            var fieldTicket = await GetTicket(customerSignatureDto.TicketId);
+
+            if (!fieldTicket.SignedOn.HasValue)
+            {
+                throw new Exception("Ticket is not yet signed");
+            }
+
+            fieldTicket.CustomerSignedOn = DateTime.UtcNow;
+            fieldTicket.CustomerPrintedName = customerSignatureDto.PrintedName;
+
+            if (_userContext.User!.Role == ApplicationRole.Customer)
+            {
+                fieldTicket.CustomerSignedBy = _userContext.User!.Id;
+            }
+
+            var model = new TicketReport(fieldTicket, customerSignatureDto.Signature);
+            var ticketPreviewHtml = await _viewRenderer.RenderViewToStringAsync(_ticketTemplate, model);
+
+            var pdfGenerated = _pdfGeneratorService.GeneratePdf(ticketPreviewHtml);
+
+            _fileManagerService.SaveTicketFile(pdfGenerated, fieldTicket.FileName);
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<byte[]> DownloadTicket(int ticketId)
+        {
+            var fieldTicket = await GetTicket(ticketId);
+
+            if (fieldTicket.CustomerSignedOn.HasValue)
+            {
+                return _fileManagerService.GetTicketBytes(fieldTicket.FileName);
+            }
+
+            var model = new TicketReport(fieldTicket);
+            var ticketPreviewHtml = await _viewRenderer.RenderViewToStringAsync(_ticketTemplate, model);
+
+            return _pdfGeneratorService.GeneratePdf(ticketPreviewHtml);
+        }
+
+        public async Task UploadTicket(Stream fileStream, int ticketId)
+        {
+            var ticket = await GetTicket(ticketId);
+
+            using var memoryStream = new MemoryStream();
+            fileStream.CopyTo(memoryStream);
+            var fileBytes = memoryStream.ToArray();
+
+            _fileManagerService.SaveTicketFile(fileBytes, ticket.FileName);
+
+            ticket.CustomerSignedOn = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task ResetSignatures(int ticketId)
+        {
+            var ticket = await GetTicket(ticketId);
+            ticket.SignedOn = null;
+            ticket.EmployeePrintedName = string.Empty;
+            ticket.CustomerSignedBy = string.Empty;
+            ticket.CustomerSignedOn = null;
+            ticket.CustomerPrintedName = string.Empty;
+            ticket.EmployeeSignature = string.Empty;
+
+            _fileManagerService.DeleteTicket(ticket.FileName);
+
+            await _context.SaveChangesAsync();
+        }
+
+        private static void VerifyCharges(FieldTicket ticket, ManageTicketDto manageTicketDto)
         {
             if (ticket.ServiceType == manageTicketDto.ServiceType)
             {
@@ -273,7 +463,7 @@ namespace CA.Ticketing.Business.Services.Tickets
             UpdateChargeQuantity(ticket, ChargeNames.Fuel, totalTime * settings.FuelCalculationMultiplier);
         }
 
-        private void UpdateChargeQuantity(FieldTicket ticket, string chargeName, double chargeQuantity)
+        private static void UpdateChargeQuantity(FieldTicket ticket, string chargeName, double chargeQuantity)
         {
             var charge = ticket.TicketSpecifications
                 .SingleOrDefault(x => x.Charge == chargeName);
@@ -284,9 +474,9 @@ namespace CA.Ticketing.Business.Services.Tickets
             charge.Quantity = chargeQuantity;
         }
 
-        private async Task<FieldTicket> GetTicket(int id)
+        private async Task<FieldTicket> GetTicket(int id, bool includeSpecs = true)
         {
-            var ticket = await GetTicketIncludes(true)
+            var ticket = await GetTicketIncludes(includeSpecs)
                 .SingleOrDefaultAsync(x => x.Id == id);
 
             if (ticket == null)
@@ -313,6 +503,14 @@ namespace CA.Ticketing.Business.Services.Tickets
                 .Include(x => x.TicketSpecifications)
                 .Include(x => x.PayrollData)
                     .ThenInclude(p => p.Employee);
+        }
+
+        private static void VerifyCanUpdateTicket(FieldTicket ticket)
+        {
+            if (ticket.SignedOn.HasValue)
+            {
+                throw new Exception("Unable to modify ticket after it has been signed");
+            }
         }
     }
 }

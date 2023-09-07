@@ -1,0 +1,267 @@
+﻿@using CA.Ticketing.Business.Services.Pdf.Dto;
+@using CA.Ticketing.Common.Enums;
+
+@model TicketReport
+
+@{
+    Layout = "~/Views/Shared/_Layout_Ticket.cshtml";
+    var charges = Model.Charges();
+}
+
+<div class="wrapper">
+    <div class="header-info">
+        <p class="report-number">@Model.TicketIdentifier</p>
+        <p class="title center">C & A</p>
+        <p class="subtitle center mb-1">Well Services, LLC</p>
+        <p class="regular-text center mb-3">6037 Manry Ave</p>
+        <p class="regular-text center mb-1">Brookside Village, TX 77581</p>
+        <div class="contact-list center inline">
+            <p class="regular-text inline">{{representative}}</p>
+            <p class="regular-text inline ml-10">{{customer}}</p>
+        </div>
+    </div>
+    <div class="daily-report">
+        <p class="subtitle center uppercase">Daily work report</p>
+        <table class="mt-4 w-100">
+            <tr>
+                <td>
+                    <table class="w-100">
+                        <tr>
+                            <td style="width: 11%;">Rods & Tubing</td>
+                            <td class="underline" style="width: 24%;">@Model.GetServiceTypeSelection(ServiceType.RodsAndTubing)</td>
+                            <td class="pl-4" style="width: 8%;">Workovers</td>
+                            <td class="underline" style="width: 27%;">@Model.GetServiceTypeSelection(ServiceType.Workover)</td>
+                            <td class="pl-4" style="width: 5%;">P & A</td>
+                            <td class="underline" style="width: 10%;">@Model.GetServiceTypeSelection(ServiceType.PAndA)</td>
+                            <td class="pl-4" style="width: 5%;">Rig#</td>
+                            <td class="underline" style="width: 10%;">@Model.RigIdentifier</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <table class="w-70">
+                        <tr>
+                            <td class="pt-2" style="width: 13%;">Completion</td>
+                            <td class="underline pt-2" style="width: 37%;">@Model.GetServiceTypeSelection(ServiceType.Completion)</td>
+                            <td class="pl-4 pt-2" style="width: 13%;">Other</td>
+                            <td class="underline pt-2" style="width: 37%;">@Model.GetServiceTypeSelection()</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <table class="w-90">
+                        <tr>
+                            <td class="pt-2" style="width: 10%;">Customer</td>
+                            <td class="underline pt-2" style="width: 34%;">@Model.Customer</td>
+                            <td class="pl-4 pt-2" style="width: 7%;">Day/Date</td>
+                            <td class="underline pt-2" style="width: 39%;">@Model.ExecutionDate</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <table class="w-100">
+                        <tr>
+                            <td class="pt-2" style="width: 14%;">Mail Invoice To</td>
+                            <td class="underline pt-2" style="width: 31%;">@Model.Address</td>
+                            <td class="pl-4 pt-2" style="width: 6%;">City</td>
+                            <td class="underline pt-2" style="width: 12%;">@Model.City</td>
+                            <td class="pl-4 pt-2" style="width: 6%;">State</td>
+                            <td class="underline pt-2" style="width: 12%;">@Model.State</td>
+                            <td class="pl-4 pt-2" style="width: 7%;">Zip Code</td>
+                            <td class="underline pt-2" style="width: 12%;">@Model.Zip</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <table class="w-100">
+                        <tr>
+                            <td class="pt-2" style="width: 7%;">Lease</td>
+                            <td class="underline pt-2" style="width: 18%;">@Model.Lease</td>
+                            <td class="pl-4 pt-2" style="width: 7%;">Well#</td>
+                            <td class="underline pt-2" style="width: 18%;">@Model.Well</td>
+                            <td class="pl-4 pt-2" style="width: 7%;">Field</td>
+                            <td class="underline pt-2" style="width: 18%;">@Model.Field</td>
+                            <td class="pl-4 pt-2" style="width: 7%;">County</td>
+                            <td class="underline pt-2" style="width: 18%;">@Model.County</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <table class="w-100">
+                        <tr>
+                            <td class="pt-2" style="width: 7%;">From</td>
+                            <td class="underline pt-2" style="width: 18%;">@Model.StartTime</td>
+                            <td class="pl-4 pt-2" style="width: 5%;">To:</td>
+                            <td class="underline pt-2" style="width: 18%;">@Model.EndTime</td>
+                            <td class="pl-4 pt-2" style="width: 7%;">Oil Well:</td>
+                            <td class="underline pt-2" style="width: 18%;">@Model.GetWellType(WellType.Oil)</td>
+                            <td class="pl-4 pt-2" style="width: 9%;">Gas Well:</td>
+                            <td class="underline pt-2" style="width: 18%;">@Model.GetWellType(WellType.Gas)</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="description-info">
+        <p class="subtitle center">Description Of Work Performed</p>
+        <div class="work-description">
+            @Model.Description
+        </div>
+    </div>
+    <div class="equipment-charges">
+        <p class="subtitle center uppercase">Equipment Charges</p>
+        <table class="charges-table mt-4 w-100">
+            <tr class="equipment-header">
+                <th style="width: 14%;">Item</th>
+                <th style="width: 8%;">Quantity</th>
+                <th style="width: 8%;">Unit</th>
+                <th style="width: 8%;">Rate</th>
+                <th style="width: 12%;">Amount</th>
+                <th style="width: 14%;">Item</th>
+                <th style="width: 8%;">Quantity</th>
+                <th style="width: 8%;">Unit</th>
+                <th style="width: 8%;">Rate</th>
+                <th style="width: 12%;">Amount</th>
+            </tr>
+            @foreach (var equipmentCharge in charges)
+            {
+                <tr class="equipment-row">
+                    <td>@equipmentCharge.LeftSide.Item</td>
+                    <td>@equipmentCharge.LeftSide.Quantity</td>
+                    <td>@equipmentCharge.LeftSide.UoM</td>
+                    <td>@equipmentCharge.LeftSide.Rate</td>
+                    <td>@equipmentCharge.LeftSide.Amount</td>
+                    <td>@equipmentCharge.RightSide.Item</td>
+                    <td>@equipmentCharge.RightSide.Quantity</td>
+                    <td>@equipmentCharge.RightSide.UoM</td>
+                    <td>@equipmentCharge.RightSide.Rate</td>
+                    <td>@equipmentCharge.RightSide.Amount</td>
+                </tr>
+            }
+            <tr class="equipment-row">
+                <td class="no-border" colspan="6"></td>
+                <td colspan="2" class="additional-field">Sub Total</td>
+                <td colspan="2" class="bold">$@Model.Subtotal.ToString("D2")</td>
+            </tr>
+            <tr class="equipment-row">
+                <td class="no-border" colspan="6"></td>
+                <td colspan="2" class="additional-field">Tax %</td>
+                <td colspan="2">@Model.TaxRate</td>
+            </tr>
+            <tr class="equipment-row">
+                <td class="no-border" colspan="6"></td>
+                <td colspan="2" class="additional-field">Total</td>
+                <td colspan="2" class="bold">$@Model.Total.ToString("D2")</td>
+            </tr>
+        </table>
+
+    </div>
+
+    <div class="equipment-charges">
+        <p class="subtitle center">Payroll</p>
+        <table class="charges-table mt-4 w-100">
+            <tr class="equipment-header">
+                <th style="width: 20%;">Labor</th>
+                <th style="width: 20%;">Name</th>
+                <th style="width: 10%;">Employee#</th>
+                <th style="width: 10%;">Rig Hours</th>
+                <th style="width: 10%;">Travel</th>
+                <th style="width: 10%;">Yard</th>
+                <th style="width: 10%;">Roustabout</th>
+                <th style="width: 10%;">Total Time</th>
+            </tr>
+            @foreach (var payrollData in Model.PayrollData)
+            {
+                <tr class="equipment-row">
+                    <td>@payrollData.Labor</td>
+                    <td>@payrollData.Name</td>
+                    <td>@payrollData.EmployeeNumber</td>
+                    <td>@payrollData.RigHours</td>
+                    <td>@payrollData.Travel</td>
+                    <td>@payrollData.Yard</td>
+                    <td>@payrollData.Roustabout</td>
+                    <td>@payrollData.TotalTime</td>
+                </tr>
+            }
+        </table>
+
+    </div>
+
+    <div class="legal">
+        <div class="legal-info inline">
+            <div class="text-info">
+                LEGAL TERMS: Customer herby acknowledges and agrees to the
+                terms and conditions of the master service agreement hereof which
+                include, but are not limited to, PAYMENT, RELEASE, IDEMNITY, AND
+                LIMITED WARRANTY provisions.
+            </div>
+        </div>
+        <div class="acceptance inline">
+            <div class="text-info">
+                CUSTOMER ACCEPTANCE OF MATERIALS AND SERVICES: <br>
+                Customer herby acknowledges receipt and acceptance of
+                materials and services identified on this ticket.
+            </div>
+        </div>
+    </div>
+
+    <div class="signatures upper">
+        <div class="left-signature inline">
+            &nbsp;
+        </div>
+        <div class="right-signature inline">
+            <div class="text-info">
+                <div class="upper-part">
+                    <p class="representative">@Model.CustomerPrintedName</p>
+                    @if (!string.IsNullOrEmpty(Model.CustomerSignature))
+                    {
+                        <img class="signature" src="@Model.CustomerSignature" alt="Customer Signature" />
+                    }
+                    <p class="date">@Model.CustomerSignedOn</p>
+                </div>
+                <div class="lower-part">
+                    <p class="representative">Customer Representative (Print Name)</p>
+                    <p class="signature">(Signature)</p>
+                    <p class="date">Date</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="signatures lower">
+        <div class="left-signature inline">
+            <div class="text-info">
+                <div class="upper-part">
+                </div>
+                <div class="lower-part">
+                    <p class="customer w-100">Must be signed by Customer or Customers Agent</p>
+                </div>
+            </div>
+        </div>
+        <div class="right-signature inline">
+            <div class="text-info">
+                <div class="upper-part">
+                    <p class="representative">@Model.EmployeePrintedName</p>
+                    <img class="signature" src="@Model.EmployeeSignature" alt="Employee Signature" />
+                    <p class="date">@Model.EmployeeSignedOn</p>
+                </div>
+                <div class="lower-part">
+                    <p class="representative">CA Well Services Rep (Print Name)</p>
+                    <p class="signature">(Signature)</p>
+                    <p class="date">Date</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

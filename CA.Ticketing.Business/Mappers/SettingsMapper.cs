@@ -11,6 +11,10 @@ namespace CA.Ticketing.Business.Mappers
             CreateMap<Setting, SettingDto>();
 
             CreateMap<SettingDto, Setting>();
+
+            CreateMap<ApplicationUser, ProfileDto>();
+
+            CreateMap<ProfileDto, ApplicationUser>();
         }
     }
 }

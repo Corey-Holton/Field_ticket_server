@@ -1,4 +1,4 @@
-﻿namespace CA.Ticketing.Business.Services.Notifications.Renderers
+﻿namespace CA.Ticketing.Business.Extensions
 {
     public interface IRazorViewToStringRenderer
     {

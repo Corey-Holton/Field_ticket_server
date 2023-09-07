@@ -1,12 +1,14 @@
 ﻿using CA.Ticketing.Business.Authentication;
+using CA.Ticketing.Business.Extensions;
 using CA.Ticketing.Business.Services.Authentication;
 using CA.Ticketing.Business.Services.Charges;
 using CA.Ticketing.Business.Services.Customers;
 using CA.Ticketing.Business.Services.Employees;
 using CA.Ticketing.Business.Services.Equipments;
+using CA.Ticketing.Business.Services.FileManager;
 using CA.Ticketing.Business.Services.Invoices;
 using CA.Ticketing.Business.Services.Notifications;
-using CA.Ticketing.Business.Services.Notifications.Renderers;
+using CA.Ticketing.Business.Services.Payroll;
 using CA.Ticketing.Business.Services.Pdf;
 using CA.Ticketing.Business.Services.Scheduling;
 using CA.Ticketing.Business.Services.Settings;
@@ -39,6 +41,8 @@ namespace CA.Ticketing.Business.Bootstrap
             services.AddScoped<IInvoiceService, InvoiceService>();
             services.AddScoped<ISettingsService, SettingsService>();
             services.AddScoped<IPdfGeneratorService, PdfGeneratorService>();
+            services.AddScoped<IPayrollService, PayrollService>();
+            services.AddScoped<IFileManagerService, FileManagerService>();
         }
 
         private static void RegisterBaseServices(this IServiceCollection services)

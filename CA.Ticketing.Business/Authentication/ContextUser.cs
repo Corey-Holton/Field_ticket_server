@@ -1,5 +1,6 @@
 ﻿using CA.Ticketing.Common.Authentication;
 using CA.Ticketing.Common.Constants;
+using CA.Ticketing.Common.Enums;
 using System.Security.Claims;
 
 namespace CA.Ticketing.Business.Authentication
@@ -9,6 +10,10 @@ namespace CA.Ticketing.Business.Authentication
         public string Id { get; set; }
 
         public string TicketIdentifier { get; set; }
+
+        public ApplicationRole Role { get; set; }
+
+        public int? CustomerContactId { get; set; }
 
         public IContextUser FromClaimsIdentity(ClaimsIdentity identity)
         {
@@ -23,6 +28,26 @@ namespace CA.Ticketing.Business.Authentication
             if (ticketIdentifierClaim != null)
             {
                 TicketIdentifier = ticketIdentifierClaim.Value;
+            }
+
+            var roleClaim = identity.FindFirst(ClaimTypes.Role);
+
+            if (roleClaim != null)
+            {
+                if (Enum.TryParse(typeof(ApplicationRole), roleClaim.Value, out var role))
+                {
+                    Role = (ApplicationRole)role!;
+                }
+            }
+
+            var customerContactClaim = identity.FindFirst(CAClaims.CustomerContactId);
+
+            if (customerContactClaim != null)
+            {
+                if (int.TryParse(customerContactClaim.Value, out var customerContactId))
+                {
+                    CustomerContactId = customerContactId;
+                }
             }
 
             return this;

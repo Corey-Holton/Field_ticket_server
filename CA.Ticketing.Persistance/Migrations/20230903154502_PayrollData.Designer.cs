@@ -4,6 +4,7 @@ using CA.Ticketing.Persistance.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CA.Ticketing.Persistance.Migrations
 {
     [DbContext(typeof(CATicketingContext))]
-    partial class CATicketingContextModelSnapshot : ModelSnapshot
+    [Migration("20230903154502_PayrollData")]
+    partial class PayrollData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -525,9 +527,6 @@ namespace CA.Ticketing.Persistance.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("CustomerId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("DueDate")
                         .HasColumnType("datetime2");
 
@@ -541,12 +540,7 @@ namespace CA.Ticketing.Persistance.Migrations
                     b.Property<bool>("Paid")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime?>("SentToCustomer")
-                        .HasColumnType("datetime2");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("CustomerId");
 
                     b.ToTable("Invoices");
                 });
@@ -891,7 +885,7 @@ namespace CA.Ticketing.Persistance.Migrations
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.FieldTicket", b =>
                 {
                     b.HasOne("CA.Ticketing.Persistance.Models.Customer", "Customer")
-                        .WithMany("Tickets")
+                        .WithMany()
                         .HasForeignKey("CustomerId");
 
                     b.HasOne("CA.Ticketing.Persistance.Models.Equipment", "Equipment")
@@ -913,17 +907,6 @@ namespace CA.Ticketing.Persistance.Migrations
                     b.Navigation("Invoice");
 
                     b.Navigation("Location");
-                });
-
-            modelBuilder.Entity("CA.Ticketing.Persistance.Models.Invoice", b =>
-                {
-                    b.HasOne("CA.Ticketing.Persistance.Models.Customer", "Customer")
-                        .WithMany("Invoices")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.PayrollData", b =>
@@ -1034,11 +1017,7 @@ namespace CA.Ticketing.Persistance.Migrations
                 {
                     b.Navigation("Contacts");
 
-                    b.Navigation("Invoices");
-
                     b.Navigation("Locations");
-
-                    b.Navigation("Tickets");
                 });
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.CustomerContact", b =>

@@ -20,8 +20,23 @@ namespace CA.Ticketing.Business.Services.Tickets
 
         Task AddPayroll(PayrollDataDto payrollDataDto);
 
+        Task UpdatePayrollData(PayrollDataDto payrollDataDto);
+
         Task RemovePayroll(int payrollDataId);
 
         Task<UpdateTicketSpecResponse> UpdateTicketSpecification(TicketSpecificationDto ticketSpecificationDto);
+
+        Task<string> PreviewTicket(int ticketId);
+
+        Task EmployeeSignature(SignatureBaseDto signatureBaseDto);
+
+        Task CustomerSignature(CustomerSignatureDto customerSignatureDto);
+
+        Task<byte[]> DownloadTicket(int ticketId);
+
+        Task UploadTicket(Stream fileStream, int ticketId);
+
+        Task ResetSignatures(int ticketId);
+
     }
 }

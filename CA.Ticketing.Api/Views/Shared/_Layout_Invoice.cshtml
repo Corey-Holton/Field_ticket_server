@@ -1,0 +1,202 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Invoice-PDF</title>
+</head>
+<style>
+
+    html {
+        width: 30cm;
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+    }
+
+    .wrapper {
+        height: 100%;
+        margin-bottom: 120px;
+        position: relative;
+    }
+
+    p, div, th, td {
+        font-family: Verdana, sans-serif;
+        padding: 0;
+        margin: 0;
+    }
+
+    .mt-4 {
+        margin-top: 14px;
+    }
+
+    .mt-10 {
+        margin-top: 100px;
+    }
+
+    .mb-1 {
+        margin-bottom: 4px;
+    }
+
+    .mb-2 {
+        margin-bottom: 8px;
+    }
+
+
+    .mb-3 {
+        margin-bottom: 10px;
+    }
+
+    .ml-10 {
+        margin-left: 100px;
+    }
+
+    .pt-2 {
+        padding-top: 8px;
+    }
+
+    .pl-4 {
+        padding-left: 10px;
+    }
+
+    .pl-10 {
+        padding-left: 40px;
+    }
+
+    .pb-2 {
+        padding-bottom: 6px;
+    }
+
+    .title {
+        font-family: Arial, sans-serif;
+        font-size: 24px;
+        font-weight: bold;
+        text-transform: uppercase;
+        color: #0077CB;
+    }
+
+    .subtitle {
+        font-family: Arial, sans-serif;
+        font-size: 18px;
+        color: #0077CB;
+    }
+
+    .regular-title {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        color: #8C9097;
+    }
+
+    .invoice-header {
+        height: 300px;
+        background: white;
+        position: relative;
+        padding: 100px 60px 40px 60px;
+    }
+
+    .bill-section {
+        background: #E9F4FB;
+        padding: 40px 60px;
+    }
+
+    .overview-section {
+        background: white;
+        padding: 20px 60px 20px 30px;
+    }
+
+    .invoice-header-table tr td {
+        font-size: 12px;
+        font-weight: normal;
+    }
+
+    .service-table {
+        width: 100%;
+        position: relative;
+    }
+
+    .payment-section {
+        position: absolute;
+        left: 60px;
+        bottom: -80px;
+        width: 10cm;
+    }
+
+    .payment-title {
+        font-size: 20px;
+        color: #0077CB;
+        margin-bottom: 10px;
+    }
+
+    .payment-text {
+        font-size: 12px;
+        line-height: 16px;
+    }
+
+    .larger {
+        font-size: 14px;
+        font-weight: normal !important;
+    }
+
+    .payment-image {
+        width: 30px;
+        height: auto;
+        margin-bottom: 20px;
+    }
+
+
+    .service-table th {
+        color: #8C9097;
+        text-align: left;
+        font-size: 12px;
+        font-weight: normal;
+        padding-bottom: 10px;
+    }
+
+    .service-table td {
+        font-size: 12px;
+        padding: 12px 2px;
+        vertical-align: top;
+    }
+
+    .more-padding {
+        padding: 20px 2px !important;
+    }
+
+    .large-font {
+        font-size: 16px !important;
+    }
+
+    .underline {
+        border-bottom: 1px solid #e7e8eb;
+    }
+
+    .align-right {
+        text-align: right !important;
+    }
+
+    .bold {
+        font-weight: bold !important;
+    }
+
+    .ca-image {
+        position: absolute;
+        top: 120px;
+        right: 60px;
+        width: 8cm;
+        height: auto;
+    }
+
+    .w-50 {
+        width: 50%;
+    }
+
+    .w-70 {
+        width: 70%;
+    }
+</style>
+<body>
+    @RenderBody()
+</body>
+</html>

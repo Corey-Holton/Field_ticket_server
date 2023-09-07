@@ -46,11 +46,21 @@ namespace CA.Ticketing.Persistance.Models
 
         public virtual Invoice? Invoice { get; set; }
 
-        public string FileIndicatorGenerated { get; set; } = string.Empty;
-
-        public string FileIndicatorCustomer { get; set; } = string.Empty;
-
         public string CreatedBy { get; set; }
+
+        public DateTime? SignedOn { get; set; }
+
+        public string SignedBy { get; set; }
+
+        public string EmployeePrintedName { get; set; }
+
+        public string EmployeeSignature { get; set; }
+
+        public DateTime? CustomerSignedOn { get; set; }
+
+        public string CustomerPrintedName { get; set; }
+
+        public string CustomerSignedBy { get; set; }
 
         public virtual ICollection<TicketSpecification> TicketSpecifications { get; set; } = new List<TicketSpecification>();
 
@@ -63,6 +73,12 @@ namespace CA.Ticketing.Persistance.Models
         public double Total => TicketSpecifications.Sum(x => x.Quantity * x.Rate);
 
         [NotMapped]
-        public bool HasCustomerSignature { get; set; }
+        public bool HasCustomerSignature => SignedOn.HasValue;
+
+        [NotMapped]
+        public bool HasEmployeeSignature => SignedOn.HasValue;
+
+        [NotMapped]
+        public string FileName => $"{TicketId}-{Id}.pdf";
     }
 }

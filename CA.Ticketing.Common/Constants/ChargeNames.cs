@@ -65,7 +65,6 @@
         { 
             ChargeNames.Rig,
             ChargeNames.Fuel,
-            ChargeNames.ToolPusher,
             ChargeNames.Labor
         };
         

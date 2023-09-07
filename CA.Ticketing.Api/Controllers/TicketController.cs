@@ -120,6 +120,19 @@ namespace CA.Ticketing.Api.Controllers
         }
 
         /// <summary>
+        /// Update Payroll data
+        /// </summary>
+        /// <param name="payrollDataDto">PayrollDataDto</param>
+        [Route(ApiRoutes.Tickets.UpdatePayrollEntry)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> UpdatePayroll(PayrollDataDto payrollDataDto)
+        {
+            await _ticketService.UpdatePayrollData(payrollDataDto);
+            return Ok();
+        }
+
+        /// <summary>
         /// Remove Payroll data
         /// </summary>
         /// <param name="payrollDataId">PayrollData Id</param>
@@ -143,6 +156,86 @@ namespace CA.Ticketing.Api.Controllers
         {
             var result = await _ticketService.UpdateTicketSpecification(ticketSpecificationDto);
             return Ok(result);
+        }
+
+        /// <summary>
+        /// Preview Ticket
+        /// </summary>
+        /// <param name="ticketId">Ticket Id</param>
+        [Route(ApiRoutes.Tickets.Preview)]
+        [HttpGet]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        public async Task<IActionResult> PreviewTicket(int ticketId)
+        {
+            var previewResult = await _ticketService.PreviewTicket(ticketId);
+            return Ok(previewResult);
+        }
+
+        /// <summary>
+        /// Add Employee Signature
+        /// </summary>
+        /// <param name="signatureBaseDto">SignatureBaseDto</param>
+        [Route(ApiRoutes.Tickets.EmployeeSignature)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> EmployeeSignature(SignatureBaseDto signatureBaseDto)
+        {
+            await _ticketService.EmployeeSignature(signatureBaseDto);
+            return Ok();
+        }
+
+        /// <summary>
+        /// Add Customer Signature
+        /// </summary>
+        /// <param name="customerSignatureDto">CustomerSignatureDto</param>
+        [Route(ApiRoutes.Tickets.CustomerSignature)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> CustomerSignature(CustomerSignatureDto customerSignatureDto)
+        {
+            await _ticketService.CustomerSignature(customerSignatureDto);
+            return Ok();
+        }
+
+        /// <summary>
+        /// Customer Ticket Upload
+        /// </summary>
+        /// <param name="ticketId">Ticket Id</param>
+        /// <param name="ticketPdf">Ticket Upload</param>
+        [Route(ApiRoutes.Tickets.CustomerUpload)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> CustomerUpload(int ticketId, IFormFile ticketPdf)
+        {
+            await _ticketService.UploadTicket(ticketPdf.OpenReadStream(), ticketId);
+
+            return Ok();
+        }
+
+        /// <summary>
+        /// Download Ticket
+        /// </summary>
+        /// <param name="ticketId">Ticket Id</param>
+        [Route(ApiRoutes.Tickets.Download)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> DownloadTicket(int ticketId)
+        {
+            await _ticketService.DownloadTicket(ticketId);
+            return Ok();
+        }
+
+        /// <summary>
+        /// Reset Ticket Signatures
+        /// </summary>
+        /// <param name="ticketId">Ticket Id</param>
+        [Route(ApiRoutes.Tickets.Reset)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> ResetSignatures(int ticketId)
+        {
+            await _ticketService.ResetSignatures(ticketId);
+            return Ok();
         }
     }
 }

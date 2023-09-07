@@ -1,4 +1,4 @@
-﻿using CA.Ticketing.Business.Services.Notifications.Renderers;
+﻿using CA.Ticketing.Business.Extensions;
 using CA.Ticketing.Common.Models;
 using CA.Ticketing.Common.Setup;
 using Microsoft.Extensions.Options;

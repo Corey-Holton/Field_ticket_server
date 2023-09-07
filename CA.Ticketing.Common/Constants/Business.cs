@@ -20,12 +20,12 @@
         public class ServiceTypes
         {
             public const string RodsAndTubing = "Rods And Tubing";
-            public const string Workovers = "Workovers";
+            public const string Workover = nameof(Workover);
             public const string PAndA = "P&A";
-            public const string Completion = "Completion";
+            public const string Completion = nameof(Completion);
             public const string StandBy = "Stand By";
-            public const string Roustabout = "Roustabout";
-            public const string Yard = "Yard";
+            public const string Roustabout = nameof(Roustabout);
+            public const string Yard = nameof(Yard);
         }
     }
 }

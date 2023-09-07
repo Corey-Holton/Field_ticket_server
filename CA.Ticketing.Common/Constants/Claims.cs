@@ -5,5 +5,7 @@
         public const string TicketIdentifier = nameof(TicketIdentifier);
 
         public const string RigId = nameof(RigId);
+
+        public const string CustomerContactId = nameof(CustomerContactId);
     }
 }

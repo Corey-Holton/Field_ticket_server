@@ -45,7 +45,7 @@ namespace CA.Ticketing.Common.Extensions
                 ServiceType.PAndA => ServiceTypes.PAndA,
                 ServiceType.Completion => ServiceTypes.Completion,
                 ServiceType.Yard => ServiceTypes.Yard,
-                ServiceType.Workover => ServiceTypes.Workovers,
+                ServiceType.Workover => ServiceTypes.Workover,
                 ServiceType.StandBy => ServiceTypes.StandBy,
                 ServiceType.Roustabout => ServiceTypes.Roustabout,
                 _ => throw new ArgumentNullException(null, nameof(serviceType))

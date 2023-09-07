@@ -73,5 +73,18 @@ namespace CA.Ticketing.Api.Controllers
             await _accountsService.SetPasswordFromLink(setPasswordDto);
             return Ok();
         }
+
+        /// <summary>
+        /// Change own password
+        /// </summary>
+        /// <param name="changePasswordDto">ChangePasswordDto</param>
+        [Route(ApiRoutes.Authentication.ChangePassword)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> ChangePassword(ChangePasswordDto changePasswordDto)
+        {
+            await _accountsService.ChangePassword(changePasswordDto);
+            return Ok();
+        }
     }
 }

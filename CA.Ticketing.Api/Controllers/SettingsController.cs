@@ -40,5 +40,30 @@ namespace CA.Ticketing.Api.Controllers
             await _settingsService.Update(settingDto);
             return Ok();
         }
+
+        ///<summary>
+        /// Get Profile
+        /// </summary>
+        [Route(ApiRoutes.Settings.GetProfile)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetProfile()
+        {
+            var profile = await _settingsService.GetProfile();
+            return Ok(profile);
+        }
+
+        ///<summary>
+        /// Update Profile
+        /// </summary>
+        /// <param name="profileDto">ProfileDto</param>
+        [Route(ApiRoutes.Settings.UpdateProfile)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> UpdateProfile(ProfileDto profileDto)
+        {
+            await _settingsService.UpdateProfile(profileDto);
+            return Ok();
+        }
     }
 }
