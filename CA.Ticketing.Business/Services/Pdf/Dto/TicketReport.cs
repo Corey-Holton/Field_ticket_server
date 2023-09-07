@@ -63,7 +63,7 @@ namespace CA.Ticketing.Business.Services.Pdf.Dto
 
         public string EmployeeSignature => _fieldTicket.EmployeePrintedName;
 
-        public string EmployeeSignedOn => _fieldTicket.SignedOn!.Value.ToString("yyyy-MM-dd");
+        public string EmployeeSignedOn => _fieldTicket.SignedOn?.ToString("yyyy-MM-dd") ?? string.Empty;
 
         public List<TicketPayrollData> PayrollData => _fieldTicket.PayrollData.Select(x => new TicketPayrollData(_fieldTicket, x)).ToList();
 
