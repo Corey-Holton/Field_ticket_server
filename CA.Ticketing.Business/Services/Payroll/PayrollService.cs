@@ -1,16 +1,11 @@
 ﻿using AutoMapper;
 using CA.Ticketing.Business.Services.Base;
-using CA.Ticketing.Business.Services.Employees;
 using CA.Ticketing.Business.Services.Payroll.Dto;
-using CA.Ticketing.Business.Services.Settings.Dto;
-using CA.Ticketing.Business.Services.Tickets;
-using CA.Ticketing.Business.Services.Tickets.Dto;
+using CA.Ticketing.Common.Constants;
+using CA.Ticketing.Common.Enums;
 using CA.Ticketing.Persistance.Context;
-using CA.Ticketing.Persistance.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 
 namespace CA.Ticketing.Business.Services.Payroll
 {
@@ -23,101 +18,107 @@ namespace CA.Ticketing.Business.Services.Payroll
 
         public async Task<IEnumerable<EmployeePayrollDataDto>> GetPayrollData(DateTime startTime, DateTime endTime)
         {
-            await Task.Delay(10);
+            // Get settings for calculation
+            var settings = await _context.Settings.FirstAsync();
 
-            var tickets = await GetTicketDetailsByDates(startTime, endTime);
+            // Catch end of the day of the end date
+            endTime = endTime.AddDays(1);
 
-            var payrollData = ExtractPayrollData(tickets.ToList());
-
-            var groupedPayrollData = GroupPayrollDataByEmployee(payrollData);
-
-            var finalList = await CalculateTotals(groupedPayrollData.ToList());
-
-            return finalList.ToList();
-        }
-
-        private async Task<IEnumerable<TicketDetailsDto>> GetTicketDetailsByDates(DateTime startDate, DateTime endDate)
-        {
+            // Get all tickets
             var tickets = await _context.FieldTickets
-               .Include(x => x.PayrollData)
-               .ThenInclude(p => p.Employee)
-               .Where(x => x.ExecutionDate >= startDate && x.ExecutionDate <= endDate)
-               .ToListAsync();
+                .Include(x => x.TicketSpecifications)
+                .Include(x => x.PayrollData)
+                    .ThenInclude(p => p.Employee)
+                .Where(x => x.ExecutionDate >= startTime && x.ExecutionDate <= endTime)
+                .ToListAsync();
 
-            return tickets.Select(x => _mapper.Map<TicketDetailsDto>(x));
-        }
+            return tickets
+                // Select all PayrollData from tickets
+                .SelectMany(ticket => ticket.PayrollData
+                    // Transform Payroll data
+                    .Select(payrollEntry =>
+                        {
+                            // Charge company or input hours
+                            var chargeCompanyHours = ticket.ServiceType < ServiceType.Roustabout;
+                            
+                            // Special logic for Tool pushers
+                            var isToolPusher = payrollEntry.Employee?.JobTitle == JobTitle.ToolPusher;
 
-        private List<EmployeePayrollDataDto> ExtractPayrollData(List<TicketDetailsDto> tickets)
-        {
-            var payrollData = new List<EmployeePayrollDataDto>();
-
-            foreach (var ticket in tickets)
-            {
-                foreach (var payrollItem in ticket.PayrollData)
+                            // Return anonymous object for calculation
+                            return new
+                            {
+                                // Set grouping identifier
+                                GroupingIdentifier = payrollEntry.EmployeeId?.ToString() ?? payrollEntry.Name.ToLower(),
+                                // Payroll data can contain Employee or just a name
+                                Name = payrollEntry.Employee?.DisplayName ?? payrollEntry.Name,
+                                Rate = payrollEntry.Employee?.PayRate ?? 20,
+                                // Hours charged only calculated if not a tool pusher for company hours or input hours for everyone
+                                HoursCharged = chargeCompanyHours ? (!isToolPusher ? ticket.CompanyHours : 0) :
+                                    (ticket.ServiceType == ServiceType.Roustabout ?
+                                        payrollEntry.RoustaboutHours : payrollEntry.YardHours),
+                                // Set week for the entry
+                                Week = (int)Math.Ceiling((ticket.ExecutionDate - startTime).TotalDays / 7),
+                                ticket.Mileage,
+                                IsToolPusher = isToolPusher,
+                                // Get Tool pusher rate from specifications
+                                ToolPusherRate = !chargeCompanyHours || !isToolPusher ? 0 :
+                                    ticket.TicketSpecifications
+                                        .FirstOrDefault(x => x.Charge == ChargeNames.ToolPusher)?.Rate ?? 0
+                            };
+                        }))
+                // Group by set identifier
+                .GroupBy(x => x.GroupingIdentifier)
+                // Calculate totals
+                .Select(employeePayrollData => 
                 {
-                    payrollData.Add(new EmployeePayrollDataDto
+                    var payRate = employeePayrollData.First().Rate;
+                    var name = employeePayrollData.First().Name;
+
+                    // Get total hours for each week
+                    var perWeekTotals = employeePayrollData
+                        .GroupBy(x => x.Week)
+                        .Select(w => w.Sum(g => g.HoursCharged));
+
+                    // Total hours for employee
+                    var totalHours = employeePayrollData.Sum(x => x.HoursCharged);
+
+                    // Get overtime hours by calculating 
+                    var weeklyRegularHours = 40;
+                    var overTimeHours = perWeekTotals
+                        .Where(x => x > weeklyRegularHours).Sum(x => weeklyRegularHours - x);
+
+                    // Set regular hours based on overtime hours
+                    var regularHours = totalHours - overTimeHours;
+
+                    // Mileage calculation
+                    var mileage = employeePayrollData.Sum(x => x.Mileage);
+                    var totalMileage = mileage * settings.MileageCost;
+
+                    // Set Jobs count
+                    var jobsCount = employeePayrollData.Count();
+
+                    // Set total from jobs for ToolPusher
+                    var totalJobs = employeePayrollData.Sum(x => x.ToolPusherRate);
+
+                    // Set amount total
+                    var amountTotal = totalMileage + 
+                        totalJobs + 
+                        regularHours * payRate + 
+                        overTimeHours * payRate * (1 + settings.OvertimePercentageIncrease / 100);
+
+                    return new EmployeePayrollDataDto()
                     {
-                        ExecutionTime = ticket.ExecutionDate,
-                        Employee = $"{payrollItem.Employee.FirstName} {payrollItem.Employee.LastName}",
-                        EmployeeId = (int)payrollItem.EmployeeId,
-                        RegularHours = ticket.CompanyHours,
-                        OvertimeHours = 0,
-                        Mileage = ticket.Mileage,
-                        TotalHours = 0,
-                        TotalMileage = 0,
-                        TotalAmount = 0
-                    });
-                }
-            }
-            return payrollData;
-        }
-
-        private IEnumerable<EmployeePayrollDataDto> GroupPayrollDataByEmployee(List<EmployeePayrollDataDto> payrollData)
-        {
-            return payrollData
-                .GroupBy(item => item.EmployeeId)
-                .Select(group => new EmployeePayrollDataDto
-                {
-                    EmployeeId = group.Key,
-                    Employee = group.First().Employee,
-                    RegularHours = group.Sum(item => item.RegularHours),
-                    Mileage = group.Sum(item => item.Mileage)
+                        Employee = name,
+                        TotalHours = totalHours,
+                        Jobs = jobsCount,
+                        TotalJobs = totalJobs,
+                        RegularHours = regularHours,
+                        OvertimeHours = overTimeHours,
+                        Mileage = mileage,
+                        TotalMileage = totalMileage,
+                        TotalAmount = amountTotal
+                    };
                 });
-        }
-
-        private async Task<SettingDto> GetSettings()
-        {
-            var setting = await _context.Settings.FirstAsync();
-            return _mapper.Map<SettingDto>(setting);
-        }
-
-        private async Task<Employee> GetEmployee(int id)
-        {
-            var employee = await _context.Employees
-                .SingleOrDefaultAsync(x => x.Id == id);
-
-            if (employee == null)
-            {
-                throw new KeyNotFoundException(nameof(Employee));
-            }
-
-            return employee!;
-        }
-
-
-        private async Task<IEnumerable<EmployeePayrollDataDto>> CalculateTotals(List<EmployeePayrollDataDto> data)
-        {
-            var settings = await GetSettings();
-            var list = data.Select(async item =>
-            {
-                var employee = await GetEmployee(item.EmployeeId);
-                item.TotalMileage = settings.MileageCost * item.Mileage;
-                item.TotalHours = item.RegularHours * employee.PayRate;
-                item.TotalAmount = item.TotalHours + item.TotalMileage;
-                return item;
-            }).ToList();
-            await Task.WhenAll(list);
-            return list.Select(x => x.Result);
         }
     }
 }

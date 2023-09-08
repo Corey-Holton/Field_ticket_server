@@ -221,8 +221,10 @@ namespace CA.Ticketing.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> DownloadTicket(int ticketId)
         {
-            await _ticketService.DownloadTicket(ticketId);
-            return Ok();
+            var ticketBytes = await _ticketService.DownloadTicket(ticketId);
+            var stream = new MemoryStream(ticketBytes);
+
+            return File(stream, "application/pdf", $"Ticket_{ticketId}.pdf");
         }
 
         /// <summary>

@@ -73,7 +73,7 @@ namespace CA.Ticketing.Persistance.Models
         public double Total => TicketSpecifications.Sum(x => x.Quantity * x.Rate);
 
         [NotMapped]
-        public bool HasCustomerSignature => SignedOn.HasValue;
+        public bool HasCustomerSignature => CustomerSignedOn.HasValue;
 
         [NotMapped]
         public bool HasEmployeeSignature => SignedOn.HasValue;

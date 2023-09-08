@@ -4,13 +4,11 @@ namespace CA.Ticketing.Business.Services.Payroll.Dto
 {
     public class EmployeePayrollDataDto
     {
-        [JsonIgnore]
-        public DateTime ExecutionTime { get; set; }
-
         public string Employee { get; set; }
 
-        [JsonIgnore]
-        public int EmployeeId { get; set; }
+        public double Jobs { get; set; }
+
+        public double TotalJobs { get; set; }
 
         public double RegularHours { get; set; }
 
