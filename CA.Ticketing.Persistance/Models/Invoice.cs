@@ -7,7 +7,7 @@ namespace CA.Ticketing.Persistance.Models
     [Table(TableNames.Invoices)]
     public class Invoice : IdentityModel<int>
     {
-        public string InvoiceIdentifier { get; set; }
+        public string InvoiceId { get; set; }
 
         [ForeignKey(nameof(Customer))]
         public int CustomerId { get; set; }

@@ -158,16 +158,14 @@
             public const string _root = $"{ApiRoutes._root}/invoices";
 
             public const string List = $"{_root}/list";
-
-            public const string ListByDates = $"{_root}/list/startDate={{startDate}}&endDate={{endDate}}";
-
-            public const string ListByCustomer = $"{_root}/list/customer={{search}}";
-
-            public const string Get = $"{_root}/{{invoiceId}}";
                 
             public const string Create = $"{_root}/create";
 
-            public const string Update = $"{_root}/update";
+            public const string MarkAsPaid = $"{_root}/mark-paid";
+
+            public const string SendToCustomer = $"{_root}/send";
+
+            public const string Download = $"{_root}/download";
 
             public const string Delete = $"{_root}/delete";
         }

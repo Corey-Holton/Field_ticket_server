@@ -5,7 +5,6 @@ using CA.Ticketing.Common.Enums;
 using CA.Ticketing.Persistance.Context;
 using CA.Ticketing.Persistance.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Cryptography.X509Certificates;
 
 namespace CA.Ticketing.Business.Services.Equipments
 {

@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
-using CA.Ticketing.Business.Services.Authentication;
+﻿using AutoMapper;
+using CA.Ticketing.Business.Extensions;
 using CA.Ticketing.Business.Services.Base;
-using CA.Ticketing.Business.Services.Customers.Dto;
 using CA.Ticketing.Business.Services.Invoices.Dto;
-using CA.Ticketing.Business.Services.Tickets.Dto;
+using CA.Ticketing.Business.Services.Pdf;
+using CA.Ticketing.Business.Services.Pdf.Dto;
 using CA.Ticketing.Persistance.Context;
 using CA.Ticketing.Persistance.Models;
 using Microsoft.EntityFrameworkCore;
@@ -17,125 +12,116 @@ namespace CA.Ticketing.Business.Services.Invoices
 {
     public class InvoiceService : EntityServiceBase, IInvoiceService
     {
-        public InvoiceService(CATicketingContext context, IMapper mapper) : base(context, mapper)
+        private readonly IPdfGeneratorService _pdfGeneratorService;
+
+        private readonly IRazorViewToStringRenderer _viewRenderer;
+
+        private readonly string _ticketTemplate = "/Views/Invoice/InvoiceTemplate.cshtml";
+
+        public InvoiceService(
+            CATicketingContext context,
+            IMapper mapper, 
+            IPdfGeneratorService pdfGeneratorService,
+            IRazorViewToStringRenderer viewRenderer) : base(context, mapper)
         {
-            
+            _pdfGeneratorService = pdfGeneratorService;
+            _viewRenderer = viewRenderer;
         }
 
         public async Task<IEnumerable<InvoiceDto>> GetAll()
         {
             var invoices = await _context.Invoices
+                .Include(x => x.Customer)
+                .Include(x => x.Tickets)
+                    .ThenInclude(x => x.TicketSpecifications)
                 .ToListAsync();
-            return invoices.Select(x => _mapper.Map<InvoiceDto>(x));
-        }
-
-        public async Task<IEnumerable<InvoiceDto>> GetByDates(DateTime startDate, DateTime endDate)
-        {
-            var invoices = await _context.Invoices
-                .Where(x => x.InvoiceDate >= startDate && x.InvoiceDate <= endDate)
-                .ToListAsync();
-
-            return invoices.Select(x => _mapper.Map<InvoiceDto>(x));
-        }
-
-        public async Task<InvoiceDetailsDto> GetById(int id)
-        {
-            var invoice = await GetInvoice(id);
-            return _mapper.Map<InvoiceDetailsDto>(invoice);
-        }
-
-        public async Task<IEnumerable<InvoiceDto>> GetByCustomer(string customerName)
-        {
-            var customers = await _context.Customers
-                .Where(x => x.Name.Contains(customerName))
-                .ToListAsync();
-
-            var fieldTickets = new List<FieldTicket>();
-
-            foreach (var customer in customers)
-            {
-                var foundTickets = await _context.FieldTickets
-                    .Where(x => x.Location.CustomerId == customer.Id)
-                    .Include(x => x.Invoice)
-                    .ToListAsync();
-                if (foundTickets != null)
-                    fieldTickets.AddRange(foundTickets); 
-            }
-
-            var invoices = new List<Invoice>();
-
-            foreach (var ticket in fieldTickets)
-            {
-                if (ticket.Invoice != null)
-                    if (!invoices.Contains(ticket.Invoice))
-                        invoices.Add(ticket.Invoice);
-            }
-
             return invoices.Select(x => _mapper.Map<InvoiceDto>(x));
         }
 
         public async Task<int> Create(CreateInvoiceDto entity)
         {
-            var invoice = _mapper.Map<Invoice>(entity);
+            var currentInvoiceCount = await _context.Invoices.CountAsync();
+            var customer = await _context.Customers
+                .SingleAsync(x => x.Id == entity.CustomerId);
+
+            var netTerm = customer.NetTerm > 0 ? customer.NetTerm : 30;
+
+            var invoice = new Invoice()
+            {
+                InvoiceId = $"A-{currentInvoiceCount + 1}",
+                CustomerId = customer.Id,
+                InvoiceDate = DateTime.UtcNow,
+                DueDate = DateTime.UtcNow.AddDays(netTerm)
+            };
+
+            var tickets = await _context.FieldTickets
+                .Where(x => entity.TicketIds.Contains(x.Id))
+                .ToListAsync();
+
+            var isAnyTicketInvoiced = tickets.Any(x => x.InvoiceId.HasValue);
+
+            if (isAnyTicketInvoiced)
+            {
+                throw new Exception("Some tickets are already invoiced");
+            }
+
+            var isCustomer = tickets.All(x => x.CustomerId == invoice.CustomerId);
+
+            if (!isCustomer)
+            {
+                throw new Exception("Some tickets do not have the same customer id");
+            }
+
+            tickets.ForEach(x => invoice.Tickets.Add(x));
 
             _context.Invoices.Add(invoice);
 
             await _context.SaveChangesAsync();
-
-            if (entity.ticketIds != null)
-            {
-                foreach(var ticketId in entity.ticketIds)
-                {
-                    var fieldTicket = await _context.FieldTickets
-                        .Where(x => x.Id == ticketId)
-                        .FirstOrDefaultAsync();
-
-                    if (fieldTicket != null)
-                        fieldTicket.InvoiceId = invoice.Id;
-                } 
-            }
-
-            await _context.SaveChangesAsync();
-
             return invoice.Id;
         }
 
-        public async Task Update(CreateInvoiceDto entity)
+        public async Task MarkAsPaid(int id)
         {
-            var invoice = await GetInvoice(entity.Id);
-            
-            _mapper.Map(entity, invoice);
-            
-            if (entity.ticketIds != null)
-            {
-                // Clear all tickets
-                foreach (var ticket in invoice.Tickets)
-                {
-                    ticket.InvoiceId = null;
-                }
+            var invoice = await _context.Invoices
+                .SingleAsync(x => x.Id == id);
 
-                // Re-attach tickets that are in the array of ticketIds
-                foreach (var id in entity.ticketIds)
-                {
-                    var fieldTicket = await _context.FieldTickets
-                        .Where(x => x.Id == id)
-                        .FirstOrDefaultAsync();
+            invoice.Paid = true;
 
-                    if (fieldTicket != null)
-                    {
-                        fieldTicket.InvoiceId = invoice.Id;
-                    }
-                }
-            }
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task SendToCustomer(int id)
+        {
+            var invoice = await _context.Invoices
+                .SingleAsync(x => x.Id == id);
+
+            invoice.SentToCustomer = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
         }
 
         public async Task Delete(int id)
         {
-            var invoice = await GetInvoice(id);
+            var invoice = await _context.Invoices
+                .SingleAsync(x => x.Id == id);
             _context.Invoices.Remove(invoice);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<(string InvoiceId, byte[] InvoiceBytes)> Download(int id)
+        {
+            var invoice = await _context.Invoices
+                .Include(x => x.Tickets)
+                .Include(x => x.Customer)
+                .SingleAsync(x => x.Id == id);
+
+            var invoiceReport = new InvoiceReport(invoice);
+
+            var invoiceHtml = await _viewRenderer.RenderViewToStringAsync(_ticketTemplate, invoiceReport);
+
+            var pdf = _pdfGeneratorService.GeneratePdf(invoiceHtml);
+
+            return (invoice.InvoiceId, pdf);
         }
 
         private async Task<Invoice> GetInvoice(int id)

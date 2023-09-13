@@ -305,7 +305,10 @@ namespace CA.Ticketing.Business.Services.Tickets
                 throw new Exception("This document is already signed");
             }
 
-            var model = new TicketReport(fieldTicket);
+            var employeeNumber = await GetEmployeeNumber(!string.IsNullOrEmpty(fieldTicket.SignedBy) ? fieldTicket.SignedBy : null);
+
+            var model = new TicketReport(fieldTicket, employeeNumber);
+            model.ClassName = "preview-wrapper";
             var ticketPreviewHtml = await _viewRenderer.RenderViewToStringAsync(_ticketTemplate, model);
             return ticketPreviewHtml;
         }
@@ -327,7 +330,8 @@ namespace CA.Ticketing.Business.Services.Tickets
                 fieldTicket.CustomerSignedBy = _userContext.User!.Id;
             }
 
-            var model = new TicketReport(fieldTicket, customerSignatureDto.Signature);
+            var employeeNumber = await GetEmployeeNumber(fieldTicket.SignedBy);
+            var model = new TicketReport(fieldTicket, employeeNumber, customerSignatureDto.Signature);
             var ticketPreviewHtml = await _viewRenderer.RenderViewToStringAsync(_ticketTemplate, model);
 
             var pdfGenerated = _pdfGeneratorService.GeneratePdf(ticketPreviewHtml);
@@ -346,7 +350,8 @@ namespace CA.Ticketing.Business.Services.Tickets
                 return _fileManagerService.GetTicketBytes(fieldTicket.FileName);
             }
 
-            var model = new TicketReport(fieldTicket);
+            var employeeNumber = await GetEmployeeNumber(fieldTicket.SignedBy);
+            var model = new TicketReport(fieldTicket, employeeNumber);
             var ticketPreviewHtml = await _viewRenderer.RenderViewToStringAsync(_ticketTemplate, model);
 
             return _pdfGeneratorService.GeneratePdf(ticketPreviewHtml);
@@ -371,6 +376,7 @@ namespace CA.Ticketing.Business.Services.Tickets
         {
             var ticket = await GetTicket(ticketId);
             ticket.SignedOn = null;
+            ticket.SignedBy = string.Empty;
             ticket.EmployeePrintedName = string.Empty;
             ticket.CustomerSignedBy = string.Empty;
             ticket.CustomerSignedOn = null;
@@ -492,6 +498,8 @@ namespace CA.Ticketing.Business.Services.Tickets
             var baseIncludes = _context.FieldTickets
                 .Include(x => x.Customer)
                 .Include(x => x.Equipment)
+                .Include(x => x.TicketSpecifications)
+                .Include(x => x.Invoice)
                 .Include(x => x.Location);
 
             if (!includeSpecs)
@@ -500,9 +508,21 @@ namespace CA.Ticketing.Business.Services.Tickets
             }
 
             return baseIncludes
-                .Include(x => x.TicketSpecifications)
                 .Include(x => x.PayrollData)
                     .ThenInclude(p => p.Employee);
+        }
+
+        private async Task<string?> GetEmployeeNumber(string? signedOn = null)
+        {
+            var userId = signedOn ?? _userContext.User!.Id;
+            var user = await _context.Users.SingleAsync(x => x.Id == userId);
+            if (!user.EmployeeId.HasValue)
+            {
+                return null;
+            }
+
+            var employee = _context.Employees.SingleOrDefault(x => x.Id == user.EmployeeId);
+            return employee?.Phone;
         }
 
         private static void VerifyCanUpdateTicket(FieldTicket ticket)

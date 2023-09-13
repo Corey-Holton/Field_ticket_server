@@ -11,10 +11,13 @@ namespace CA.Ticketing.Business.Services.Pdf.Dto
 
         private readonly string? _customerSignature;
 
-        public TicketReport(FieldTicket fieldTicket, string? customerSignature = null)
+        private readonly string? _employeeNumber;
+
+        public TicketReport(FieldTicket fieldTicket, string? employeeNumber = null, string? customerSignature = null)
         {
             _fieldTicket = fieldTicket;
             _customerSignature = customerSignature;
+            _employeeNumber = employeeNumber;
         }
 
         public string TicketIdentifier => _fieldTicket.TicketId;
@@ -59,11 +62,15 @@ namespace CA.Ticketing.Business.Services.Pdf.Dto
 
         public string CustomerSignedOn => _fieldTicket.CustomerSignedOn?.ToString("yyyy-MM-dd") ?? string.Empty;
 
-        public string EmployeePrintedName => _fieldTicket.EmployeeSignature;
+        public string EmployeePrintedName => _fieldTicket.EmployeePrintedName;
 
-        public string EmployeeSignature => _fieldTicket.EmployeePrintedName;
+        public string EmployeeSignature => _fieldTicket.EmployeeSignature;
 
         public string EmployeeSignedOn => _fieldTicket.SignedOn?.ToString("yyyy-MM-dd") ?? string.Empty;
+
+        public string EmployeeNumber => _employeeNumber ?? string.Empty;
+
+        public string ClassName { get; set; }
 
         public List<TicketPayrollData> PayrollData => _fieldTicket.PayrollData.Select(x => new TicketPayrollData(_fieldTicket, x)).ToList();
 
@@ -77,7 +84,7 @@ namespace CA.Ticketing.Business.Services.Pdf.Dto
             for (int i = 0; i < half; i++)
             {
                 var leftSideCharge = leftSide[i];
-                var rightSideCharge = rightSide.Count < i ? rightSide[i] : null;
+                var rightSideCharge = i < rightSide.Count ? rightSide[i] : null;
                 result.Add((new TicketReportCharge(leftSideCharge), new TicketReportCharge(rightSideCharge)));
             }
 
@@ -126,9 +133,9 @@ namespace CA.Ticketing.Business.Services.Pdf.Dto
 
             Item = ticketSpecification.Charge;
             UoM = ticketSpecification.UoM.ToString();
-            Rate = ticketSpecification.Rate.ToString("#.##");
+            Rate = ticketSpecification.Rate.ToString("0.00");
             Quantity = ticketSpecification.Quantity.ToString();
-            Amount = (ticketSpecification.Quantity * ticketSpecification.Rate).ToString("#.##");
+            Amount = (ticketSpecification.Quantity * ticketSpecification.Rate).ToString("0.00");
         }
     }
 

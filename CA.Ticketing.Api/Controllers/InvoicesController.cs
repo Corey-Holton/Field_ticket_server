@@ -29,46 +29,6 @@ namespace CA.Ticketing.Api.Controllers
         }
 
         /// <summary>
-        /// Get a list of Invoices by start and end date
-        /// </summary>
-        /// <returns>List of invoices</returns>
-        [Route(ApiRoutes.Invoices.ListByDates)]
-        [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<InvoiceDto>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetByDates(DateTime startDate, DateTime endDate)
-        {
-            var invoices = await _invoiceService.GetByDates(startDate, endDate);
-            return Ok(invoices);
-        }
-
-        /// <summary>
-        /// Get a list of invoces by searching customer name
-        /// </summary>
-        /// <returns>List of invoices</returns>
-        [Route(ApiRoutes.Invoices.ListByCustomer)]
-        [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<InvoiceDto>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetByCustomer(string search)
-        {
-            var invoices = await _invoiceService.GetByCustomer(search);
-            return Ok(invoices);
-        }
-
-
-        /// <summary>
-        /// Get a ticket by Id
-        /// </summary>
-        /// <returns>Invoice Details</returns>
-        [Route(ApiRoutes.Invoices.Get)]
-        [HttpGet]
-        [ProducesResponseType(typeof(InvoiceDetailsDto), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetById(int invoiceId)
-        {
-            var invoice = await _invoiceService.GetById(invoiceId);
-            return Ok(invoice);
-        }
-
-        /// <summary>
         /// Create an invoice
         /// </summary>
         /// <returns>Invoice Id</returns>
@@ -82,15 +42,41 @@ namespace CA.Ticketing.Api.Controllers
         }
 
         /// <summary>
-        /// Update an invoice
+        /// Mark ticket as paid
         /// </summary>
-        [Route(ApiRoutes.Invoices.Update)]
+        [Route(ApiRoutes.Invoices.MarkAsPaid)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> Update(CreateInvoiceDto invoice)
+        public async Task<IActionResult> MarkAsPaid(int invoiceId)
         {
-            await _invoiceService.Update(invoice);
+            await _invoiceService.MarkAsPaid(invoiceId);
             return Ok();
+        }
+
+        /// <summary>
+        /// Send to Customer
+        /// </summary>
+        [Route(ApiRoutes.Invoices.SendToCustomer)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> SendToCustomer(int invoiceId)
+        {
+            await _invoiceService.SendToCustomer(invoiceId);
+            return Ok();
+        }
+
+        /// <summary>
+        /// Update an invoice
+        /// </summary>
+        [Route(ApiRoutes.Invoices.Download)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> Update(int invoiceId)
+        {
+            var (InvoiceId, InvoiceBytes) = await _invoiceService.Download(invoiceId);
+            var stream = new MemoryStream(InvoiceBytes);
+
+            return File(stream, "application/pdf", $"Invoice_{InvoiceId}.pdf");
         }
 
         /// <summary>

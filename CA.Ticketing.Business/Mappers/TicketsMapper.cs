@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CA.Ticketing.Business.Services.Invoices.Dto;
 using CA.Ticketing.Business.Services.Tickets.Dto;
 using CA.Ticketing.Common.Constants;
 using CA.Ticketing.Common.Extensions;
@@ -12,11 +13,14 @@ namespace CA.Ticketing.Business.Mappers
         {
             CreateMap<FieldTicket, TicketDto>()
                 .ForMember(x => x.ServiceType, dest => dest.MapFrom(src => src.ServiceType.GetServiceType()))
+                .ForMember(x => x.Invoice, dest => dest.MapFrom(src => src.Invoice))
                 .ForMember(x => x.LocationName, dest => dest.MapFrom(src => src.Location != null ? src.Location.DisplayName : "None"))
                 .ForMember(x => x.CustomerName, dest => dest.MapFrom(src => src.Customer != null ? src.Customer.Name : "None"));
 
             CreateMap<FieldTicket, TicketDetailsDto>()
                 .IncludeBase<FieldTicket, TicketDto>();
+
+            CreateMap<FieldTicket, TicketInfoDto>();
 
             CreateMap<TicketSpecification, TicketSpecificationDto>()
                 .ForMember(x => x.Total, dest => dest.MapFrom(src => src.Quantity * src.Rate))
@@ -32,7 +36,8 @@ namespace CA.Ticketing.Business.Mappers
 
             CreateMap<PayrollDataDto, PayrollData>();
 
-            CreateMap<ManageTicketDto, FieldTicket>();
+            CreateMap<ManageTicketDto, FieldTicket>()
+                .ForMember(x => x.LocationId, dest => dest.MapFrom(src => src.CustomerLocationId));
 
             CreateMap<ManageTicketHoursDto, FieldTicket>();
 

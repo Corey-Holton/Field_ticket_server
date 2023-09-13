@@ -85,7 +85,7 @@ namespace CA.Ticketing.Business.Services.Payroll
                     // Get overtime hours by calculating 
                     var weeklyRegularHours = 40;
                     var overTimeHours = perWeekTotals
-                        .Where(x => x > weeklyRegularHours).Sum(x => weeklyRegularHours - x);
+                        .Where(x => x > weeklyRegularHours).Sum(x => x - weeklyRegularHours);
 
                     // Set regular hours based on overtime hours
                     var regularHours = totalHours - overTimeHours;

@@ -8,7 +8,7 @@
     var charges = Model.Charges();
 }
 
-<div class="wrapper">
+<div class="wrapper @Model.ClassName">
     <div class="header-info">
         <p class="report-number">@Model.TicketIdentifier</p>
         <p class="title center">C & A</p>
@@ -16,8 +16,8 @@
         <p class="regular-text center mb-3">6037 Manry Ave</p>
         <p class="regular-text center mb-1">Brookside Village, TX 77581</p>
         <div class="contact-list center inline">
-            <p class="regular-text inline">{{representative}}</p>
-            <p class="regular-text inline ml-10">{{customer}}</p>
+            <p class="regular-text inline">Corey Holton (989) 640-0967</p>
+            <p class="regular-text inline ml-10">@Model.EmployeePrintedName @Model.EmployeeNumber</p>
         </div>
     </div>
     <div class="daily-report">
@@ -238,30 +238,51 @@
             </div>
         </div>
     </div>
-
     <div class="signatures lower">
-        <div class="left-signature inline">
-            <div class="text-info">
-                <div class="upper-part">
-                </div>
-                <div class="lower-part">
-                    <p class="customer w-100">Must be signed by Customer or Customers Agent</p>
-                </div>
-            </div>
-        </div>
-        <div class="right-signature inline">
-            <div class="text-info">
-                <div class="upper-part">
-                    <p class="representative">@Model.EmployeePrintedName</p>
-                    <img class="signature" src="@Model.EmployeeSignature" alt="Employee Signature" />
-                    <p class="date">@Model.EmployeeSignedOn</p>
-                </div>
-                <div class="lower-part">
-                    <p class="representative">CA Well Services Rep (Print Name)</p>
-                    <p class="signature">(Signature)</p>
-                    <p class="date">Date</p>
-                </div>
-            </div>
-        </div>
+        <table class="w-100 signatures-table">
+            <tr>
+                <td class="side v-align-bottom">
+                    <table class="w-100">
+                        <tr class="bordered">
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="v-align-top">Must be signed by Customer or Customers Agent</td>
+                        </tr>
+                    </table>
+                </td>
+                <td class="middle">
+                </td>
+                <td class="side">
+                    <table>
+                        <tr class="bordered">
+                            <td class="representative v-align-bottom">
+                                @Model.EmployeePrintedName
+                            </td>
+                            <td class="signature v-align-bottom">
+                                @if (!string.IsNullOrEmpty(Model.EmployeeSignature))
+                                {
+                                    <img class="w-100" src="@Model.EmployeeSignature" alt="Employee Signature" />
+                                }
+                            </td>
+                            <td class="date v-align-bottom">
+                                @Model.EmployeeSignedOn
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="representative v-align-top">
+                                CA Well Services Rep (Print Name)
+                            </td>
+                            <td class="signature v-align-top">
+                                (Signature)
+                            </td>
+                            <td class="date v-align-top">
+                                Date
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
     </div>
 </div>

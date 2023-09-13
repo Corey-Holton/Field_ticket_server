@@ -217,7 +217,7 @@ namespace CA.Ticketing.Api.Controllers
         /// </summary>
         /// <param name="ticketId">Ticket Id</param>
         [Route(ApiRoutes.Tickets.Download)]
-        [HttpPost]
+        [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> DownloadTicket(int ticketId)
         {
