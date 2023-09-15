@@ -2,7 +2,6 @@
 using CA.Ticketing.Business.Services.Invoices.Dto;
 using CA.Ticketing.Business.Services.Tickets.Dto;
 using CA.Ticketing.Common.Constants;
-using CA.Ticketing.Common.Extensions;
 using CA.Ticketing.Persistance.Models;
 
 namespace CA.Ticketing.Business.Mappers
@@ -12,7 +11,6 @@ namespace CA.Ticketing.Business.Mappers
         public TicketsMapper() 
         {
             CreateMap<FieldTicket, TicketDto>()
-                .ForMember(x => x.ServiceType, dest => dest.MapFrom(src => src.ServiceType.GetServiceType()))
                 .ForMember(x => x.Invoice, dest => dest.MapFrom(src => src.Invoice))
                 .ForMember(x => x.LocationName, dest => dest.MapFrom(src => src.Location != null ? src.Location.DisplayName : "None"))
                 .ForMember(x => x.CustomerName, dest => dest.MapFrom(src => src.Customer != null ? src.Customer.Name : "None"));
