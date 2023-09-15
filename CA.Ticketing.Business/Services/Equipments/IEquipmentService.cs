@@ -19,5 +19,9 @@ namespace CA.Ticketing.Business.Services.Equipments
         Task<IEnumerable<EquipmentChargeDto>> GetEquipmentCharges(int id);
 
         Task UpdateEquipmentCharges(IEnumerable<EquipmentChargeDto> charges);
+
+        Task<IEnumerable<EquipmentDetailsDto>> GetExpiringPermitEquipment();
+
+        Task<IEnumerable<RigWithNextJobDto>> GetRigsWithJobData();
     }
 }

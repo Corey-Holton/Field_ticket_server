@@ -122,5 +122,29 @@ namespace CA.Ticketing.Api.Controllers
             await _equipmentService.UpdateEquipmentCharges(equipmentCharges);
             return Ok();
         }
+
+        ///<summary>
+        /// List of equipment with permit expiration date in next 30 days
+        /// </summary>
+        [Route(ApiRoutes.Equipment.PermitExpirationDate)]
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<EquipmentDetailsDto>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetExpiringPermitEquipment()
+        {
+            var equipment = await _equipmentService.GetExpiringPermitEquipment();
+            return Ok(equipment);
+        }
+
+        ///<summary>
+        /// List of rigs that are not currently working
+        /// </summary>
+        [Route(ApiRoutes.Equipment.RigsNotWorking)]
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<RigWithNextJobDto>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetRigsNotWorking()
+        {
+            var rigs = await _equipmentService.GetRigsWithJobData();
+            return Ok(rigs);
+        }
     }
 }

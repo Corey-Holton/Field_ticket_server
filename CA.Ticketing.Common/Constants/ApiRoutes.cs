@@ -105,6 +105,10 @@
             public const string ListEquipmentCharges = $"{_root}/{{equipmentId}}/charges/list";
 
             public const string UpdateEquipmentCharges = $"{_root}/{{equipmentId}}/charges/update";
+
+            public const string PermitExpirationDate = $"{_root}/permits-expiration";
+
+            public const string RigsNotWorking = $"{_root}/rigs-not-working";
         }
 
         public class Tickets
