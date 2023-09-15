@@ -15,17 +15,15 @@ namespace CA.Ticketing.Business.Services.Equipments
 
         public async Task<IEnumerable<EquipmentDto>> GetAll()
         {
-            var equipment = await _context.Equipment
-                .ToListAsync();
-            return equipment.Select(x => _mapper.Map<EquipmentDto>(x));
+            return (await _context.Equipment
+                .ToListAsync()).Select(x => _mapper.Map<EquipmentDto>(x));
         }
 
         public async Task<IEnumerable<EquipmentDto>> GetAllByCategory(int equipmentCategory)
         {
-            var equipment = await _context.Equipment
+            return (await _context.Equipment
                 .Where(x => (int)x.Category == equipmentCategory)
-                .ToListAsync();
-            return equipment.Select(x => _mapper.Map<EquipmentDto>(x));
+                .ToListAsync()).Select(x => _mapper.Map<EquipmentDto>(x));
         }
 
 
@@ -121,49 +119,35 @@ namespace CA.Ticketing.Business.Services.Equipments
 
         public async Task<IEnumerable<EquipmentDetailsDto>> GetExpiringPermitEquipment()
         {
-            var equipmentUnfiltered = await _context.Equipment.ToListAsync();
-            var equipment = new List<Equipment>();
-            foreach( var item in equipmentUnfiltered)
-            {
-                if (DayTimeExtensions.IsWithinMonth(item.PermitExpirationDate)) 
-                    equipment.Add(item);
-            }
-            return equipment.Select(x => _mapper.Map<EquipmentDetailsDto>(x));
+            return (await _context.Equipment.ToListAsync())
+                .Where(x => DayTimeExtensions.IsWithinMonth(x.PermitExpirationDate))
+                .Select(x => _mapper.Map<EquipmentDetailsDto>(x));
         }
 
-        public async Task<IEnumerable<RigWithNextJobDto>> GetRigsNotWorking()
+        public async Task<IEnumerable<RigWithNextJobDto>> GetRigsWithJobData()
         {
-            var allRigs = await _context.Equipment
-                .Where(x => (int)x.Category == 1)
-                .ToListAsync();
-
-            var scheduling = await _context.Scheduling
-                                     .Include(s => s.Equipment)
-                                     .ToListAsync();
-
-            var rigsNotWorking = allRigs.Select(rig =>
-            {
-                var nextJob = scheduling
-                    .Where(schedule =>
-                        schedule.EquipmentId == rig.Id &&
-                        schedule.StartTime >= DateTime.Now)
-                    .OrderBy(schedule => schedule.StartTime)
-                    .FirstOrDefault();
-
-                int daysUntilNextJob = nextJob != null
-                    ? ((TimeSpan)(nextJob.StartTime - DateTime.Now)).Days
-                    : -1;
-
-                var rigDto = _mapper.Map<EquipmentDto>(rig);
-
-                return new RigWithNextJobDto
+            return (await _context.Equipment
+                .Where(x => x.Category == EquipmentCategory.Rig)
+                .ToListAsync())
+                .Select(rig =>
                 {
-                    Rig = rigDto,
-                    DaysUntilNextJob = daysUntilNextJob
-                };
-            }).ToList();
+                    var nextJob = _context.Scheduling
+                        .OrderBy(schedule => schedule.StartTime)
+                        .FirstOrDefault(x => x.EquipmentId == rig.Id && x.StartTime > DateTime.UtcNow);
 
-            return rigsNotWorking;
+                    var lastJob = _context.FieldTickets
+                        .OrderByDescending(x => x.ExecutionDate)
+                        .FirstOrDefault(x => x.EquipmentId == rig.Id);
+
+                    var rigDto = _mapper.Map<EquipmentDto>(rig);
+
+                    return new RigWithNextJobDto
+                    {
+                        Rig = rigDto,
+                        DaysUntilNextJob = (nextJob?.StartTime - DateTime.UtcNow)?.Days ?? -1,
+                        DaysSinceLastJob = (DateTime.UtcNow - lastJob?.ExecutionDate)?.Days ?? -1
+                    };
+                });
         }
     }
 }

@@ -75,28 +75,16 @@ namespace CA.Ticketing.Business.Services.Employees
 
         public async Task<IEnumerable<EmployeeDateDto>> GetEmployeesBirthdays()
         {
-            var employeesUnfiltered = await _context.Employees.ToListAsync();
-            var employees = new List<Employee>();
-            foreach (var employee in employeesUnfiltered)
-            {
-                if (DayTimeExtensions.IsWithinMonth(employee.DoB))
-                    employees.Add(employee);
-
-            }
-            return employees.Select(x => _mapper.Map<EmployeeDateDto>(x));
+            return (await _context.Employees.ToListAsync())
+                .Where(x => DayTimeExtensions.IsWithinMonth(x.DoB))
+                .Select(x => _mapper.Map<EmployeeDateDto>(x));
         }
 
         public async Task<IEnumerable<EmployeeDateDto>> GetEmployeesAnniversaries()
         {
-            var employeesUnfiltered = await _context.Employees.ToListAsync();
-            var employees = new List<Employee>();
-            foreach (var employee in employeesUnfiltered)
-            {
-                if (DayTimeExtensions.IsWithinMonth(employee.HireDate))
-                    employees.Add(employee);
-
-            }
-            return employees.Select(x => _mapper.Map<EmployeeDateDto>(x));
+            return (await _context.Employees.ToListAsync())
+                .Where(x => DayTimeExtensions.IsWithinMonth(x.HireDate))
+                .Select(x => _mapper.Map<EmployeeDateDto>(x));
         }
 
         public async Task AddLogin(AddEmployeeLoginDto addEmployeeLoginModel)

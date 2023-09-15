@@ -143,7 +143,7 @@ namespace CA.Ticketing.Api.Controllers
         [ProducesResponseType(typeof(IEnumerable<RigWithNextJobDto>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetRigsNotWorking()
         {
-            var rigs = await _equipmentService.GetRigsNotWorking();
+            var rigs = await _equipmentService.GetRigsWithJobData();
             return Ok(rigs);
         }
     }

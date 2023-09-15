@@ -22,6 +22,6 @@ namespace CA.Ticketing.Business.Services.Equipments
 
         Task<IEnumerable<EquipmentDetailsDto>> GetExpiringPermitEquipment();
 
-        Task<IEnumerable<RigWithNextJobDto>> GetRigsNotWorking();
+        Task<IEnumerable<RigWithNextJobDto>> GetRigsWithJobData();
     }
 }
