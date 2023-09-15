@@ -5,6 +5,7 @@ using CA.Ticketing.Common.Enums;
 using CA.Ticketing.Persistance.Context;
 using CA.Ticketing.Persistance.Models;
 using Microsoft.EntityFrameworkCore;
+using CA.Ticketing.Common.Extensions;
 
 namespace CA.Ticketing.Business.Services.Equipments
 {
@@ -116,6 +117,53 @@ namespace CA.Ticketing.Business.Services.Equipments
             }
 
             return equipment!;
+        }
+
+        public async Task<IEnumerable<EquipmentDetailsDto>> GetExpiringPermitEquipment()
+        {
+            var equipmentUnfiltered = await _context.Equipment.ToListAsync();
+            var equipment = new List<Equipment>();
+            foreach( var item in equipmentUnfiltered)
+            {
+                if (DayTimeExtensions.IsWithinMonth(item.PermitExpirationDate)) 
+                    equipment.Add(item);
+            }
+            return equipment.Select(x => _mapper.Map<EquipmentDetailsDto>(x));
+        }
+
+        public async Task<IEnumerable<RigWithNextJobDto>> GetRigsNotWorking()
+        {
+            var allRigs = await _context.Equipment
+                .Where(x => (int)x.Category == 1)
+                .ToListAsync();
+
+            var scheduling = await _context.Scheduling
+                                     .Include(s => s.Equipment)
+                                     .ToListAsync();
+
+            var rigsNotWorking = allRigs.Select(rig =>
+            {
+                var nextJob = scheduling
+                    .Where(schedule =>
+                        schedule.EquipmentId == rig.Id &&
+                        schedule.StartTime >= DateTime.Now)
+                    .OrderBy(schedule => schedule.StartTime)
+                    .FirstOrDefault();
+
+                int daysUntilNextJob = nextJob != null
+                    ? ((TimeSpan)(nextJob.StartTime - DateTime.Now)).Days
+                    : -1;
+
+                var rigDto = _mapper.Map<EquipmentDto>(rig);
+
+                return new RigWithNextJobDto
+                {
+                    Rig = rigDto,
+                    DaysUntilNextJob = daysUntilNextJob
+                };
+            }).ToList();
+
+            return rigsNotWorking;
         }
     }
 }

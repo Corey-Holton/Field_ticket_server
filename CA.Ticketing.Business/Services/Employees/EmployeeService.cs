@@ -4,6 +4,7 @@ using CA.Ticketing.Business.Services.Authentication.Dto;
 using CA.Ticketing.Business.Services.Base;
 using CA.Ticketing.Business.Services.Employees.Dto;
 using CA.Ticketing.Common.Enums;
+using CA.Ticketing.Common.Extensions;
 using CA.Ticketing.Persistance.Context;
 using CA.Ticketing.Persistance.Models;
 using Microsoft.EntityFrameworkCore;
@@ -78,7 +79,7 @@ namespace CA.Ticketing.Business.Services.Employees
             var employees = new List<Employee>();
             foreach (var employee in employeesUnfiltered)
             {
-                if (IsWithinMonth(employee.DoB))
+                if (DayTimeExtensions.IsWithinMonth(employee.DoB))
                     employees.Add(employee);
 
             }
@@ -91,7 +92,7 @@ namespace CA.Ticketing.Business.Services.Employees
             var employees = new List<Employee>();
             foreach (var employee in employeesUnfiltered)
             {
-                if (IsWithinMonth(employee.HireDate))
+                if (DayTimeExtensions.IsWithinMonth(employee.HireDate))
                     employees.Add(employee);
 
             }
@@ -134,23 +135,6 @@ namespace CA.Ticketing.Business.Services.Employees
             }
 
             await _accountsService.DeleteUser(employee.ApplicationUser.Id);
-        }
-
-        private static bool IsWithinMonth(DateTime? date)
-        {
-            if (date == null)
-            {
-                return false;
-            }
-
-            var birthday = new DateTime(DateTime.Now.Year, date.Value.Month, date.Value.Day);
-            var difference = birthday - DateTime.Now;
-            if (difference.TotalDays <= 30 && difference.TotalDays >= 0)
-            {
-                return true;
-            }
-            
-            return false;
         }
 
         private async Task<Employee> GetEmployee(int id)
