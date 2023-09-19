@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace CA.Ticketing.Persistance.Models
 {
     [Table(TableNames.Customers)]
-    public class Customer : IdentityModelWithAddress<int>
+    public class Customer : IdentityModelWithAddress
     {
         public string Name { get; set; }
 

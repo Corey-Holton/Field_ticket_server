@@ -38,7 +38,7 @@ namespace CA.Ticketing.Business.Services.Invoices
             return invoices.Select(x => _mapper.Map<InvoiceDto>(x));
         }
 
-        public async Task<int> Create(CreateInvoiceDto entity)
+        public async Task<string> Create(CreateInvoiceDto entity)
         {
             var currentInvoiceCount = await _context.Invoices.CountAsync();
             var customer = await _context.Customers
@@ -58,7 +58,7 @@ namespace CA.Ticketing.Business.Services.Invoices
                 .Where(x => entity.TicketIds.Contains(x.Id))
                 .ToListAsync();
 
-            var isAnyTicketInvoiced = tickets.Any(x => x.InvoiceId.HasValue);
+            var isAnyTicketInvoiced = tickets.Any(x => !string.IsNullOrEmpty(x.InvoiceId));
 
             if (isAnyTicketInvoiced)
             {
@@ -80,7 +80,7 @@ namespace CA.Ticketing.Business.Services.Invoices
             return invoice.Id;
         }
 
-        public async Task MarkAsPaid(int id)
+        public async Task MarkAsPaid(string id)
         {
             var invoice = await _context.Invoices
                 .SingleAsync(x => x.Id == id);
@@ -90,7 +90,7 @@ namespace CA.Ticketing.Business.Services.Invoices
             await _context.SaveChangesAsync();
         }
 
-        public async Task SendToCustomer(int id)
+        public async Task SendToCustomer(string id)
         {
             var invoice = await _context.Invoices
                 .SingleAsync(x => x.Id == id);
@@ -100,7 +100,7 @@ namespace CA.Ticketing.Business.Services.Invoices
             await _context.SaveChangesAsync();
         }
 
-        public async Task Delete(int id)
+        public async Task Delete(string id)
         {
             var invoice = await _context.Invoices
                 .SingleAsync(x => x.Id == id);
@@ -108,7 +108,7 @@ namespace CA.Ticketing.Business.Services.Invoices
             await _context.SaveChangesAsync();
         }
 
-        public async Task<(string InvoiceId, byte[] InvoiceBytes)> Download(int id)
+        public async Task<(string InvoiceId, byte[] InvoiceBytes)> Download(string id)
         {
             var invoice = await _context.Invoices
                 .Include(x => x.Tickets)
@@ -124,7 +124,7 @@ namespace CA.Ticketing.Business.Services.Invoices
             return (invoice.InvoiceId, pdf);
         }
 
-        private async Task<Invoice> GetInvoice(int id)
+        private async Task<Invoice> GetInvoice(string? id)
         {
             var invoice = await _context.Invoices
                 .Include(x => x.Tickets).ThenInclude(x => x.Customer)

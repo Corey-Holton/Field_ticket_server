@@ -2,8 +2,8 @@
 
 namespace CA.Ticketing.Business.Services.Authentication.Dto
 {
-    public class UserDto : EntityDtoBase<string>
-    {
+    public class UserDto : EntityDtoBase
+    {   
         public string FirstName { get; set; }
 
         public string LastName { get; set; }

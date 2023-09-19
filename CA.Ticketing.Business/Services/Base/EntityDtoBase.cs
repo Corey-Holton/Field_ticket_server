@@ -1,7 +1,7 @@
 ﻿namespace CA.Ticketing.Business.Services.Base
 {
-    public class EntityDtoBase<TKey> where TKey : IEquatable<TKey>
+    public class EntityDtoBase
     {
-        public TKey? Id { get; set; }
+        public string? Id { get; set; }
     }
 }

@@ -15,6 +15,9 @@ namespace CA.Ticketing.Business.Mappers
             CreateMap<ApplicationUser, ProfileDto>();
 
             CreateMap<ProfileDto, ApplicationUser>();
+
+            CreateMap<Setting, Setting>()
+                .ForMember(x => x.Id, dest => dest.Ignore());
         }
     }
 }

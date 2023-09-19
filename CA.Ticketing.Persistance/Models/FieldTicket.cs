@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace CA.Ticketing.Persistance.Models
 {
     [Table(TableNames.FieldTickets)]
-    public class FieldTicket : IdentityModel<int>
+    public class FieldTicket : IdentityModel, IFileEntity
     {
         public string TicketId { get; set; }
 
@@ -19,17 +19,17 @@ namespace CA.Ticketing.Persistance.Models
         public double TaxRate { get; set; }
 
         [ForeignKey(nameof(Equipment))]
-        public int? EquipmentId { get; set; }
+        public string? EquipmentId { get; set; }
 
         public virtual Equipment? Equipment { get; set; }
 
         [ForeignKey(nameof(Customer))]
-        public int? CustomerId { get; set; }
+        public string? CustomerId { get; set; }
 
         public virtual Customer? Customer { get; set; }
 
         [ForeignKey(nameof(CustomerLocation))]
-        public int? LocationId { get; set; }
+        public string? LocationId { get; set; }
 
         public virtual CustomerLocation? Location { get; set; }
 
@@ -42,7 +42,7 @@ namespace CA.Ticketing.Persistance.Models
         public double CompanyHours { get; set; }
 
         [ForeignKey(nameof(Invoice))]
-        public int? InvoiceId { get; set; }
+        public string? InvoiceId { get; set; }
 
         public virtual Invoice? Invoice { get; set; }
 
@@ -62,6 +62,8 @@ namespace CA.Ticketing.Persistance.Models
 
         public string CustomerSignedBy { get; set; } = string.Empty;
 
+        public string FileName { get; set; } = string.Empty;
+
         public virtual ICollection<TicketSpecification> TicketSpecifications { get; set; } = new List<TicketSpecification>();
 
         public virtual ICollection<PayrollData> PayrollData { get; set; } = new List<PayrollData>();
@@ -79,6 +81,6 @@ namespace CA.Ticketing.Persistance.Models
         public bool HasEmployeeSignature => SignedOn.HasValue;
 
         [NotMapped]
-        public string FileName => $"{TicketId}-{Id}.pdf";
+        public byte[]? FileBytes { get; set; }
     }
 }

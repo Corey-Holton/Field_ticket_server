@@ -25,7 +25,7 @@ namespace CA.Ticketing.Business.Services.Scheduling
 
         }
 
-        public async Task<int> Create(SchedulingDto entity)
+        public async Task<string> Create(SchedulingDto entity)
         {
             var scheduling = _mapper.Map<Persistance.Models.Scheduling>(entity);
 
@@ -35,7 +35,7 @@ namespace CA.Ticketing.Business.Services.Scheduling
 
         }
 
-        public async Task Delete(int id)
+        public async Task Delete(string id)
         {
             var scheduling = await GetScheduling(id);
 
@@ -53,7 +53,7 @@ namespace CA.Ticketing.Business.Services.Scheduling
             await _context.SaveChangesAsync();
         }
 
-        private async Task<Persistance.Models.Scheduling> GetScheduling(int id)
+        private async Task<Persistance.Models.Scheduling> GetScheduling(string? id)
         {
             var scheduling = await _context.Scheduling
                          .Include(s => s.Customer)

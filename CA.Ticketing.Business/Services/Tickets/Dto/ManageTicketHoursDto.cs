@@ -2,7 +2,7 @@
 {
     public class ManageTicketHoursDto
     {
-        public int TicketId { get; set; }
+        public string TicketId { get; set; }
 
         public DateTime? StartTime { get; set; }
 

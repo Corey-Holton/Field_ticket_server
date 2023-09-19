@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace CA.Ticketing.Business.Services.Equipments.Dto
 {
-    public class EquipmentDto : EntityDtoBase<int>
+    public class EquipmentDto : EntityDtoBase
     {
         public EquipmentCategory Category { get; set; }
 

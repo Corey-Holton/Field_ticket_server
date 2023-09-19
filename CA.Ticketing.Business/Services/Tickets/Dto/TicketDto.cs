@@ -4,11 +4,11 @@ using Newtonsoft.Json;
 
 namespace CA.Ticketing.Business.Services.Tickets.Dto
 {
-    public class TicketDto : EntityDtoBase<int>
+    public class TicketDto : EntityDtoBase
     {
         public string TicketId { get; set; }
 
-        public int? CustomerId { get; set; }
+        public string? CustomerId { get; set; }
 
         public string CustomerName { get; set; }
 

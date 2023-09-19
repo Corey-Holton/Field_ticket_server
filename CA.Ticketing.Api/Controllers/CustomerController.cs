@@ -36,7 +36,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Customers.Get)]
         [HttpGet]
         [ProducesResponseType(typeof(CustomerDetailsDto), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetById(int customerId)
+        public async Task<IActionResult> GetById(string customerId)
         {
             var customer = await _customerService.GetById(customerId);
             return Ok(customer);
@@ -76,7 +76,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Customers.Delete)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> Delete(int customerId)
+        public async Task<IActionResult> Delete(string customerId)
         {
             await _customerService.Delete(customerId);
             return Ok();
@@ -115,7 +115,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Customers.DeleteLocation)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> DeleteLocation(int customerLocationId)
+        public async Task<IActionResult> DeleteLocation(string customerLocationId)
         {
             await _customerService.DeleteLocation(customerLocationId);
             return Ok();
@@ -154,7 +154,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Customers.DeleteContact)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> DeleteContact(int contactId)
+        public async Task<IActionResult> DeleteContact(string contactId)
         {
             await _customerService.DeleteContact(contactId);
             return Ok();
@@ -206,7 +206,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Customers.DeleteLogin)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> DeleteLogin(int customerContactId)
+        public async Task<IActionResult> DeleteLogin(string customerContactId)
         {
             await _customerService.DeleteLogin(customerContactId);
             return Ok();

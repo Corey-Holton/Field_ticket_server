@@ -8,12 +8,16 @@ namespace CA.Ticketing.Business.Mappers
     {
         public SchedulingMapper()
         {
-            CreateMap<SchedulingDto, Scheduling>();
+            CreateMap<SchedulingDto, Scheduling>()
+                .ForMember(x => x.Id, dest => dest.Ignore());
 
             CreateMap<Scheduling, SchedulingDto>()
                 .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Customer.Name))
                 .ForMember(dest => dest.CustomerLocationName, opt => opt.MapFrom(src => src.CustomerLocation != null ? src.CustomerLocation.DisplayName : string.Empty))
                 .ForMember(dest => dest.EquipmentName, opt => opt.MapFrom(src => src.Equipment.Name));
+
+            CreateMap<Scheduling, Scheduling>()
+                .ForMember(x => x.Id, dest => dest.Ignore());
         }
 
     }

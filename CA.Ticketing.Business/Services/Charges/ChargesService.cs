@@ -58,7 +58,7 @@ namespace CA.Ticketing.Business.Services.Charges
             await _context.SaveChangesAsync();
         }
 
-        private async Task<Charge> GetCharge(int id)
+        private async Task<Charge> GetCharge(string? id)
         {
             var charge = await _context.Charges
                 .SingleOrDefaultAsync(x => x.Id == id);

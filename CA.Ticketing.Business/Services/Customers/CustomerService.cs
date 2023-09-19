@@ -24,13 +24,13 @@ namespace CA.Ticketing.Business.Services.Customers
             return customers.Select(x => _mapper.Map<CustomerDto>(x));
         }
 
-        public async Task<CustomerDetailsDto> GetById(int id)
+        public async Task<CustomerDetailsDto> GetById(string id)
         {
             var customer = await GetCustomer(id);
             return _mapper.Map<CustomerDetailsDto>(customer);
         }
 
-        public async Task<int> Create(CustomerDetailsDto entity)
+        public async Task<string> Create(CustomerDetailsDto entity)
         {
             var customer = _mapper.Map<Customer>(entity);
             _context.Customers.Add(customer);
@@ -45,14 +45,14 @@ namespace CA.Ticketing.Business.Services.Customers
             await _context.SaveChangesAsync();
         }
 
-        public async Task Delete(int id)
+        public async Task Delete(string id)
         {
             var customer = await GetCustomer(id);
             _context.Customers.Remove(customer);
             await _context.SaveChangesAsync();
         }
 
-        public async Task<int> AddLocation(CustomerLocationDto entity)
+        public async Task<string> AddLocation(CustomerLocationDto entity)
         {
             var location = _mapper.Map<CustomerLocation>(entity);
             _context.CustomerLocations.Add(location);
@@ -67,14 +67,14 @@ namespace CA.Ticketing.Business.Services.Customers
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteLocation(int id)
+        public async Task DeleteLocation(string id)
         {
             var location = await GetLocation(id);
             _context.CustomerLocations.Remove(location);
             await _context.SaveChangesAsync();
         }
 
-        public async Task<int> AddContact(CustomerContactDto entity)
+        public async Task<string> AddContact(CustomerContactDto entity)
         {
             var contact = _mapper.Map<CustomerContact>(entity);
             _context.CustomerContacts.Add(contact);
@@ -89,7 +89,7 @@ namespace CA.Ticketing.Business.Services.Customers
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteContact(int id)
+        public async Task DeleteContact(string id)
         {
             var contact = await GetCustomerContact(id);
             _context.CustomerContacts.Remove(contact);
@@ -122,13 +122,13 @@ namespace CA.Ticketing.Business.Services.Customers
             await _accountsService.ResetCustomerContactPassword(resetCustomerContactPasswordModel);
         }
 
-        public async Task DeleteLogin(int customerContactId)
+        public async Task DeleteLogin(string customerContactId)
         {
             var customerContact = await GetCustomerContact(customerContactId);
             await _accountsService.DeleteUser(customerContact.ApplicationUser!.Id);
         }
 
-        private async Task<Customer> GetCustomer(int id)
+        private async Task<Customer> GetCustomer(string? id)
         {
             var customer = await _context.Customers
                 .Include(x => x.Locations)
@@ -144,7 +144,7 @@ namespace CA.Ticketing.Business.Services.Customers
             return customer;
         }
 
-        private async Task<CustomerLocation> GetLocation(int id)
+        private async Task<CustomerLocation> GetLocation(string? id)
         {
             var location = await _context.CustomerLocations
                 .SingleOrDefaultAsync (x => x.Id == id);
@@ -157,7 +157,7 @@ namespace CA.Ticketing.Business.Services.Customers
             return location!;
         }
 
-        private async Task<CustomerContact> GetCustomerContact(int id)
+        private async Task<CustomerContact> GetCustomerContact(string? id)
         {
             var customerContact = await _context.CustomerContacts
                 .Include(x => x.ApplicationUser)

@@ -67,13 +67,7 @@ builder.Services.RegisterMappers();
 
 var app = builder.Build();
 
-// Execute Seed methods
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    var seeder = services.GetRequiredService<DatabaseInitializer>();
-    await seeder.InitializeAsync();
-}
+await app.InitiateDatabase();
 
 app.UseSwagger();
 app.UseSwaggerUI(c =>

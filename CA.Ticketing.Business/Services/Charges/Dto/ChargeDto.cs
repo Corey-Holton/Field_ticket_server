@@ -3,7 +3,7 @@ using CA.Ticketing.Common.Enums;
 
 namespace CA.Ticketing.Business.Services.Charges.Dto
 {
-    public class ChargeDto : EntityDtoBase<int>
+    public class ChargeDto : EntityDtoBase
     {
         public int Order { get; set; }
 

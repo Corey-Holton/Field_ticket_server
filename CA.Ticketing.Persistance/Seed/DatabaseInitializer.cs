@@ -1,10 +1,8 @@
-﻿using AutoMapper;
-using CA.Ticketing.Common.Constants;
+﻿using CA.Ticketing.Common.Constants;
 using CA.Ticketing.Common.Enums;
 using CA.Ticketing.Common.Extensions;
 using CA.Ticketing.Persistance.Context;
 using CA.Ticketing.Persistance.Models;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,25 +16,17 @@ namespace CA.Ticketing.Persistance.Seed
 
         private readonly CATicketingContext _context;
 
-        private readonly IWebHostEnvironment _hostEnvironment;
-
         private const string _adminUserName = "admin";
 
         private const string _adminInitialPassword = "I@mAdm1nUs3r";
 
-        private readonly IMapper _mapper;
-
         public DatabaseInitializer(UserManager<ApplicationUser> userManager, 
             RoleManager<IdentityRole> roleManager, 
-            CATicketingContext context, 
-            IWebHostEnvironment hostEnvironment,
-            IMapper mapper)
+            CATicketingContext context)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _context = context;
-            _hostEnvironment = hostEnvironment;
-            _mapper = mapper;
         }
 
         public async Task InitializeAsync()

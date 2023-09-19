@@ -6,10 +6,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace CA.Ticketing.Persistance.Models
 {
     [Table(TableNames.TicketSpecification)]
-    public class TicketSpecification : IdentityModel<int>
+    public class TicketSpecification : IdentityModel
     {
         [ForeignKey(nameof(FieldTicket))]
-        public int FieldTicketId { get; set; }
+        public string FieldTicketId { get; set; }
 
         public virtual FieldTicket FieldTicket { get; set; }
 

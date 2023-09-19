@@ -21,6 +21,18 @@ namespace CA.Ticketing.Business.Bootstrap
                 FileProvider = new PhysicalFileProvider(documentsRootPath),
                 RequestPath = new PathString($"/{FilePaths.Tickets}")
             });
+
+            var equipmentRootPath = Path.Combine(env.ContentRootPath, FilePaths.Equipment);
+            if (!Directory.Exists(equipmentRootPath))
+            {
+                Directory.CreateDirectory(equipmentRootPath);
+            }
+
+            builder.UseStaticFiles(new StaticFileOptions()
+            {
+                FileProvider = new PhysicalFileProvider(equipmentRootPath),
+                RequestPath = new PathString($"/{FilePaths.Equipment}")
+            });
         }
     }
 }

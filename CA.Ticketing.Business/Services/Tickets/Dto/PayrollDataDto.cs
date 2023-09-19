@@ -3,11 +3,11 @@ using CA.Ticketing.Business.Services.Employees.Dto;
 
 namespace CA.Ticketing.Business.Services.Tickets.Dto
 {
-    public class PayrollDataDto : EntityDtoBase<int>
+    public class PayrollDataDto : EntityDtoBase
     {
-        public int FieldTicketId { get; set; }
+        public string FieldTicketId { get; set; }
 
-        public int? EmployeeId { get; set; }
+        public string? EmployeeId { get; set; }
 
         public EmployeeDto? Employee { get; set; }
 

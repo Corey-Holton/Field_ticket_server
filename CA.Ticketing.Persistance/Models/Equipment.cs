@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace CA.Ticketing.Persistance.Models
 {
     [Table(TableNames.Equipment)]
-    public class Equipment : IdentityModel<int>
+    public class Equipment : IdentityModel
     {
         public EquipmentCategory Category { get; set; }
 
@@ -29,5 +29,7 @@ namespace CA.Ticketing.Persistance.Models
         public virtual ICollection<EquipmentCharge> Charges { get; set; } = new List<EquipmentCharge>();
 
         public virtual ICollection<Employee> Crew { get; set; } = new List<Employee>();
+
+        public virtual ICollection<EquipmentFile> Files { get; set; } = new List<EquipmentFile>();
     }
 }

@@ -12,6 +12,7 @@ using CA.Ticketing.Business.Services.Payroll;
 using CA.Ticketing.Business.Services.Pdf;
 using CA.Ticketing.Business.Services.Scheduling;
 using CA.Ticketing.Business.Services.Settings;
+using CA.Ticketing.Business.Services.Sync;
 using CA.Ticketing.Business.Services.Tickets;
 using CA.Ticketing.Common.Authentication;
 using CA.Ticketing.Persistance.Seed;
@@ -26,7 +27,6 @@ namespace CA.Ticketing.Business.Bootstrap
             services.RegisterBaseServices();
 
             services.AddSingleton<MessagesComposer>();
-
             services.AddTransient<DatabaseInitializer>();
 
             services.AddScoped<IRazorViewToStringRenderer, RazorViewToStringRenderer>();
@@ -43,6 +43,7 @@ namespace CA.Ticketing.Business.Bootstrap
             services.AddScoped<IPdfGeneratorService, PdfGeneratorService>();
             services.AddScoped<IPayrollService, PayrollService>();
             services.AddScoped<IFileManagerService, FileManagerService>();
+            services.AddScoped<ISyncProcessor, SyncProcessor>();
         }
 
         private static void RegisterBaseServices(this IServiceCollection services)

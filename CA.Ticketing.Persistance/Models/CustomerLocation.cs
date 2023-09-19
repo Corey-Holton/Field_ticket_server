@@ -6,10 +6,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace CA.Ticketing.Persistance.Models
 {
     [Table(TableNames.CustomerLocations)]
-    public class CustomerLocation : IdentityModel<int>
+    public class CustomerLocation : IdentityModel
     {
         [ForeignKey(nameof(Customer))]
-        public int CustomerId { get; set; }
+        public string CustomerId { get; set; }
 
         public virtual Customer Customer { get; set; }
 

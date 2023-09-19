@@ -51,7 +51,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Equipment.Get)]
         [HttpGet]
         [ProducesResponseType(typeof(EquipmentDetailsDto), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetById(int equipmentId)
+        public async Task<IActionResult> GetById(string equipmentId)
         {
             var equipment = await _equipmentService.GetById(equipmentId);
             return Ok(equipment);
@@ -64,7 +64,7 @@ namespace CA.Ticketing.Api.Controllers
         /// <returns>Equipment Id</returns>
         [Route(ApiRoutes.Equipment.Create)]
         [HttpPost]
-        [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         public async Task<IActionResult> Create(EquipmentDetailsDto equipment)
         {
             var equipmentId = await _equipmentService.Create(equipment);
@@ -91,7 +91,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Equipment.Delete)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> Delete(int equipmentId)
+        public async Task<IActionResult> Delete(string equipmentId)
         {
             await _equipmentService.Delete(equipmentId);
             return Ok();
@@ -104,7 +104,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Equipment.ListEquipmentCharges)]
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<EquipmentChargeDto>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetEquipmentCharges(int equipmentId)
+        public async Task<IActionResult> GetEquipmentCharges(string equipmentId)
         {
             var equipmentCharges = await _equipmentService.GetEquipmentCharges(equipmentId);
             return Ok(equipmentCharges);
@@ -145,6 +145,61 @@ namespace CA.Ticketing.Api.Controllers
         {
             var rigs = await _equipmentService.GetRigsWithJobData();
             return Ok(rigs);
+        }
+
+        ///<summary>
+        /// List equipment files
+        /// </summary>
+        /// <param name="equipmentId">Equipment Id</param>
+        [Route(ApiRoutes.Equipment.FilesList)]
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<EquipmentFileDto>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetEquipmentFiles(string equipmentId)
+        {
+            var files = await _equipmentService.GetFilesList(equipmentId);
+            return Ok(files);
+        }
+
+        /// <summary>
+        /// Equipment File Upload
+        /// </summary>
+        /// <param name="equipmentId">Equipment Id</param>
+        /// <param name="fileBytes">File Upload</param>
+        /// /// <param name="fileName">File Name</param>
+        [Route(ApiRoutes.Equipment.Upload)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> FileUpload(string equipmentId, IFormFile fileBytes, string fileName)
+        {
+            await _equipmentService.UploadFile(fileBytes.OpenReadStream(), equipmentId, fileName, fileBytes.FileName, fileBytes.ContentType);
+            return Ok();
+        }
+
+        /// <summary>
+        /// Equipment File Download
+        /// </summary>
+        /// <param name="fileId">File Id</param>
+        [Route(ApiRoutes.Equipment.Download)]
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> DownloadFile(string fileId)
+        {
+            var (FileBytes, FileDto) = await _equipmentService.DownloadFile(fileId);
+            var stream = new MemoryStream(FileBytes);
+            return File(stream, FileDto.ContentType, $"{FileDto.FileName}");
+        }
+
+        /// <summary>
+        /// Equipment File Delete
+        /// </summary>
+        /// <param name="fileId">File Id</param>
+        [Route(ApiRoutes.Equipment.DeleteFile)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> FileUpload(string fileId)
+        {
+            await _equipmentService.DeleteFile(fileId);
+            return Ok();
         }
     }
 }

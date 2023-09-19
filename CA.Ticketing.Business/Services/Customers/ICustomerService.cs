@@ -6,25 +6,25 @@ namespace CA.Ticketing.Business.Services.Customers
     {
         Task<IEnumerable<CustomerDto>> GetAll();
 
-        Task<CustomerDetailsDto> GetById(int id);
+        Task<CustomerDetailsDto> GetById(string id);
 
-        Task<int> Create(CustomerDetailsDto entity);
+        Task<string> Create(CustomerDetailsDto entity);
 
         Task Update(CustomerDetailsDto entity);
 
-        Task Delete(int id);
+        Task Delete(string id);
 
-        Task<int> AddLocation(CustomerLocationDto entity);
+        Task<string> AddLocation(CustomerLocationDto entity);
 
         Task UpdateLocation(CustomerLocationDto entity);
 
-        Task DeleteLocation(int id);
+        Task DeleteLocation(string id);
 
-        Task<int> AddContact(CustomerContactDto entity);
+        Task<string> AddContact(CustomerContactDto entity);
 
         Task UpdateContact(CustomerContactDto entity);
 
-        Task DeleteContact(int id);
+        Task DeleteContact(string id);
 
         Task AddLogin(CustomerLoginDto loginDto);
 
@@ -32,6 +32,6 @@ namespace CA.Ticketing.Business.Services.Customers
 
         Task ResetPassword(ResetCustomerContactPasswordDto resetCustomerContactPasswordDto);
 
-        Task DeleteLogin(int customerContactId);
+        Task DeleteLogin(string customerContactId);
     }
 }

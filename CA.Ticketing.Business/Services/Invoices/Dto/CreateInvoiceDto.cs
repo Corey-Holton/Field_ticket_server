@@ -2,8 +2,8 @@
 {
     public class CreateInvoiceDto
     {
-        public int CustomerId { get; set; }
+        public string CustomerId { get; set; }
 
-        public int[] TicketIds { get; set; }
+        public string[] TicketIds { get; set; }
     }
 }

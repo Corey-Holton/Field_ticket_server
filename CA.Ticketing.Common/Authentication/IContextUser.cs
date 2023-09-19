@@ -11,7 +11,7 @@ namespace CA.Ticketing.Common.Authentication
 
         ApplicationRole Role { get; set; }
 
-        int? CustomerContactId { get; set; }
+        string? CustomerContactId { get; set; }
 
         IContextUser FromClaimsIdentity(ClaimsIdentity identity);
     }

@@ -2,7 +2,7 @@
 
 namespace CA.Ticketing.Business.Services.Employees.Dto
 {
-    public class EmployeeDto : EntityDtoBase<int>
+    public class EmployeeDto : EntityDtoBase
     {
         public string FirstName { get; set; }
 

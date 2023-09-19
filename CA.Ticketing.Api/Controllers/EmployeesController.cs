@@ -38,7 +38,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Employees.Get)]
         [HttpGet]
         [ProducesResponseType(typeof(EmployeeDetailsDto), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetById(int employeeId)
+        public async Task<IActionResult> GetById(string employeeId)
         {
             var employee = await _employeeService.GetById(employeeId);
             return Ok(employee);
@@ -51,7 +51,7 @@ namespace CA.Ticketing.Api.Controllers
         /// <returns>Employee Id</returns>
         [Route(ApiRoutes.Employees.Create)]
         [HttpPost]
-        [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         public async Task<IActionResult> Create(EmployeeDetailsDto employee)
         {
             var employeeId = await _employeeService.Create(employee);
@@ -78,7 +78,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Employees.Delete)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> Delete(int employeeId)
+        public async Task<IActionResult> Delete(string employeeId)
         {
             await _employeeService.Delete(employeeId);
             return Ok();
@@ -117,7 +117,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Employees.DeleteLogin)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> DeleteLogin(int employeeId)
+        public async Task<IActionResult> DeleteLogin(string employeeId)
         {
             await _employeeService.DeleteLogin(employeeId);
             return Ok();

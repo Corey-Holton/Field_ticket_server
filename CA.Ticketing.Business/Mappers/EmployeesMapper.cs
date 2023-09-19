@@ -18,7 +18,8 @@ namespace CA.Ticketing.Business.Mappers
                 .IncludeBase<Employee, EmployeeDto>()
                 .ForMember(x => x.HasLogin, dest => dest.MapFrom(src => src.ApplicationUser != null));
 
-            CreateMap<EmployeeDetailsDto, Employee>();
+            CreateMap<EmployeeDetailsDto, Employee>()
+                .ForMember(x => x.Id, dest => dest.Ignore());
 
             CreateMap<(Employee Employee, AddEmployeeLoginDto AddEmployeeLoginModel), CreateEmployeeLoginDto>()
                 .ForMember(x => x.EmployeeId, dest => dest.MapFrom(src => src.Employee.Id))
@@ -30,6 +31,9 @@ namespace CA.Ticketing.Business.Mappers
                 .ForMember(x => x.TicketIdentifier, dest => dest.MapFrom(src => src.AddEmployeeLoginModel.TicketIdentifier));
 
             CreateMap<Employee, EmployeeDateDto>();
+
+            CreateMap<Employee, Employee>()
+                .ForMember(x => x.Id, dest => dest.Ignore());
         }
     }
 }

@@ -3,9 +3,9 @@ using CA.Ticketing.Common.Enums;
 
 namespace CA.Ticketing.Business.Services.Customers.Dto
 {
-    public class CustomerLocationDto : EntityDtoBase<int>
+    public class CustomerLocationDto : EntityDtoBase
     {
-        public int CustomerId { get; set; }
+        public string CustomerId { get; set; }
 
         public string DisplayName { get; set; }
 

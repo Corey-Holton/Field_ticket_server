@@ -8,35 +8,35 @@ namespace CA.Ticketing.Business.Services.Tickets
 
         Task<IEnumerable<TicketDto>> GetByDates(DateTime startDate, DateTime endDate);
 
-        Task<TicketDetailsDto> GetById(int id);
+        Task<TicketDetailsDto> GetById(string id);
 
-        Task<int> Create(ManageTicketDto manageTicketDto);
+        Task<string> Create(ManageTicketDto manageTicketDto);
 
         Task Update(ManageTicketDto manageTicketDto);
 
         Task UpdateHours(ManageTicketHoursDto manageTicketHours);
 
-        Task Delete(int id);
+        Task Delete(string id);
 
         Task AddPayroll(PayrollDataDto payrollDataDto);
 
         Task UpdatePayrollData(PayrollDataDto payrollDataDto);
 
-        Task RemovePayroll(int payrollDataId);
+        Task RemovePayroll(string payrollDataId);
 
         Task<UpdateTicketSpecResponse> UpdateTicketSpecification(TicketSpecificationDto ticketSpecificationDto);
 
-        Task<string> PreviewTicket(int ticketId);
+        Task<string> PreviewTicket(string ticketId);
 
         Task EmployeeSignature(SignatureBaseDto signatureBaseDto);
 
         Task CustomerSignature(CustomerSignatureDto customerSignatureDto);
 
-        Task<byte[]> DownloadTicket(int ticketId);
+        Task<byte[]> DownloadTicket(string ticketId);
 
-        Task UploadTicket(Stream fileStream, int ticketId);
+        Task UploadTicket(Stream fileStream, string ticketId);
 
-        Task ResetSignatures(int ticketId);
+        Task ResetSignatures(string ticketId);
 
     }
 }

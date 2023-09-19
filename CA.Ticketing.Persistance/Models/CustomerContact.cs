@@ -5,15 +5,15 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace CA.Ticketing.Persistance.Models
 {
     [Table(TableNames.CustomerContacts)]
-    public class CustomerContact : IdentityModel<int>
+    public class CustomerContact : IdentityModel
     {
         [ForeignKey(nameof(Customer))]
-        public int CustomerId { get; set; }
+        public string CustomerId { get; set; }
 
         public virtual Customer Customer { get; set; }
 
         [ForeignKey(nameof(CustomerLocation))]
-        public int? CustomerLocationId { get; set; }
+        public string? CustomerLocationId { get; set; }
 
         public virtual CustomerLocation? CustomerLocation { get; set; }
 

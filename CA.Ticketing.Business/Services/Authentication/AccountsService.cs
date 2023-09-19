@@ -119,6 +119,8 @@ namespace CA.Ticketing.Business.Services.Authentication
                 throw new Exception("User not found");
             }
 
+            user.LastModifiedDate = DateTime.UtcNow;
+
             var result = await _userManager.ChangePasswordAsync(user, changePasswordModel.CurrentPassword, changePasswordModel.NewPassword);
 
             if (!result.Succeeded)
@@ -158,7 +160,7 @@ namespace CA.Ticketing.Business.Services.Authentication
             {
                 throw new Exception($"User with id {customerLoginDto.CustomerContactId} was not found");
             }
-
+            user.LastModifiedDate = DateTime.UtcNow;
             await SendUserInvite(user, customerLoginDto.RedirectUrl);
         }
 
@@ -175,6 +177,8 @@ namespace CA.Ticketing.Business.Services.Authentication
             {
                 throw new Exception("User has already set the password");
             }
+
+            user.LastModifiedDate = DateTime.UtcNow;
 
             var emailConfirmationResult = await _userManager.ConfirmEmailAsync(user, setCustomerPasswordModel.Code);
 
@@ -219,13 +223,8 @@ namespace CA.Ticketing.Business.Services.Authentication
         public async Task SetPasswordFromLink(SetPasswordDto setPasswordModel)
         {
             var user = await _userManager.FindByEmailAsync(setPasswordModel.Email);
-
+            user.LastModifiedDate = DateTime.UtcNow;
             await _userManager.ResetPasswordAsync(user, setPasswordModel.Code, setPasswordModel.Password);
-        }
-
-        public Task SetPassword(SetPasswordDto setPasswordModel)
-        {
-            throw new NotImplementedException();
         }
 
         public async Task AddEmployeeLogin(CreateEmployeeLoginDto createEmployeeLoginDto)
@@ -260,6 +259,7 @@ namespace CA.Ticketing.Business.Services.Authentication
         {
             var user = await _userManager.FindByIdAsync(userDto.Id);
             _mapper.Map(userDto, user);
+            user.LastModifiedDate = DateTime.UtcNow;
             await _userManager.UpdateAsync(user);
 
             var currentRole = (await _userManager.GetRolesAsync(user)).First();
@@ -291,6 +291,7 @@ namespace CA.Ticketing.Business.Services.Authentication
         public async Task ResetUserPassword(ResetUserPasswordDto resetUserPasswordDto)
         {
             var user = await _userManager.FindByIdAsync(resetUserPasswordDto.UserId);
+            user.LastModifiedDate = DateTime.UtcNow;
             await ResetUserPasswordInternal(user, resetUserPasswordDto.Password);
         }
 
@@ -308,9 +309,9 @@ namespace CA.Ticketing.Business.Services.Authentication
             if (role == RoleNames.ToolPusher)
             {
                 var employee = _context.Employees.Single(x => x.Id == user.EmployeeId);
-                if (employee.AssignedRigId.HasValue)
+                if (!string.IsNullOrEmpty(employee.AssignedRigId))
                 {
-                    userClaims.Add(new Claim(CAClaims.RigId, employee.AssignedRigId.Value.ToString()));
+                    userClaims.Add(new Claim(CAClaims.RigId, employee.AssignedRigId));
                 }
             }
 
@@ -319,9 +320,9 @@ namespace CA.Ticketing.Business.Services.Authentication
                 userClaims.Add(new Claim(CAClaims.TicketIdentifier, user.TicketIdentifier));
             }
 
-            if (role == RoleNames.Customer && user.CustomerContactId.HasValue)
+            if (role == RoleNames.Customer && !string.IsNullOrEmpty(user.CustomerContactId))
             {
-                userClaims.Add(new Claim(CAClaims.CustomerContactId, user.CustomerContactId.Value.ToString()));
+                userClaims.Add(new Claim(CAClaims.CustomerContactId, user.CustomerContactId));
             }
 
             return userClaims;
@@ -360,6 +361,8 @@ namespace CA.Ticketing.Business.Services.Authentication
 
         private async Task SendResetPasswordEmail(ApplicationUser user, string redirectUrl)
         {
+            user.LastModifiedDate = DateTime.UtcNow;
+
             var emailPasswordResetToken = HttpUtility.UrlEncode(await _userManager.GeneratePasswordResetTokenAsync(user));
 
             var callBackUrl = $"{redirectUrl}?code={emailPasswordResetToken}";
@@ -371,6 +374,7 @@ namespace CA.Ticketing.Business.Services.Authentication
 
         private async Task<string> CreateUserInternal(ApplicationUser user, string password, string role)
         {
+            user.LastModifiedDate = DateTime.UtcNow;
             var userCreateResult = !string.IsNullOrEmpty(password) ? 
                 await _userManager.CreateAsync(user, password) : 
                 await _userManager.CreateAsync(user);
@@ -393,6 +397,7 @@ namespace CA.Ticketing.Business.Services.Authentication
 
         private async Task ResetUserPasswordInternal(ApplicationUser user, string password)
         {
+            user.LastModifiedDate = DateTime.UtcNow;
             var resetPasswordToken = await _userManager.GeneratePasswordResetTokenAsync(user);
             var resetPasswordResult = await _userManager.ResetPasswordAsync(user, resetPasswordToken, password);
 

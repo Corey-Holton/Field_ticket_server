@@ -4,6 +4,6 @@ namespace CA.Ticketing.Business.Services.Customers.Dto
 {
     public class CustomerLoginDto : BaseRedirectUrlRequest
     {
-        public int CustomerContactId { get; set; }
+        public string CustomerContactId { get; set; }
     }
 }

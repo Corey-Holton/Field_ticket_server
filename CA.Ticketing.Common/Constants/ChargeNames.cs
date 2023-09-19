@@ -61,7 +61,7 @@
 
     public class ChargesInfo
     {
-        private static List<string> _readonlyCharges = new List<string>() 
+        private static readonly List<string> _readonlyCharges = new() 
         { 
             ChargeNames.Rig,
             ChargeNames.Fuel,

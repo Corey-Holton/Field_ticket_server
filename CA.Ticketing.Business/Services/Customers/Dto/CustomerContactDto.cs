@@ -2,11 +2,11 @@
 
 namespace CA.Ticketing.Business.Services.Customers.Dto
 {
-    public class CustomerContactDto : EntityDtoBase<int>
+    public class CustomerContactDto : EntityDtoBase
     {
-        public int CustomerId { get; set; }
+        public string CustomerId { get; set; }
 
-        public int? CustomerLocationId { get; set; }
+        public string? CustomerLocationId { get; set; }
 
         public string FirstName { get; set; }
 

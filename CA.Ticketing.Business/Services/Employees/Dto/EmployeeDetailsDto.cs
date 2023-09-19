@@ -24,7 +24,7 @@ namespace CA.Ticketing.Business.Services.Employees.Dto
 
         public string SSN { get; set; }
 
-        public int? AssignedRigId { get; set; }
+        public string? AssignedRigId { get; set; }
 
         public JobTitle JobTitle { get; set; }
     }

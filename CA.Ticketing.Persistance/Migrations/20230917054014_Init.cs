@@ -27,8 +27,7 @@ namespace CA.Ticketing.Persistance.Migrations
                 name: "Charges",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Order = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UoM = table.Column<int>(type: "int", nullable: false),
@@ -36,7 +35,11 @@ namespace CA.Ticketing.Persistance.Migrations
                     IsRigSpecific = table.Column<bool>(type: "bit", nullable: false),
                     IncludeInTicketSpecs = table.Column<bool>(type: "bit", nullable: false),
                     AllowUoMChange = table.Column<bool>(type: "bit", nullable: false),
-                    AllowRateAdjustment = table.Column<bool>(type: "bit", nullable: false)
+                    AllowRateAdjustment = table.Column<bool>(type: "bit", nullable: false),
+                    AutoCalculated = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DeletedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -47,10 +50,12 @@ namespace CA.Ticketing.Persistance.Migrations
                 name: "Customers",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     NetTerm = table.Column<int>(type: "int", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DeletedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     City = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Zip = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -65,8 +70,7 @@ namespace CA.Ticketing.Persistance.Migrations
                 name: "Equipment",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Category = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -75,7 +79,10 @@ namespace CA.Ticketing.Persistance.Migrations
                     PermitNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PermitExpirationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     LastMaintenance = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    FuelConsumption = table.Column<double>(type: "float", nullable: false)
+                    FuelConsumption = table.Column<double>(type: "float", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DeletedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -83,31 +90,17 @@ namespace CA.Ticketing.Persistance.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Invoices",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    InvoiceIdentifier = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    InvoiceDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DueDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Paid = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Invoices", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Settings",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     TaxRate = table.Column<double>(type: "float", nullable: false),
                     OvertimePercentageIncrease = table.Column<double>(type: "float", nullable: false),
                     MileageCost = table.Column<int>(type: "int", nullable: false),
-                    FuelCalculationMultiplier = table.Column<double>(type: "float", nullable: false)
+                    FuelCalculationMultiplier = table.Column<double>(type: "float", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DeletedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -139,15 +132,18 @@ namespace CA.Ticketing.Persistance.Migrations
                 name: "CustomerLocations",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CustomerId = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CustomerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Lease = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Well = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Field = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     County = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Lattitude = table.Column<double>(type: "float", nullable: true),
-                    Longitude = table.Column<double>(type: "float", nullable: true)
+                    Longitude = table.Column<double>(type: "float", nullable: true),
+                    WellType = table.Column<int>(type: "int", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DeletedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -161,11 +157,36 @@ namespace CA.Ticketing.Persistance.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Invoices",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    InvoiceId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CustomerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    InvoiceDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DueDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    SentToCustomer = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Paid = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DeletedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Invoices", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Invoices_Customers_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Customers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Employees",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -177,7 +198,10 @@ namespace CA.Ticketing.Persistance.Migrations
                     HireDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     TerminationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     PayRate = table.Column<double>(type: "float", nullable: false),
-                    AssignedRigId = table.Column<int>(type: "int", nullable: true),
+                    AssignedRigId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DeletedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     City = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Zip = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -197,11 +221,13 @@ namespace CA.Ticketing.Persistance.Migrations
                 name: "EquipmentCharges",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    EquipmentId = table.Column<int>(type: "int", nullable: false),
-                    ChargeId = table.Column<int>(type: "int", nullable: false),
-                    Rate = table.Column<double>(type: "float", nullable: false)
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    EquipmentId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ChargeId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Rate = table.Column<double>(type: "float", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DeletedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -221,50 +247,21 @@ namespace CA.Ticketing.Persistance.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Scheduling",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ArrangeDateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Duration = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    LocationX = table.Column<double>(type: "float", nullable: false),
-                    LocationY = table.Column<double>(type: "float", nullable: false),
-                    CustomerId = table.Column<int>(type: "int", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    EquipmentId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Scheduling", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Scheduling_Customers_CustomerId",
-                        column: x => x.CustomerId,
-                        principalTable: "Customers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Scheduling_Equipment_EquipmentId",
-                        column: x => x.EquipmentId,
-                        principalTable: "Equipment",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "CustomerContacts",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CustomerId = table.Column<int>(type: "int", nullable: false),
-                    CustomerLocationId = table.Column<int>(type: "int", nullable: true),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CustomerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CustomerLocationId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     InviteSent = table.Column<bool>(type: "bit", nullable: false),
-                    InviteSentOn = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    InviteSentOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DeletedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -283,28 +280,71 @@ namespace CA.Ticketing.Persistance.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Scheduling",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    StartTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    EndTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CustomerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CustomerLocationId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EquipmentId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DeletedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Scheduling", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Scheduling_CustomerLocations_CustomerLocationId",
+                        column: x => x.CustomerLocationId,
+                        principalTable: "CustomerLocations",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Scheduling_Customers_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Customers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Scheduling_Equipment_EquipmentId",
+                        column: x => x.EquipmentId,
+                        principalTable: "Equipment",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "FieldTickets",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     TicketId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ExecutionDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ServiceType = table.Column<int>(type: "int", nullable: false),
-                    WellType = table.Column<int>(type: "int", nullable: false),
                     TaxRate = table.Column<double>(type: "float", nullable: false),
-                    EquipmentId = table.Column<int>(type: "int", nullable: true),
-                    CustomerId = table.Column<int>(type: "int", nullable: true),
-                    LocationId = table.Column<int>(type: "int", nullable: true),
+                    EquipmentId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    CustomerId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    LocationId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     StartTime = table.Column<DateTime>(type: "datetime2", nullable: true),
                     EndTime = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Mileage = table.Column<double>(type: "float", nullable: false),
                     CompanyHours = table.Column<double>(type: "float", nullable: false),
-                    HasCustomerSignature = table.Column<bool>(type: "bit", nullable: false),
-                    InvoiceId = table.Column<int>(type: "int", nullable: true),
-                    FileIndicatorGenerated = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FileIndicatorCustomer = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    InvoiceId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SignedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    SignedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EmployeePrintedName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EmployeeSignature = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CustomerSignedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CustomerPrintedName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CustomerSignedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DeletedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -338,9 +378,10 @@ namespace CA.Ticketing.Persistance.Migrations
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    EmployeeId = table.Column<int>(type: "int", nullable: true),
-                    CustomerContactId = table.Column<int>(type: "int", nullable: true),
+                    EmployeeId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    CustomerContactId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     TicketIdentifier = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Signature = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -375,14 +416,15 @@ namespace CA.Ticketing.Persistance.Migrations
                 name: "PayrollData",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    EmployeeId = table.Column<int>(type: "int", nullable: true),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    FieldTicketId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    EmployeeId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RigHours = table.Column<double>(type: "float", nullable: false),
-                    TravelHours = table.Column<double>(type: "float", nullable: false),
+                    YardHours = table.Column<double>(type: "float", nullable: false),
                     RoustaboutHours = table.Column<double>(type: "float", nullable: false),
-                    FieldTicketId = table.Column<int>(type: "int", nullable: true)
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DeletedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -396,21 +438,25 @@ namespace CA.Ticketing.Persistance.Migrations
                         name: "FK_PayrollData_FieldTickets_FieldTicketId",
                         column: x => x.FieldTicketId,
                         principalTable: "FieldTickets",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "TicketSpecification",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    FieldTicketId = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    FieldTicketId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Charge = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UoM = table.Column<int>(type: "int", nullable: false),
-                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    Quantity = table.Column<double>(type: "float", nullable: false),
                     Rate = table.Column<double>(type: "float", nullable: false),
-                    Total = table.Column<double>(type: "float", nullable: false)
+                    AllowUoMChange = table.Column<bool>(type: "bit", nullable: false),
+                    AllowRateAdjustment = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DeletedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -612,6 +658,11 @@ namespace CA.Ticketing.Persistance.Migrations
                 column: "LocationId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Invoices_CustomerId",
+                table: "Invoices",
+                column: "CustomerId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PayrollData_EmployeeId",
                 table: "PayrollData",
                 column: "EmployeeId");
@@ -625,6 +676,11 @@ namespace CA.Ticketing.Persistance.Migrations
                 name: "IX_Scheduling_CustomerId",
                 table: "Scheduling",
                 column: "CustomerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Scheduling_CustomerLocationId",
+                table: "Scheduling",
+                column: "CustomerLocationId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Scheduling_EquipmentId",

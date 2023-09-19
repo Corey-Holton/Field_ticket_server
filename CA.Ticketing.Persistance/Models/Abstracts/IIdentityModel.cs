@@ -1,7 +1,7 @@
 ﻿namespace CA.Ticketing.Persistance.Models.Abstracts
 {
-    public interface IIdentityModel<TKey> where TKey : IEquatable<TKey>
+    public interface IIdentityModel : ISyncedEntity
     {
-        TKey Id { get; set; }
+        string Id { get; set; }
     }
 }

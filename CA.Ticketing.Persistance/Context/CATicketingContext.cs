@@ -1,4 +1,5 @@
 ﻿using CA.Ticketing.Persistance.Models;
+using CA.Ticketing.Persistance.Models.Abstracts;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,6 +19,8 @@ namespace CA.Ticketing.Persistance.Context
 
         public DbSet<Equipment> Equipment { get; set; }
 
+        public DbSet<EquipmentFile> EquipmentFiles { get; set; }
+
         public DbSet<Charge> Charges { get; set; }
 
         public DbSet<EquipmentCharge> EquipmentCharges { get; set; }
@@ -33,5 +36,58 @@ namespace CA.Ticketing.Persistance.Context
         public DbSet<Invoice> Invoices { get; set; }
 
         public DbSet<Setting> Settings { get; set; }
+
+        public DbSet<SyncData> SyncData { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.Entity<Setting>().HasQueryFilter(x => !x.DeletedDate.HasValue);
+            builder.Entity<Invoice>().HasQueryFilter(x => !x.DeletedDate.HasValue);
+            builder.Entity<Scheduling>().HasQueryFilter(x => !x.DeletedDate.HasValue);
+            builder.Entity<PayrollData>().HasQueryFilter(x => !x.DeletedDate.HasValue);
+            builder.Entity<TicketSpecification>().HasQueryFilter(x => !x.DeletedDate.HasValue);
+            builder.Entity<FieldTicket>().HasQueryFilter(x => !x.DeletedDate.HasValue);
+            builder.Entity<EquipmentCharge>().HasQueryFilter(x => !x.DeletedDate.HasValue);
+            builder.Entity<Charge>().HasQueryFilter(x => !x.DeletedDate.HasValue);
+            builder.Entity<Equipment>().HasQueryFilter(x => !x.DeletedDate.HasValue);
+            builder.Entity<Customer>().HasQueryFilter(x => !x.DeletedDate.HasValue);
+            builder.Entity<CustomerContact>().HasQueryFilter(x => !x.DeletedDate.HasValue);
+            builder.Entity<Employee>().HasQueryFilter(x => !x.DeletedDate.HasValue);
+            builder.Entity<EquipmentFile>().HasQueryFilter(x => !x.DeletedDate.HasValue);
+            base.OnModelCreating(builder);
+        }
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            var syncedEntities = this.ChangeTracker.Entries()
+                .Where(x => typeof(ISyncedEntity).IsAssignableFrom(x.Entity.GetType()))
+                .ToList();
+
+            foreach (var syncedEntity in syncedEntities)
+            {
+                if (syncedEntity.State == EntityState.Deleted)
+                {
+                    syncedEntity.State = EntityState.Modified;
+                    var entityCast = (ISyncedEntity)syncedEntity.Entity;
+                    entityCast.LastModifiedDate = DateTime.UtcNow;
+                    entityCast.DeletedDate = DateTime.UtcNow;
+                }
+
+                if (syncedEntity.State == EntityState.Added)
+                {
+                    var entityCast = (ISyncedEntity)syncedEntity.Entity;
+                    entityCast.CreatedDate = DateTime.UtcNow;
+                    entityCast.LastModifiedDate = DateTime.UtcNow;
+                }
+
+                if (syncedEntity.State == EntityState.Modified)
+                {
+                    var entityCast = (ISyncedEntity)syncedEntity.Entity;
+                    entityCast.LastModifiedDate = DateTime.UtcNow;
+                }
+            }
+
+            return base.SaveChangesAsync(cancellationToken);
+        }
     }
 }

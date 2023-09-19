@@ -4,15 +4,13 @@
     {
         public string Description { get; set; }
 
-        public int EquipmentId { get; set; }
+        public string EquipmentId { get; set; }
 
         public DateTime? StartTime { get; set; }
 
         public DateTime? EndTime { get; set; }
 
-        public int? CustomerId { get; set; }
-
-        public int? LocationId { get; set; }
+        public string? LocationId { get; set; }
 
         public double Mileage { get; set; }
 

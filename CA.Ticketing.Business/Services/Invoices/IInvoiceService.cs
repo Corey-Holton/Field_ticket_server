@@ -6,14 +6,14 @@ namespace CA.Ticketing.Business.Services.Invoices
     {
         Task<IEnumerable<InvoiceDto>> GetAll();
 
-        Task<int> Create(CreateInvoiceDto entity);
+        Task<string> Create(CreateInvoiceDto entity);
 
-        Task MarkAsPaid(int id);
+        Task MarkAsPaid(string id);
 
-        Task SendToCustomer(int id);
+        Task SendToCustomer(string id);
 
-        Task<(string InvoiceId, byte[] InvoiceBytes)> Download(int id);
+        Task<(string InvoiceId, byte[] InvoiceBytes)> Download(string id);
 
-        Task Delete(int id);
+        Task Delete(string id);
     }
 }

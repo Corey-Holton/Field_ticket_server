@@ -2,7 +2,7 @@
 {
     public class TicketInfoDto
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         public string TicketId { get; set; }
 

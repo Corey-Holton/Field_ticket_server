@@ -6,7 +6,7 @@ namespace CA.Ticketing.Business.Services.Employees.Dto
     public class AddEmployeeLoginDto
     {
         [Required]
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         [Required]
         public string Username { get; set; }

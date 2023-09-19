@@ -13,6 +13,7 @@ using CA.Ticketing.Persistance.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 using System.Linq.Expressions;
+using static CA.Ticketing.Common.Constants.ApiRoutes;
 
 namespace CA.Ticketing.Business.Services.Tickets
 {
@@ -74,13 +75,13 @@ namespace CA.Ticketing.Business.Services.Tickets
             return tickets.Select(x => _mapper.Map<TicketDto>(x));
         }
 
-        public async Task<TicketDetailsDto> GetById(int id)
+        public async Task<TicketDetailsDto> GetById(string id)
         {
             var ticket = await GetTicket(id);
             return _mapper.Map<TicketDetailsDto>(ticket);
         }
 
-        public async Task<int> Create(ManageTicketDto manageTicketDto)
+        public async Task<string> Create(ManageTicketDto manageTicketDto)
         {
             var createdByUserCount = await _context.FieldTickets
                 .Where(x => x.CreatedBy == _userContext.User!.Id)
@@ -147,7 +148,7 @@ namespace CA.Ticketing.Business.Services.Tickets
             await _context.SaveChangesAsync();
         }
 
-        public async Task Delete(int id)
+        public async Task Delete(string id)
         {
             var ticket = await GetTicket(id);
 
@@ -170,7 +171,7 @@ namespace CA.Ticketing.Business.Services.Tickets
 
             VerifyCanUpdateTicket(ticket);
 
-            var alreadyExists = payrollDataDto.EmployeeId.HasValue ? 
+            var alreadyExists = !string.IsNullOrEmpty(payrollDataDto.EmployeeId) ? 
                 ticket.PayrollData
                     .Any(x => x.EmployeeId == payrollDataDto.EmployeeId) :
                 ticket.PayrollData
@@ -205,7 +206,7 @@ namespace CA.Ticketing.Business.Services.Tickets
             await _context.SaveChangesAsync();
         }
 
-        public async Task RemovePayroll(int payrollDataId)
+        public async Task RemovePayroll(string payrollDataId)
         {
             var payrollData = _context.PayrollData
                 .Include(x => x.FieldTicket)
@@ -296,7 +297,7 @@ namespace CA.Ticketing.Business.Services.Tickets
             await _context.SaveChangesAsync();
         }
 
-        public async Task<string> PreviewTicket(int ticketId)
+        public async Task<string> PreviewTicket(string ticketId)
         {
             var fieldTicket = await GetTicket(ticketId);
 
@@ -307,8 +308,11 @@ namespace CA.Ticketing.Business.Services.Tickets
 
             var employeeNumber = await GetEmployeeNumber(!string.IsNullOrEmpty(fieldTicket.SignedBy) ? fieldTicket.SignedBy : null);
 
-            var model = new TicketReport(fieldTicket, employeeNumber);
-            model.ClassName = "preview-wrapper";
+            var model = new TicketReport(fieldTicket, employeeNumber)
+            {
+                ClassName = "preview-wrapper"
+            };
+
             var ticketPreviewHtml = await _viewRenderer.RenderViewToStringAsync(_ticketTemplate, model);
             return ticketPreviewHtml;
         }
@@ -336,18 +340,20 @@ namespace CA.Ticketing.Business.Services.Tickets
 
             var pdfGenerated = _pdfGeneratorService.GeneratePdf(ticketPreviewHtml);
 
-            _fileManagerService.SaveTicketFile(pdfGenerated, fieldTicket.FileName);
+            fieldTicket.FileName = $"{fieldTicket.TicketId}-{fieldTicket.Id}.pdf";
+
+            _fileManagerService.SaveFile(pdfGenerated, FilePaths.Tickets, fieldTicket.FileName);
 
             await _context.SaveChangesAsync();
         }
 
-        public async Task<byte[]> DownloadTicket(int ticketId)
+        public async Task<byte[]> DownloadTicket(string ticketId)
         {
             var fieldTicket = await GetTicket(ticketId);
 
             if (fieldTicket.CustomerSignedOn.HasValue)
             {
-                return _fileManagerService.GetTicketBytes(fieldTicket.FileName);
+                return _fileManagerService.GetFileBytes(FilePaths.Tickets, fieldTicket.FileName);
             }
 
             var employeeNumber = await GetEmployeeNumber(fieldTicket.SignedBy);
@@ -357,7 +363,7 @@ namespace CA.Ticketing.Business.Services.Tickets
             return _pdfGeneratorService.GeneratePdf(ticketPreviewHtml);
         }
 
-        public async Task UploadTicket(Stream fileStream, int ticketId)
+        public async Task UploadTicket(Stream fileStream, string ticketId)
         {
             var ticket = await GetTicket(ticketId);
 
@@ -365,14 +371,14 @@ namespace CA.Ticketing.Business.Services.Tickets
             fileStream.CopyTo(memoryStream);
             var fileBytes = memoryStream.ToArray();
 
-            _fileManagerService.SaveTicketFile(fileBytes, ticket.FileName);
+            _fileManagerService.SaveFile(fileBytes, FilePaths.Tickets, ticket.FileName);
 
             ticket.CustomerSignedOn = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
         }
 
-        public async Task ResetSignatures(int ticketId)
+        public async Task ResetSignatures(string ticketId)
         {
             var ticket = await GetTicket(ticketId);
             ticket.SignedOn = null;
@@ -383,7 +389,8 @@ namespace CA.Ticketing.Business.Services.Tickets
             ticket.CustomerPrintedName = string.Empty;
             ticket.EmployeeSignature = string.Empty;
 
-            _fileManagerService.DeleteTicket(ticket.FileName);
+            _fileManagerService.DeleteFile(FilePaths.Tickets, ticket.FileName);
+            ticket.FileName = string.Empty;
 
             await _context.SaveChangesAsync();
         }
@@ -480,7 +487,7 @@ namespace CA.Ticketing.Business.Services.Tickets
             charge.Quantity = chargeQuantity;
         }
 
-        private async Task<FieldTicket> GetTicket(int id, bool includeSpecs = true)
+        private async Task<FieldTicket> GetTicket(string? id, bool includeSpecs = true)
         {
             var ticket = await GetTicketIncludes(includeSpecs)
                 .SingleOrDefaultAsync(x => x.Id == id);
@@ -516,7 +523,7 @@ namespace CA.Ticketing.Business.Services.Tickets
         {
             var userId = signedOn ?? _userContext.User!.Id;
             var user = await _context.Users.SingleAsync(x => x.Id == userId);
-            if (!user.EmployeeId.HasValue)
+            if (string.IsNullOrEmpty(user.EmployeeId))
             {
                 return null;
             }

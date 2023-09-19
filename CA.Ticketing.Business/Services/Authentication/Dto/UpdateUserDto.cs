@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CA.Ticketing.Business.Services.Authentication.Dto
 {
-    public class UpdateUserDto : EntityDtoBase<string>
+    public class UpdateUserDto : EntityDtoBase
     {
         [Required]
         public string FirstName { get; set; }

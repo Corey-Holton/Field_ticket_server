@@ -5,12 +5,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace CA.Ticketing.Persistance.Models
 {
     [Table(TableNames.Invoices)]
-    public class Invoice : IdentityModel<int>
+    public class Invoice : IdentityModel
     {
         public string InvoiceId { get; set; }
 
         [ForeignKey(nameof(Customer))]
-        public int CustomerId { get; set; }
+        public string CustomerId { get; set; }
 
         public virtual Customer Customer { get; set; }
 

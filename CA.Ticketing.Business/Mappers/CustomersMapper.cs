@@ -15,14 +15,17 @@ namespace CA.Ticketing.Business.Mappers
                 .IncludeBase<Customer, CustomerDto>();
 
             CreateMap<CustomerDetailsDto, Customer>()
+                .ForMember(x => x.Id, dest => dest.Ignore())
                 .ForMember(x => x.Locations, dest => dest.Ignore())
                 .ForMember(x => x.Contacts, dest => dest.Ignore());
 
             CreateMap<CustomerLocation, CustomerLocationDto>();
 
-            CreateMap<CustomerLocationDto, CustomerLocation>();
+            CreateMap<CustomerLocationDto, CustomerLocation>()
+                .ForMember(x => x.Id, dest => dest.Ignore());
 
             CreateMap<CustomerContactDto, CustomerContact>()
+                .ForMember(x => x.Id, dest => dest.Ignore())
                 .ForMember(x => x.InviteSent, dest => dest.Ignore())
                 .ForMember(x => x.InviteSentOn, dest => dest.Ignore());
 
@@ -31,6 +34,15 @@ namespace CA.Ticketing.Business.Mappers
 
             CreateMap<CustomerContact, CreateCustomerContactLoginDto>()
                 .ForMember(x => x.CustomerContactId, dest => dest.MapFrom(src => src.Id));
+
+            CreateMap<Customer, Customer>()
+                .ForMember(x => x.Id, dest => dest.Ignore());
+
+            CreateMap<CustomerContact, CustomerContact>()
+                .ForMember(x => x.Id, dest => dest.Ignore());
+
+            CreateMap<CustomerLocation, CustomerLocation>()
+                .ForMember(x => x.Id, dest => dest.Ignore());
         }
     }
 }

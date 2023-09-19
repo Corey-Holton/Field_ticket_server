@@ -1,6 +1,6 @@
 ﻿namespace CA.Ticketing.Persistance.Models.Abstracts
 {
-    public class IdentityModelWithAddress<TKey> : IdentityModel<TKey> where TKey : IEquatable<TKey>
+    public class IdentityModelWithAddress : IdentityModel
     {
         public string Address { get; set; }
 

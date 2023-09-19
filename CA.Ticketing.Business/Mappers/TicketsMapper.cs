@@ -32,12 +32,15 @@ namespace CA.Ticketing.Business.Mappers
 
             CreateMap<PayrollData, PayrollDataDto>();
 
-            CreateMap<PayrollDataDto, PayrollData>();
+            CreateMap<PayrollDataDto, PayrollData>()
+                .ForMember(x => x.Id, dest => dest.Ignore());
 
             CreateMap<ManageTicketDto, FieldTicket>()
+                .ForMember(x => x.Id, dest => dest.Ignore())
                 .ForMember(x => x.LocationId, dest => dest.MapFrom(src => src.CustomerLocationId));
 
-            CreateMap<ManageTicketHoursDto, FieldTicket>();
+            CreateMap<ManageTicketHoursDto, FieldTicket>()
+                .ForMember(x => x.Id, dest => dest.Ignore());
 
             CreateMap<Charge, TicketSpecification>()
                 .ForMember(x => x.Id, dest => dest.Ignore())
@@ -50,6 +53,15 @@ namespace CA.Ticketing.Business.Mappers
                 .ForMember(x => x.AllowRateAdjustment, dest => dest.MapFrom(src => src.Charge.AllowRateAdjustment))
                 .ForMember(x => x.AllowUoMChange, dest => dest.MapFrom(src => src.Charge.AllowUoMChange))
                 .ForMember(x => x.UoM, dest => dest.MapFrom(src => src.Charge.UoM));
+
+            CreateMap<FieldTicket, FieldTicket>()
+                .ForMember(x => x.Id, dest => dest.Ignore());
+
+            CreateMap<TicketSpecification, TicketSpecification>()
+                .ForMember(x => x.Id, dest => dest.Ignore());
+
+            CreateMap<PayrollData, PayrollData>()
+                .ForMember(x => x.Id, dest => dest.Ignore());
         }
     }
 }

@@ -2,7 +2,7 @@
 {
     public class SignatureBaseDto
     {
-        public int TicketId { get; set; }
+        public string TicketId { get; set; }
 
         public string Signature { get; set; }
     }

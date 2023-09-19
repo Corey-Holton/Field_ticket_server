@@ -3,5 +3,7 @@
     public class FilePaths
     {
         public const string Tickets = "Tickets";
+
+        public const string Equipment = "Equipment";
     }
 }

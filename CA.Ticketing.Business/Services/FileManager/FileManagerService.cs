@@ -12,15 +12,19 @@ namespace CA.Ticketing.Business.Services.FileManager
             _hostEnvironment = hostEnvironment;
         }
 
-        public void SaveTicketFile(byte[] bytes, string fileName)
+        public void SaveFile(byte[] bytes, string path, string fileName)
         {
-            var filePath = Path.Combine(_hostEnvironment.ContentRootPath, FilePaths.Tickets, fileName);
+            var folder = Path.Combine(_hostEnvironment.ContentRootPath, path);
+
+            Directory.CreateDirectory(folder);
+            
+            var filePath = Path.Combine(folder, fileName);
             File.WriteAllBytes(filePath, bytes);
         }
 
-        public byte[] GetTicketBytes(string fileName)
+        public byte[] GetFileBytes(string path, string fileName)
         {
-            var filePath = Path.Combine(_hostEnvironment.ContentRootPath, FilePaths.Tickets, fileName);
+            var filePath = Path.Combine(_hostEnvironment.ContentRootPath, path, fileName);
             
             if (!File.Exists(filePath))
             {
@@ -30,9 +34,9 @@ namespace CA.Ticketing.Business.Services.FileManager
             return File.ReadAllBytes(filePath);
         }
 
-        public void DeleteTicket(string fileName)
+        public void DeleteFile(string path, string fileName)
         {
-            var filePath = Path.Combine(_hostEnvironment.ContentRootPath, FilePaths.Tickets, fileName);
+            var filePath = Path.Combine(_hostEnvironment.ContentRootPath, path, fileName);
 
             if (!File.Exists(filePath))
             {

@@ -34,7 +34,7 @@ namespace CA.Ticketing.Api.Controllers
         /// <returns>Invoice Id</returns>
         [Route(ApiRoutes.Invoices.Create)]
         [HttpPost]
-        [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         public async Task<IActionResult> Create(CreateInvoiceDto invoice)
         {
             var invoiceId = await _invoiceService.Create(invoice);
@@ -47,7 +47,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Invoices.MarkAsPaid)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> MarkAsPaid(int invoiceId)
+        public async Task<IActionResult> MarkAsPaid(string invoiceId)
         {
             await _invoiceService.MarkAsPaid(invoiceId);
             return Ok();
@@ -59,7 +59,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Invoices.SendToCustomer)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> SendToCustomer(int invoiceId)
+        public async Task<IActionResult> SendToCustomer(string invoiceId)
         {
             await _invoiceService.SendToCustomer(invoiceId);
             return Ok();
@@ -71,7 +71,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Invoices.Download)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> Update(int invoiceId)
+        public async Task<IActionResult> Update(string invoiceId)
         {
             var (InvoiceId, InvoiceBytes) = await _invoiceService.Download(invoiceId);
             var stream = new MemoryStream(InvoiceBytes);
@@ -85,7 +85,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Invoices.Delete)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> Delete(int invoiceId)
+        public async Task<IActionResult> Delete(string invoiceId)
         {
             await _invoiceService.Delete(invoiceId);
             return Ok();

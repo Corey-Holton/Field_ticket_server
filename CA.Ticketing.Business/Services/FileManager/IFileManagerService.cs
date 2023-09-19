@@ -2,10 +2,10 @@
 {
     public interface IFileManagerService
     {
-        void SaveTicketFile(byte[] bytes, string fileName);
+        void SaveFile(byte[] bytes, string path, string fileName);
 
-        byte[] GetTicketBytes(string fileName);
+        byte[] GetFileBytes(string path, string fileName);
 
-        void DeleteTicket(string fileName);
+        void DeleteFile(string path, string fileName);
     }
 }

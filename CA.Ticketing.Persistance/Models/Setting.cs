@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace CA.Ticketing.Persistance.Models
 {
     [Table(TableNames.Settings)]
-    public class Setting : IdentityModel<int>
+    public class Setting : IdentityModel
     {
         public double TaxRate { get; set; }
 

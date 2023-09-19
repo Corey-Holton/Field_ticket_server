@@ -13,8 +13,6 @@ namespace CA.Ticketing.Business.Services.Authentication
 
         Task SetPasswordFromLink(SetPasswordDto setPasswordModel);
 
-        Task SetPassword(SetPasswordDto setPasswordModel);
-
         Task ChangePassword(ChangePasswordDto changePasswordModel);
 
         Task AddEmployeeLogin(CreateEmployeeLoginDto createEmployeeLoginDto);

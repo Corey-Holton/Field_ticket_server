@@ -43,13 +43,13 @@ namespace CA.Ticketing.Business.Services.Employees
             return employees.Select(x => _mapper.Map<EmployeeDto>(x));
         }
 
-        public async Task<EmployeeDetailsDto> GetById(int id)
+        public async Task<EmployeeDetailsDto> GetById(string id)
         {
             var employee = await GetEmployee(id);
             return _mapper.Map<EmployeeDetailsDto>(employee);
         }
 
-        public async Task<int> Create(EmployeeDetailsDto entity)
+        public async Task<string> Create(EmployeeDetailsDto entity)
         {
             var employee = _mapper.Map<Employee>(entity);
             _context.Employees.Add(employee);
@@ -66,7 +66,7 @@ namespace CA.Ticketing.Business.Services.Employees
             await _context.SaveChangesAsync();
         }
 
-        public async Task Delete(int id)
+        public async Task Delete(string id)
         {
             var employee = await GetEmployee(id);
             _context.Employees.Remove(employee);
@@ -113,7 +113,7 @@ namespace CA.Ticketing.Business.Services.Employees
             await _accountsService.ResetUserPassword(new ResetUserPasswordDto { UserId = employee.ApplicationUser.Id, Password = resetEmployeePasswordModel.Password });
         }
 
-        public async Task DeleteLogin(int id)
+        public async Task DeleteLogin(string id)
         {
             var employee = await GetEmployee(id);
 
@@ -125,11 +125,10 @@ namespace CA.Ticketing.Business.Services.Employees
             await _accountsService.DeleteUser(employee.ApplicationUser.Id);
         }
 
-        private async Task<Employee> GetEmployee(int id)
+        private async Task<Employee> GetEmployee(string? id)
         {
             var employee = await _context.Employees
                 .Include(x => x.ApplicationUser)
-
                 .SingleOrDefaultAsync(x => x.Id == id);
 
             if (employee == null)

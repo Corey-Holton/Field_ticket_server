@@ -34,7 +34,7 @@ namespace CA.Ticketing.Api.Controllers
         /// <returns>Scheduling Id</returns>
         [Route(ApiRoutes.Scheduling.Create)]
         [HttpPost]
-        [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         public async Task<IActionResult> Create(SchedulingDto scheduling)
         {
             var shedulingId = await _schedulingService.Create(scheduling);
@@ -61,7 +61,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Scheduling.Delete)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> Delete(int schedulingId)
+        public async Task<IActionResult> Delete(string schedulingId)
         {
             await _schedulingService.Delete(schedulingId);
             return Ok();

@@ -10,6 +10,7 @@ namespace CA.Ticketing.Business.Bootstrap
         {
             services.Configure<SecuritySettings>(configuration.GetSection(nameof(SecuritySettings)));
             services.Configure<EmailSettings>(configuration.GetSection(nameof(EmailSettings)));
+            services.Configure<ServerConfiguration>(configuration.GetSection(nameof(ServerConfiguration)));
         }
     }
 }

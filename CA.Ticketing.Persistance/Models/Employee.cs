@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace CA.Ticketing.Persistance.Models
 {
     [Table(TableNames.Employees)]
-    public class Employee : IdentityModelWithAddress<int>
+    public class Employee : IdentityModelWithAddress
     {
         public string FirstName { get; set; }
 
@@ -33,7 +33,7 @@ namespace CA.Ticketing.Persistance.Models
         public virtual ApplicationUser? ApplicationUser { get; set; }
 
         [ForeignKey(nameof(AssignedRig))]
-        public int? AssignedRigId { get; set; }
+        public string? AssignedRigId { get; set; }
 
         public virtual Equipment? AssignedRig { get; set; }
 

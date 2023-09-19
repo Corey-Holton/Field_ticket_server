@@ -6,7 +6,7 @@ namespace CA.Ticketing.Business.Services.Authentication.Dto
     public class CreateCustomerContactLoginDto : BaseRedirectUrlRequest
     {
         [Required]
-        public int CustomerContactId { get; set; }
+        public string CustomerContactId { get; set; }
 
         [EmailAddress]
         [Required]

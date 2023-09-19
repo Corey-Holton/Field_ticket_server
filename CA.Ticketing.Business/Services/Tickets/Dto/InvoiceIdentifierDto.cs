@@ -2,7 +2,7 @@
 {
     public class InvoiceIdentifierDto
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         public string InvoiceId { get; set; }
     }

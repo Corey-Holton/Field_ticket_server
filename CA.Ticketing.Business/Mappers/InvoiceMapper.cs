@@ -16,6 +16,9 @@ namespace CA.Ticketing.Business.Mappers
                 .ForMember(x => x.Tickets, dest => dest.MapFrom(src => src.Tickets));
 
             CreateMap<Invoice, InvoiceIdentifierDto>();
+
+            CreateMap<Invoice, Invoice>()
+                .ForMember(x => x.Id, dest => dest.Ignore());
         }
     }
 }

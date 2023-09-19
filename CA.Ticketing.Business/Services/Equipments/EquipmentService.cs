@@ -6,12 +6,19 @@ using CA.Ticketing.Persistance.Context;
 using CA.Ticketing.Persistance.Models;
 using Microsoft.EntityFrameworkCore;
 using CA.Ticketing.Common.Extensions;
+using CA.Ticketing.Business.Services.FileManager;
+using CA.Ticketing.Common.Constants;
 
 namespace CA.Ticketing.Business.Services.Equipments
 {
     public class EquipmentService : EntityServiceBase, IEquipmentService
     {
-        public EquipmentService(CATicketingContext context, IMapper mapper ) : base (context, mapper) {}
+        private readonly IFileManagerService _fileManagerService;
+
+        public EquipmentService(CATicketingContext context, IMapper mapper, IFileManagerService fileManagerService) : base (context, mapper) 
+        {
+            _fileManagerService = fileManagerService;
+        }
 
         public async Task<IEnumerable<EquipmentDto>> GetAll()
         {
@@ -27,13 +34,13 @@ namespace CA.Ticketing.Business.Services.Equipments
         }
 
 
-        public async Task<EquipmentDetailsDto> GetById(int id)
+        public async Task<EquipmentDetailsDto> GetById(string? id)
         {
             var equipment = await GetEquipment(id);
             return _mapper.Map<EquipmentDetailsDto>(equipment);
         }
 
-        public async Task<int> Create(EquipmentDetailsDto entity)
+        public async Task<string> Create(EquipmentDetailsDto entity)
         {
             var equipment = _mapper.Map<Equipment>(entity);
             
@@ -67,7 +74,7 @@ namespace CA.Ticketing.Business.Services.Equipments
             await _context.SaveChangesAsync();
         }
 
-        public async Task Delete(int id)
+        public async Task Delete(string id)
         {
             var equipment = await GetEquipment(id);
 
@@ -76,7 +83,7 @@ namespace CA.Ticketing.Business.Services.Equipments
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<EquipmentChargeDto>> GetEquipmentCharges(int id)
+        public async Task<IEnumerable<EquipmentChargeDto>> GetEquipmentCharges(string? id)
         {
             var equipmentCharges = await _context.EquipmentCharges
                 .Include(x => x.Charge)
@@ -104,7 +111,7 @@ namespace CA.Ticketing.Business.Services.Equipments
             await _context.SaveChangesAsync();
         }
 
-        private async Task<Equipment> GetEquipment(int id)
+        private async Task<Equipment> GetEquipment(string? id)
         {
             var equipment = await _context.Equipment
                 .SingleOrDefaultAsync(x => x.Id == id);
@@ -148,6 +155,54 @@ namespace CA.Ticketing.Business.Services.Equipments
                         DaysSinceLastJob = (DateTime.UtcNow - lastJob?.ExecutionDate)?.Days ?? -1
                     };
                 });
+        }
+
+        public async Task UploadFile(Stream fileStream, string equipmentId, string assignedName, string fileName, string contentType)
+        {
+            var equipment = await _context.Equipment.SingleAsync(x => x.Id == equipmentId);
+
+            var equipmentFile = new EquipmentFile 
+            { 
+                ContentType = contentType,
+                DisplayName = assignedName,
+                FileName = fileName,
+                FileIndicator = Path.GetRandomFileName()
+            };
+
+            using var memoryStream = new MemoryStream();
+            fileStream.CopyTo(memoryStream);
+            var fileBytes = memoryStream.ToArray();
+
+            _fileManagerService.SaveFile(fileBytes, Path.Combine(FilePaths.Equipment, equipment.Id), equipmentFile.FileIndicator);
+
+            equipment.Files.Add(equipmentFile);
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<EquipmentFileDto>> GetFilesList(string equipmentId)
+        {
+            var equipment = await _context.Equipment
+                .Include(x => x.Files)
+                .SingleAsync(x => x.Id == equipmentId);
+
+            return equipment.Files
+                .Select(x => _mapper.Map<EquipmentFileDto>(x)).ToList();
+        }
+
+        public async Task<(byte[] FileBytes, EquipmentFileDto FileDto)> DownloadFile(string fileId)
+        {
+            var equipmentFile = await _context.EquipmentFiles.SingleAsync(x => x.Id == fileId);
+            var fileBytes = _fileManagerService.GetFileBytes(Path.Combine(FilePaths.Equipment, equipmentFile.EquipmentId), equipmentFile.FileIndicator);
+            return (fileBytes, _mapper.Map<EquipmentFileDto>(equipmentFile));
+        }
+
+        public async Task DeleteFile(string fileId)
+        {
+            var equipmentFile = await _context.EquipmentFiles.SingleAsync(x => x.Id == fileId);
+            _context.EquipmentFiles.Remove(equipmentFile);
+            _fileManagerService.DeleteFile(Path.Combine(FilePaths.Equipment, equipmentFile.EquipmentId), equipmentFile.FileIndicator);
+            await _context.SaveChangesAsync();
         }
     }
 }

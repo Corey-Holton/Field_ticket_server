@@ -48,7 +48,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Tickets.Get)]
         [HttpGet]
         [ProducesResponseType(typeof(TicketDetailsDto), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetById(int ticketId)
+        public async Task<IActionResult> GetById(string ticketId)
         {
             var ticket = await _ticketService.GetById(ticketId);
             return Ok(ticket);
@@ -61,7 +61,7 @@ namespace CA.Ticketing.Api.Controllers
         /// <param name="manageTicketDto">Manage Ticket Dto</param>
         [Route(ApiRoutes.Tickets.Create)]
         [HttpPost]
-        [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         public async Task<IActionResult> Create(ManageTicketDto manageTicketDto)
         {
             var ticketId = await _ticketService.Create(manageTicketDto);
@@ -100,7 +100,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Tickets.Delete)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> Delete(int ticketId)
+        public async Task<IActionResult> Delete(string ticketId)
         {
             await _ticketService.Delete(ticketId);
             return Ok();
@@ -139,7 +139,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Tickets.DeletePayrollEntry)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> RemovePayroll(int payrollDataId)
+        public async Task<IActionResult> RemovePayroll(string payrollDataId)
         {
             await _ticketService.RemovePayroll(payrollDataId);
             return Ok();
@@ -165,7 +165,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Tickets.Preview)]
         [HttpGet]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-        public async Task<IActionResult> PreviewTicket(int ticketId)
+        public async Task<IActionResult> PreviewTicket(string ticketId)
         {
             var previewResult = await _ticketService.PreviewTicket(ticketId);
             return Ok(previewResult);
@@ -205,7 +205,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Tickets.CustomerUpload)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> CustomerUpload(int ticketId, IFormFile ticketPdf)
+        public async Task<IActionResult> CustomerUpload(string ticketId, IFormFile ticketPdf)
         {
             await _ticketService.UploadTicket(ticketPdf.OpenReadStream(), ticketId);
 
@@ -219,7 +219,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Tickets.Download)]
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> DownloadTicket(int ticketId)
+        public async Task<IActionResult> DownloadTicket(string ticketId)
         {
             var ticketBytes = await _ticketService.DownloadTicket(ticketId);
             var stream = new MemoryStream(ticketBytes);
@@ -234,7 +234,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Tickets.Reset)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> ResetSignatures(int ticketId)
+        public async Task<IActionResult> ResetSignatures(string ticketId)
         {
             await _ticketService.ResetSignatures(ticketId);
             return Ok();

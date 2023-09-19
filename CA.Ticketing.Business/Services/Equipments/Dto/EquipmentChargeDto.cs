@@ -3,7 +3,7 @@ using CA.Ticketing.Common.Enums;
 
 namespace CA.Ticketing.Business.Services.Equipments.Dto
 {
-    public class EquipmentChargeDto : EntityDtoBase<int>
+    public class EquipmentChargeDto : EntityDtoBase
     {
         public string Name { get; set; }
 

@@ -6,7 +6,7 @@ namespace CA.Ticketing.Business.Services.Employees.Dto
     public class ResetEmployeePasswordDto
     {
         [Required]
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         [PasswordPropertyText]
         [Required]

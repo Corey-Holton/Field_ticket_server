@@ -27,5 +27,7 @@
         public const string PayrollData = nameof(PayrollData);
 
         public const string Settings = nameof(Settings);
+
+        public const string SyncData = nameof(SyncData);
     }
 }

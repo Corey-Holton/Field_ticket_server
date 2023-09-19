@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace CA.Ticketing.Persistance.Models
 {
     [Table(TableNames.Charges)]
-    public class Charge : IdentityModel<int>
+    public class Charge : IdentityModel
     {
         public int Order { get; set; }
 

@@ -2,7 +2,7 @@
 
 namespace CA.Ticketing.Business.Services.Invoices.Dto
 {
-    public class InvoiceDto : EntityDtoBase<int>
+    public class InvoiceDto : EntityDtoBase
     {
         public string InvoiceId { get; set; }
 

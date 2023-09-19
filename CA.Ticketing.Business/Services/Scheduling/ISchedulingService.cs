@@ -6,11 +6,11 @@ namespace CA.Ticketing.Business.Services.Scheduling
     {
         Task<IEnumerable<SchedulingDto>> GetAll();
 
-        Task<int> Create(SchedulingDto entity);
+        Task<string> Create(SchedulingDto entity);
 
         Task Update(SchedulingDto entity);
 
-        Task Delete(int id);
+        Task Delete(string id);
 
     }
 }

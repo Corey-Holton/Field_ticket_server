@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CA.Ticketing.Persistance.Migrations
 {
     [DbContext(typeof(CATicketingContext))]
-    [Migration("20230903154502_PayrollData")]
-    partial class PayrollData
+    [Migration("20230918181402_ServerStatusChanges")]
+    partial class ServerStatusChanges
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -36,8 +36,8 @@ namespace CA.Ticketing.Persistance.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("CustomerContactId")
-                        .HasColumnType("int");
+                    b.Property<string>("CustomerContactId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -46,12 +46,15 @@ namespace CA.Ticketing.Persistance.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("EmployeeId")
-                        .HasColumnType("int");
+                    b.Property<string>("EmployeeId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("LastModifiedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -121,11 +124,8 @@ namespace CA.Ticketing.Persistance.Migrations
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.Charge", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<bool>("AllowRateAdjustment")
                         .HasColumnType("bit");
@@ -136,14 +136,23 @@ namespace CA.Ticketing.Persistance.Migrations
                     b.Property<bool>("AutoCalculated")
                         .HasColumnType("bit");
 
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<double>("DefaultRate")
                         .HasColumnType("float");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IncludeInTicketSpecs")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsRigSpecific")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime>("LastModifiedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -162,11 +171,8 @@ namespace CA.Ticketing.Persistance.Migrations
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.Customer", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Address")
                         .IsRequired()
@@ -175,6 +181,15 @@ namespace CA.Ticketing.Persistance.Migrations
                     b.Property<string>("City")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("LastModifiedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -198,17 +213,21 @@ namespace CA.Ticketing.Persistance.Migrations
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.CustomerContact", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
 
-                    b.Property<int>("CustomerId")
-                        .HasColumnType("int");
+                    b.Property<string>("CustomerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("CustomerLocationId")
-                        .HasColumnType("int");
+                    b.Property<string>("CustomerLocationId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -222,6 +241,9 @@ namespace CA.Ticketing.Persistance.Migrations
                         .HasColumnType("bit");
 
                     b.Property<DateTime?>("InviteSentOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("LastModifiedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("LastName")
@@ -243,22 +265,29 @@ namespace CA.Ticketing.Persistance.Migrations
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.CustomerLocation", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("County")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("CustomerId")
-                        .HasColumnType("int");
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CustomerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Field")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("LastModifiedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<double?>("Lattitude")
                         .HasColumnType("float");
@@ -286,22 +315,25 @@ namespace CA.Ticketing.Persistance.Migrations
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.Employee", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Address")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("AssignedRigId")
-                        .HasColumnType("int");
+                    b.Property<string>("AssignedRigId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("City")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("DoB")
                         .HasColumnType("datetime2");
@@ -323,6 +355,9 @@ namespace CA.Ticketing.Persistance.Migrations
 
                     b.Property<int>("JobTitle")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("LastModifiedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -359,14 +394,17 @@ namespace CA.Ticketing.Persistance.Migrations
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.Equipment", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("Category")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -376,6 +414,9 @@ namespace CA.Ticketing.Persistance.Migrations
                         .HasColumnType("float");
 
                     b.Property<DateTime?>("LastMaintenance")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("LastModifiedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
@@ -403,17 +444,25 @@ namespace CA.Ticketing.Persistance.Migrations
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.EquipmentCharge", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    b.Property<string>("ChargeId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("ChargeId")
-                        .HasColumnType("int");
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
 
-                    b.Property<int>("EquipmentId")
-                        .HasColumnType("int");
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("EquipmentId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("LastModifiedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<double>("Rate")
                         .HasColumnType("float");
@@ -429,11 +478,8 @@ namespace CA.Ticketing.Persistance.Migrations
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.FieldTicket", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<double>("CompanyHours")
                         .HasColumnType("float");
@@ -442,8 +488,11 @@ namespace CA.Ticketing.Persistance.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("CustomerId")
-                        .HasColumnType("int");
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CustomerId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("CustomerPrintedName")
                         .IsRequired()
@@ -454,6 +503,9 @@ namespace CA.Ticketing.Persistance.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("CustomerSignedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
@@ -471,17 +523,20 @@ namespace CA.Ticketing.Persistance.Migrations
                     b.Property<DateTime?>("EndTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("EquipmentId")
-                        .HasColumnType("int");
+                    b.Property<string>("EquipmentId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("ExecutionDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("InvoiceId")
-                        .HasColumnType("int");
+                    b.Property<string>("InvoiceId")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("LocationId")
-                        .HasColumnType("int");
+                    b.Property<DateTime>("LastModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LocationId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<double>("Mileage")
                         .HasColumnType("float");
@@ -521,11 +576,18 @@ namespace CA.Ticketing.Persistance.Migrations
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.Invoice", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CustomerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("DueDate")
                         .HasColumnType("datetime2");
@@ -533,31 +595,46 @@ namespace CA.Ticketing.Persistance.Migrations
                     b.Property<DateTime>("InvoiceDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("InvoiceIdentifier")
+                    b.Property<string>("InvoiceId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("LastModifiedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("Paid")
                         .HasColumnType("bit");
 
+                    b.Property<DateTime?>("SentToCustomer")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
 
                     b.ToTable("Invoices");
                 });
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.PayrollData", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
 
-                    b.Property<int?>("EmployeeId")
-                        .HasColumnType("int");
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2");
 
-                    b.Property<int>("FieldTicketId")
-                        .HasColumnType("int");
+                    b.Property<string>("EmployeeId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("FieldTicketId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("LastModifiedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -580,17 +657,21 @@ namespace CA.Ticketing.Persistance.Migrations
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.Scheduling", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
 
-                    b.Property<int>("CustomerId")
-                        .HasColumnType("int");
+                    b.Property<string>("CustomerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("CustomerLocationId")
-                        .HasColumnType("int");
+                    b.Property<string>("CustomerLocationId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -599,8 +680,12 @@ namespace CA.Ticketing.Persistance.Migrations
                     b.Property<DateTime?>("EndTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("EquipmentId")
-                        .HasColumnType("int");
+                    b.Property<string>("EquipmentId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("LastModifiedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("StartTime")
                         .HasColumnType("datetime2");
@@ -618,14 +703,20 @@ namespace CA.Ticketing.Persistance.Migrations
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.Setting", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<double>("FuelCalculationMultiplier")
                         .HasColumnType("float");
+
+                    b.Property<DateTime>("LastModifiedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("MileageCost")
                         .HasColumnType("int");
@@ -641,13 +732,27 @@ namespace CA.Ticketing.Persistance.Migrations
                     b.ToTable("Settings");
                 });
 
+            modelBuilder.Entity("CA.Ticketing.Persistance.Models.SyncData", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Changes")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("LastSyncDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SyncData");
+                });
+
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.TicketSpecification", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<bool>("AllowRateAdjustment")
                         .HasColumnType("bit");
@@ -659,8 +764,18 @@ namespace CA.Ticketing.Persistance.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("FieldTicketId")
-                        .HasColumnType("int");
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FieldTicketId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("LastModifiedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<double>("Quantity")
                         .HasColumnType("float");
@@ -885,7 +1000,7 @@ namespace CA.Ticketing.Persistance.Migrations
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.FieldTicket", b =>
                 {
                     b.HasOne("CA.Ticketing.Persistance.Models.Customer", "Customer")
-                        .WithMany()
+                        .WithMany("Tickets")
                         .HasForeignKey("CustomerId");
 
                     b.HasOne("CA.Ticketing.Persistance.Models.Equipment", "Equipment")
@@ -907,6 +1022,17 @@ namespace CA.Ticketing.Persistance.Migrations
                     b.Navigation("Invoice");
 
                     b.Navigation("Location");
+                });
+
+            modelBuilder.Entity("CA.Ticketing.Persistance.Models.Invoice", b =>
+                {
+                    b.HasOne("CA.Ticketing.Persistance.Models.Customer", "Customer")
+                        .WithMany("Invoices")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.PayrollData", b =>
@@ -1017,7 +1143,11 @@ namespace CA.Ticketing.Persistance.Migrations
                 {
                     b.Navigation("Contacts");
 
+                    b.Navigation("Invoices");
+
                     b.Navigation("Locations");
+
+                    b.Navigation("Tickets");
                 });
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.CustomerContact", b =>

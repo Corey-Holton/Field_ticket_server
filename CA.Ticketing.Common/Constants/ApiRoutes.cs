@@ -109,6 +109,14 @@
             public const string PermitExpirationDate = $"{_root}/permits-expiration";
 
             public const string RigsNotWorking = $"{_root}/rigs-not-working";
+
+            public const string FilesList = $"{_root}/files";
+
+            public const string Upload = $"{FilesList}/upload";
+
+            public const string DeleteFile = $"{FilesList}/delete";
+
+            public const string Download = $"{FilesList}/download";
         }
 
         public class Tickets
@@ -220,6 +228,17 @@
             public const string Delete = $"{_root}/delete";
 
             public const string ResetPassword = $"{_root}/reset-password";
+        }
+
+        public class Sync
+        {
+            private const string _root = $"{ApiRoutes._root}/sync";
+
+            public const string GetOrUpdateGeneric = $"{_root}/{{entityType}}";
+
+            public const string Status = $"{_root}/status";
+
+            public const string Health = $"{_root}/health";
         }
     }
 }

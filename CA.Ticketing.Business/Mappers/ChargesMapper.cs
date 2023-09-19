@@ -10,7 +10,8 @@ namespace CA.Ticketing.Business.Mappers
         {
             CreateMap<Charge, ChargeDto>();
 
-            CreateMap<ChargeDto, Charge>();
+            CreateMap<ChargeDto, Charge>()
+                .ForMember(x => x.Id, dest => dest.Ignore());
 
             CreateMap<Charge, Charge>()
                 .ForMember(x => x.Id, dest => dest.Ignore());

@@ -13,7 +13,7 @@ namespace CA.Ticketing.Business.Authentication
 
         public ApplicationRole Role { get; set; }
 
-        public int? CustomerContactId { get; set; }
+        public string? CustomerContactId { get; set; }
 
         public IContextUser FromClaimsIdentity(ClaimsIdentity identity)
         {
@@ -42,12 +42,9 @@ namespace CA.Ticketing.Business.Authentication
 
             var customerContactClaim = identity.FindFirst(CAClaims.CustomerContactId);
 
-            if (customerContactClaim != null)
+            if (customerContactClaim != null && !string.IsNullOrEmpty(customerContactClaim.Value))
             {
-                if (int.TryParse(customerContactClaim.Value, out var customerContactId))
-                {
-                    CustomerContactId = customerContactId;
-                }
+                CustomerContactId = customerContactClaim.Value;
             }
 
             return this;
