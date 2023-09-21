@@ -4,8 +4,28 @@
 		<Directory Id="INSTALLFOLDER" Name="CA-Ticketing">
 			<Directory Id="WEBAPIFOLDER" Name="Api" />
 			<Directory Id="WEBUIFOLDER" Name="Ui" />
-			<Directory Id="DESKTOPAPPFOLDER" Name="Desktop" />
 		</Directory>
     </StandardDirectory>
+	<StandardDirectory Id="CommonAppDataFolder">
+		<Directory Id="INSTALLFOLDERAPPDATA" Name="CA-Ticketing">
+			<Directory Id="DESKTOPAPPFOLDER" Name="Desktop" />
+		</Directory>
+	</StandardDirectory>
+	<StandardDirectory Id="DesktopFolder">
+		<Component Id="DesktopShortcutComponent" Guid="13564CC9-BB7C-47F0-8F6D-88EAF241FF6E">
+			<Shortcut Id="CADesktopShortcut"
+              Name="CA Ticketing"
+              Description="CA Ticketing Desktop Application"
+              Target="[DESKTOPAPPFOLDER]CA.Ticketing.Desktop.exe"
+              WorkingDirectory="DESKTOPAPPFOLDER"
+			  Icon="CAIcon" />
+			<RegistryValue Root="HKCU"                
+						   Key="Software\ReadyDev Technologies\CA-Ticketing-Desktop"                
+						   Name="installed"                
+						   Type="integer"                
+						   Value="1"                
+						   KeyPath="yes" />
+		</Component>
+	</StandardDirectory>
   </Fragment>
 </Wix>

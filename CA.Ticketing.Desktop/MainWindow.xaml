@@ -21,6 +21,6 @@
         </DataTemplate>
     </mah:MetroWindow.IconTemplate>
     <Grid>
-        <wv2:WebView2 Source="http://localhost:7058"></wv2:WebView2>
+        <wv2:WebView2 x:Name="webView" Source="http://localhost:7058"></wv2:WebView2>
     </Grid>
 </mah:MetroWindow>

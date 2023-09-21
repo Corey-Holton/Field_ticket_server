@@ -1,6 +1,13 @@
 ﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
-  <Package Name="CA.Ticketing.Installer" Manufacturer="ReadyDev Technologies" Version="1.0.0.0" UpgradeCode="dd16db44-6f13-4429-aaa4-546e603d4b87">
+  <Package Name="CA Ticketing Setup" 
+		   Manufacturer="ReadyDev Technologies" 
+		   Version="1.1.0.0" 
+	       UpgradeCode="dd16db44-6f13-4429-aaa4-546e603d4b87">
     <MajorUpgrade DowngradeErrorMessage="A later version of the application is already installed" />
+	<Property Id="ARPPRODUCTICON" Value="CAIcon" />
+	<Property Id="ARPNOREPAIR" Value="yes" Secure="yes" />      <!-- Remove repair -->
+    <Property Id="ARPNOMODIFY" Value="yes" Secure="yes" />      <!-- Remove modify -->
+	<MediaTemplate EmbedCab="yes" />
 	<Icon Id="CAIcon" SourceFile="ca-map.ico"/>
     <Feature Id="WebApi">
       <ComponentGroupRef Id="WebApiIssConfiguration" />
@@ -12,6 +19,9 @@
 	</Feature>
 	<Feature Id="Desktop">
       <ComponentGroupRef Id="DesktopAppComponent" />
+	</Feature>
+	<Feature Id="DesktopShortcut">
+	  <ComponentRef Id="DesktopShortcutComponent" />
 	</Feature>
   </Package>
 </Wix>

@@ -15,25 +15,10 @@
 					   Name="CA.Ticketing.Web" />
 				</iis:WebSite>
 			</Component>
-			<!-- Configure virtual dir 
-			<Component Id="WebUiVirtualDirCmp"
-				   Guid="{C53514BB-5CE7-4F85-8397-237EF4399690}"
-				   KeyPath="yes" >
-				<iis:WebVirtualDir Id="WebUiVirtualDir"
-						  Alias="CA.Ticketing.Web" Directory="WEBUIFOLDER"
-						  WebSite="WebUiWebsite">
-					<iis:WebDirProperties Id="WebUiVirtDirProperties"
-					   AnonymousAccess="yes" BasicAuthentication="no"
-					   WindowsAuthentication="no" />
-					<iis:WebApplication Id="WebUiWebApplication" WebAppPool="WebUiPool"
-					   Name="CA.Ticketing.Web" />
-				</iis:WebVirtualDir>
-			</Component>-->
 		</DirectoryRef>
 		<ComponentGroup Id="WebUiIssConfiguration">
 			<ComponentRef Id="WebUiAppPoolCmp" />
 			<ComponentRef Id="WebUiSiteCmp" />
-			<!--<ComponentRef Id="WebUiVirtualDirCmp" />-->
 		</ComponentGroup>
 	</Fragment>
 </Wix>

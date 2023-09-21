@@ -15,25 +15,10 @@
 							  Name="CA.Ticketing.Api"
 							  Identity="localSystem" ManagedPipelineMode="Integrated" />
 		  </Component>
-		  <!-- Configure virtual dir 
-		  <Component Id="WebApiVirtualDirCmp"
-				 Guid="{751DEB01-ECC1-48ff-869A-65BCEE9E0528}"
-				 KeyPath="yes" >
-			  <iis:WebVirtualDir Id="WebApiVirtualDir"
-						Alias="CA.Ticketing.Api" Directory="WEBAPIFOLDER"
-						WebSite="WebApiWebsite">
-				  <iis:WebDirProperties Id="WebApiVirtDirProperties"
-					 AnonymousAccess="yes" BasicAuthentication="no"
-					 WindowsAuthentication="no" />
-				  <iis:WebApplication Id="WebApiWebApplication" WebAppPool="WebApiPool"
-					 Name="CA.Ticketing.Api" />
-			  </iis:WebVirtualDir>
-		  </Component>-->
 	  </DirectoryRef>
 	  <ComponentGroup Id="WebApiIssConfiguration">
 		  <ComponentRef Id="WebApiAppPoolCmp" />
 		  <ComponentRef Id="WebApiSiteCmp" />
-		  <!--<ComponentRef Id="WebApiVirtualDirCmp" />-->
 	  </ComponentGroup>
   </Fragment>
 </Wix>
