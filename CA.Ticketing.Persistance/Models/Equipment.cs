@@ -1,6 +1,7 @@
 ﻿using CA.Ticketing.Common.Constants;
 using CA.Ticketing.Common.Enums;
 using CA.Ticketing.Persistance.Models.Abstracts;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CA.Ticketing.Persistance.Models
@@ -26,10 +27,13 @@ namespace CA.Ticketing.Persistance.Models
 
         public double FuelConsumption { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<EquipmentCharge> Charges { get; set; } = new List<EquipmentCharge>();
 
+        [JsonIgnore]
         public virtual ICollection<Employee> Crew { get; set; } = new List<Employee>();
 
+        [JsonIgnore]
         public virtual ICollection<EquipmentFile> Files { get; set; } = new List<EquipmentFile>();
     }
 }

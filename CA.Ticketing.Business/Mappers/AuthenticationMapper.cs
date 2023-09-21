@@ -18,6 +18,9 @@ namespace CA.Ticketing.Business.Mappers
             CreateMap<CreateUserDto, ApplicationUser>();
 
             CreateMap<CreateEmployeeLoginDto, ApplicationUser>();
+
+            CreateMap<ApplicationUser, ApplicationUser>()
+                .ForMember(x => x.Id, dest => dest.Ignore());
         }
     }
 }

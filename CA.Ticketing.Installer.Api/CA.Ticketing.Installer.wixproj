@@ -1,0 +1,46 @@
+﻿<Project Sdk="WixToolset.Sdk/4.0.0">
+  <PropertyGroup>
+    <DefineConstants>PublishFolderUi=$(SolutionDir)\Publish\WebUi</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);PublishFolderWeb=$(SolutionDir)\Publish\WebApi</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);PublishFolderDesktop=$(SolutionDir)\Publish\Desktop</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup>
+    <HarvestFileSuppressUniqueIds>false</HarvestFileSuppressUniqueIds>
+    <HarvestFileGenerateGuidsNow>true</HarvestFileGenerateGuidsNow>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="ca-map.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <HarvestDirectory Include="../Publish/WebApi">
+      <ComponentGroupName>WebApiComponent</ComponentGroupName>
+      <DirectoryRefId>WEBAPIFOLDER</DirectoryRefId>
+      <SuppressRootDirectory>true</SuppressRootDirectory>
+      <PreprocessorVariable>var.PublishFolderWeb</PreprocessorVariable>
+    </HarvestDirectory>
+    <HarvestDirectory Include="../Publish/Desktop">
+      <ComponentGroupName>DesktopAppComponent</ComponentGroupName>
+      <DirectoryRefId>DESKTOPAPPFOLDER</DirectoryRefId>
+      <SuppressRootDirectory>true</SuppressRootDirectory>
+      <PreprocessorVariable>var.PublishFolderDesktop</PreprocessorVariable>
+    </HarvestDirectory>
+    <HarvestDirectory Include="../Publish/WebUi">
+      <ComponentGroupName>WebUiComponent</ComponentGroupName>
+      <DirectoryRefId>WEBUIFOLDER</DirectoryRefId>
+      <SuppressRootDirectory>true</SuppressRootDirectory>
+      <PreprocessorVariable>var.PublishFolderUi</PreprocessorVariable>
+    </HarvestDirectory>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="WixToolset.Heat" Version="4.0.2" />
+    <PackageReference Include="WixToolset.Iis.wixext" Version="4.0.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CA.Ticketing.Api\CA.Ticketing.Api.csproj" />
+    <ProjectReference Include="..\CA.Ticketing.Desktop\CA.Ticketing.Desktop.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,11 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Fragment>
+    <StandardDirectory Id="ProgramFiles6432Folder">
+		<Directory Id="INSTALLFOLDER" Name="CA-Ticketing">
+			<Directory Id="WEBAPIFOLDER" Name="Api" />
+			<Directory Id="WEBUIFOLDER" Name="Ui" />
+			<Directory Id="DESKTOPAPPFOLDER" Name="Desktop" />
+		</Directory>
+    </StandardDirectory>
+  </Fragment>
+</Wix>

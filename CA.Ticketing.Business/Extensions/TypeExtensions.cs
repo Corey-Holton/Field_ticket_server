@@ -13,6 +13,7 @@ namespace CA.Ticketing.Business.Extensions
             typeof(CustomerContact),
             typeof(Equipment),
             typeof(EquipmentCharge),
+            typeof(EquipmentFile),
             typeof(Employee),
             typeof(Invoice),
             typeof(FieldTicket),
@@ -27,13 +28,15 @@ namespace CA.Ticketing.Business.Extensions
 
         public static Type GetTypeFromString(string entityType) => entityType.ToLower() switch
         {
-            "charges" => typeof(Charge),
-            "customers" => typeof(Customer),
+            "charge" => typeof(Charge),
+            "customer" => typeof(Customer),
             "customerlocation" => typeof(CustomerLocation),
             "customercontact" => typeof(CustomerContact),
             "equipment" => typeof(Equipment),
             "equipmentcharge" => typeof(EquipmentCharge),
+            "equipmentfile" => typeof(EquipmentFile),
             "employee" => typeof(Employee),
+            "invoice" => typeof(Invoice),
             "fieldticket" => typeof(FieldTicket),
             "payrolldata" => typeof(PayrollData),
             "scheduling" => typeof(Scheduling),
@@ -41,7 +44,7 @@ namespace CA.Ticketing.Business.Extensions
             "ticketspecification" => typeof(TicketSpecification),
             "applicationuser" => typeof(ApplicationUser),
             "identityrole" => typeof(IdentityRole),
-            "identityuserrole<string>" => typeof(IdentityUserRole<string>),
+            "identityuserrole`1" => typeof(IdentityUserRole<string>),
             _ => throw new Exception("Unknown type requested")
         };
     }

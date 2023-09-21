@@ -1,6 +1,7 @@
 ﻿using CA.Ticketing.Common.Constants;
 using CA.Ticketing.Common.Enums;
 using CA.Ticketing.Persistance.Models.Abstracts;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CA.Ticketing.Persistance.Models
@@ -11,6 +12,7 @@ namespace CA.Ticketing.Persistance.Models
         [ForeignKey(nameof(Customer))]
         public string CustomerId { get; set; }
 
+        [JsonIgnore]
         public virtual Customer Customer { get; set; }
 
         public string Lease { get; set; }
@@ -27,8 +29,10 @@ namespace CA.Ticketing.Persistance.Models
 
         public WellType WellType { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<CustomerContact> Contacts { get; set; } = new List<CustomerContact>();
 
+        [JsonIgnore]
         public virtual ICollection<FieldTicket> FieldTickets { get; set; } = new List<FieldTicket>();
 
         [NotMapped]

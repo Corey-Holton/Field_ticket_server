@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+	 xmlns:iis="http://wixtoolset.org/schemas/v4/wxs/iis">
+  <Fragment>
+	  <DirectoryRef Id="WEBAPIFOLDER">
+		  <Component Id="WebApiSiteCmp" Guid="6C540139-5258-4FBE-95EE-4C1FFE502345" KeyPath="yes" >
+			  <iis:WebSite Id="WebApiWebsite" Description="CA.Ticketing.Api" Directory="WEBAPIFOLDER">
+				  <iis:WebAddress Id="AllUnassignedApi" Port="7057" />
+				  <iis:WebApplication Id="WebApiWebApplication" WebAppPool="WebApiPool"
+					 Name="CA.Ticketing.Api" />
+			  </iis:WebSite>
+		  </Component>
+		  <Component Id="WebApiAppPoolCmp" Guid="8C20D5B1-EA66-4DD4-A256-ACF512CA8FCF" KeyPath="yes">
+			  <iis:WebAppPool Id="WebApiPool"
+							  Name="CA.Ticketing.Api"
+							  Identity="localSystem" ManagedPipelineMode="Integrated" />
+		  </Component>
+		  <!-- Configure virtual dir 
+		  <Component Id="WebApiVirtualDirCmp"
+				 Guid="{751DEB01-ECC1-48ff-869A-65BCEE9E0528}"
+				 KeyPath="yes" >
+			  <iis:WebVirtualDir Id="WebApiVirtualDir"
+						Alias="CA.Ticketing.Api" Directory="WEBAPIFOLDER"
+						WebSite="WebApiWebsite">
+				  <iis:WebDirProperties Id="WebApiVirtDirProperties"
+					 AnonymousAccess="yes" BasicAuthentication="no"
+					 WindowsAuthentication="no" />
+				  <iis:WebApplication Id="WebApiWebApplication" WebAppPool="WebApiPool"
+					 Name="CA.Ticketing.Api" />
+			  </iis:WebVirtualDir>
+		  </Component>-->
+	  </DirectoryRef>
+	  <ComponentGroup Id="WebApiIssConfiguration">
+		  <ComponentRef Id="WebApiAppPoolCmp" />
+		  <ComponentRef Id="WebApiSiteCmp" />
+		  <!--<ComponentRef Id="WebApiVirtualDirCmp" />-->
+	  </ComponentGroup>
+  </Fragment>
+</Wix>

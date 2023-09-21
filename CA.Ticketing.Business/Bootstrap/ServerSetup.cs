@@ -11,22 +11,31 @@ namespace CA.Ticketing.Business.Bootstrap
     {
         public static void RegisterServer(this IServiceCollection services, IConfiguration configuration)
         {
-            var securitySettings = configuration
-                .GetSection(nameof(ServerConfiguration)).Get<ServerConfiguration>();
+            var serverConfiguration = GetServerConfiguration(configuration);
 
-            if (!securitySettings.IsMainServer)
+            if (!serverConfiguration.IsMainServer)
             {
-                services.AddSingleton<DataSyncService>();
-                services.AddHostedService(serviceCollection => serviceCollection.GetRequiredService<DataSyncService>());
+                services.AddSingleton<IDataSyncService, DataSyncService>();
+                services.AddHostedService(serviceCollection => serviceCollection.GetRequiredService<IDataSyncService>());
             }
         }
-        public static async Task<IApplicationBuilder> InitiateDatabase(this IApplicationBuilder app)
+
+        public static async Task<IApplicationBuilder> InitiateDatabase(this IApplicationBuilder app, IConfiguration configuration)
         {
+            var serverConfiguration = GetServerConfiguration(configuration);
+
             using var scope = app.ApplicationServices.CreateScope();
             var services = scope.ServiceProvider;
             var seeder = services.GetRequiredService<DatabaseInitializer>();
-            await seeder.InitializeAsync();
+            await seeder.InitializeAsync(serverConfiguration.IsMainServer);
+
             return app;
+        }
+
+        private static ServerConfiguration GetServerConfiguration(IConfiguration configuration)
+        {
+            return configuration
+                .GetSection(nameof(ServerConfiguration)).Get<ServerConfiguration>();
         }
     }
 }

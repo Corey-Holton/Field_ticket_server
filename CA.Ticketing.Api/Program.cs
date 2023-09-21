@@ -63,11 +63,13 @@ builder.Services.AddDbContext<CATicketingContext>(options =>
 
 builder.Services.RegisterDomainServices();
 
+builder.Services.RegisterServer(builder.Configuration);
+
 builder.Services.RegisterMappers();
 
 var app = builder.Build();
 
-await app.InitiateDatabase();
+await app.InitiateDatabase(builder.Configuration);
 
 app.UseSwagger();
 app.UseSwaggerUI(c =>

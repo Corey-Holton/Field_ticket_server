@@ -1,5 +1,6 @@
 ﻿using CA.Ticketing.Common.Constants;
 using CA.Ticketing.Persistance.Models.Abstracts;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CA.Ticketing.Persistance.Models
@@ -11,12 +12,16 @@ namespace CA.Ticketing.Persistance.Models
 
         public int NetTerm { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<CustomerLocation> Locations { get; set; } = new List<CustomerLocation>();
 
+        [JsonIgnore]
         public virtual ICollection<CustomerContact> Contacts { get; set; } = new List<CustomerContact>();
 
+        [JsonIgnore]
         public virtual ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
 
+        [JsonIgnore]
         public virtual ICollection<FieldTicket> Tickets { get; set; } = new List<FieldTicket>();
     }
 }

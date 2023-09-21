@@ -1,6 +1,7 @@
 ﻿using CA.Ticketing.Common.Constants;
 using CA.Ticketing.Common.Enums;
 using CA.Ticketing.Persistance.Models.Abstracts;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CA.Ticketing.Persistance.Models
@@ -21,16 +22,19 @@ namespace CA.Ticketing.Persistance.Models
         [ForeignKey(nameof(Equipment))]
         public string? EquipmentId { get; set; }
 
+        [JsonIgnore]
         public virtual Equipment? Equipment { get; set; }
 
         [ForeignKey(nameof(Customer))]
         public string? CustomerId { get; set; }
 
+        [JsonIgnore]
         public virtual Customer? Customer { get; set; }
 
         [ForeignKey(nameof(CustomerLocation))]
         public string? LocationId { get; set; }
 
+        [JsonIgnore]
         public virtual CustomerLocation? Location { get; set; }
 
         public DateTime? StartTime { get; set; }
@@ -44,6 +48,7 @@ namespace CA.Ticketing.Persistance.Models
         [ForeignKey(nameof(Invoice))]
         public string? InvoiceId { get; set; }
 
+        [JsonIgnore]
         public virtual Invoice? Invoice { get; set; }
 
         public string CreatedBy { get; set; }
@@ -64,8 +69,10 @@ namespace CA.Ticketing.Persistance.Models
 
         public string FileName { get; set; } = string.Empty;
 
+        [JsonIgnore]
         public virtual ICollection<TicketSpecification> TicketSpecifications { get; set; } = new List<TicketSpecification>();
 
+        [JsonIgnore]
         public virtual ICollection<PayrollData> PayrollData { get; set; } = new List<PayrollData>();
 
         [NotMapped]

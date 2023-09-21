@@ -1,5 +1,6 @@
 ﻿using CA.Ticketing.Common.Constants;
 using CA.Ticketing.Persistance.Models.Abstracts;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CA.Ticketing.Persistance.Models
@@ -12,6 +13,7 @@ namespace CA.Ticketing.Persistance.Models
         [ForeignKey(nameof(Customer))]
         public string CustomerId { get; set; }
 
+        [JsonIgnore]
         public virtual Customer Customer { get; set; }
 
         public DateTime InvoiceDate { get; set; }
@@ -22,6 +24,7 @@ namespace CA.Ticketing.Persistance.Models
 
         public bool Paid { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<FieldTicket> Tickets { get; set; } = new List<FieldTicket>();
     }
 }

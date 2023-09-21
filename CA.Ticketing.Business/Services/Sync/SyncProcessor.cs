@@ -88,24 +88,14 @@ namespace CA.Ticketing.Business.Services.Sync
                         continue;
                     }
 
-                    if (typeof(T) == typeof(FieldTicket))
+                    if (entity is FieldTicket fieldTicket && !string.IsNullOrEmpty(fieldTicket.FileName))
                     {
-                        if (entity is not FieldTicket fieldTicket || string.IsNullOrEmpty(fieldTicket.FileName))
-                        {
-                            continue;
-                        }
-
                         fieldTicket.FileBytes = _fileManagerService.GetFileBytes(FilePaths.Tickets, fieldTicket.FileName);
                     }
-
-                    if (typeof(T) == typeof(EquipmentFile))
+                    
+                    if (entity is EquipmentFile equipmentFile)
                     {
-                        if (entity is not EquipmentFile equipmentFile)
-                        {
-                            continue;
-                        }
-
-                        equipmentFile.FileBytes = _fileManagerService.GetFileBytes(Path.Combine(FilePaths.Equipment, equipmentFile.EquipmentId), equipmentFile.FileName);
+                        equipmentFile.FileBytes = _fileManagerService.GetFileBytes(Path.Combine(FilePaths.Equipment, equipmentFile.EquipmentId), equipmentFile.FileIndicator);
                     }
                 }
             }
@@ -233,19 +223,25 @@ namespace CA.Ticketing.Business.Services.Sync
                 }
                 else
                 {
-                    dbSet.Add(entity);
+                    if (!entity.DeletedDate.HasValue)
+                    {
+                        dbSet.Add(entity);
+                    }
                 }
 
-                if (typeof(T) == typeof(FieldTicket) || typeof(T) == typeof(EquipmentFile))
+                if (entity is IFileEntity fileEntity)
                 {
-                    if (entity is not IFileEntity fileEntity)
+                    FieldTicket? fieldTicket = null;
+                    EquipmentFile? equipmentFile = null;
+
+                    if (typeof(T) == typeof(FieldTicket))
                     {
-                        continue;
+                        fieldTicket = entity as FieldTicket;
                     }
 
-                    if (entity is not FieldTicket fieldTicket || entity is not EquipmentFile equipmentFile)
+                    if (typeof(T) == typeof(EquipmentFile))
                     {
-                        continue;
+                        equipmentFile = entity as EquipmentFile;
                     }
 
                     if (entity.DeletedDate.HasValue)

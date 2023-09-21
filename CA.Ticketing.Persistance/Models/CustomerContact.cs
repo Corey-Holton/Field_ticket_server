@@ -1,6 +1,7 @@
 ﻿using CA.Ticketing.Common.Constants;
 using CA.Ticketing.Persistance.Models.Abstracts;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace CA.Ticketing.Persistance.Models
 {
@@ -10,11 +11,13 @@ namespace CA.Ticketing.Persistance.Models
         [ForeignKey(nameof(Customer))]
         public string CustomerId { get; set; }
 
+        [JsonIgnore]
         public virtual Customer Customer { get; set; }
 
         [ForeignKey(nameof(CustomerLocation))]
         public string? CustomerLocationId { get; set; }
 
+        [JsonIgnore]
         public virtual CustomerLocation? CustomerLocation { get; set; }
 
         public string FirstName { get; set; }
@@ -29,6 +32,7 @@ namespace CA.Ticketing.Persistance.Models
 
         public DateTime? InviteSentOn { get; set; }
 
+        [JsonIgnore]
         public virtual ApplicationUser? ApplicationUser { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CA.Ticketing.Persistance.Models
@@ -15,11 +16,13 @@ namespace CA.Ticketing.Persistance.Models
         [ForeignKey(nameof(Employee))]
         public string? EmployeeId { get; set; }
 
+        [JsonIgnore]
         public virtual Employee? Employee { get; set; }
 
         [ForeignKey(nameof(CustomerContact))] 
         public string? CustomerContactId { get; set; }
 
+        [JsonIgnore]
         public virtual CustomerContact? CustomerContact { get; set; }
 
         public string TicketIdentifier { get; set; } = string.Empty;

@@ -15,6 +15,7 @@ namespace CA.Ticketing.Business.Services.Charges
         public async Task<IEnumerable<ChargeDto>> GetAll()
         {
             var charges = await _context.Charges
+                .OrderBy(x => x.Order)
                 .ToListAsync();
             return charges.Select(x => _mapper.Map<ChargeDto>(x));
         }

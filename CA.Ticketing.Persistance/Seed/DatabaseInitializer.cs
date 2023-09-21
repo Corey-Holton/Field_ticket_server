@@ -29,11 +29,16 @@ namespace CA.Ticketing.Persistance.Seed
             _context = context;
         }
 
-        public async Task InitializeAsync()
+        public async Task InitializeAsync(bool isMainServer)
         {
             if (_context.Database.GetPendingMigrations().Any())
             {
                 await _context.Database.MigrateAsync();
+            }
+            
+            if (!isMainServer)
+            {
+                return;
             }
 
             await CreateRoles();
@@ -92,7 +97,7 @@ namespace CA.Ticketing.Persistance.Seed
             var chargesNames = defaultCharges.Select(x => x.Name).ToList();
 
             var chargesToRemove = await _context.Charges
-                .Where(x => chargesNames.Contains(x.Name))
+                .Where(x => !chargesNames.Contains(x.Name))
                 .ToListAsync();
 
             _context.Charges.RemoveRange(chargesToRemove);

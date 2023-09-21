@@ -1,4 +1,5 @@
 ﻿using CA.Ticketing.Persistance.Models.Abstracts;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CA.Ticketing.Persistance.Models
@@ -8,6 +9,7 @@ namespace CA.Ticketing.Persistance.Models
         [ForeignKey(nameof(Equipment))]
         public string EquipmentId { get; set; }
 
+        [JsonIgnore]
         public virtual Equipment Equipment { get; set; }
 
         public string FileName { get; set; }

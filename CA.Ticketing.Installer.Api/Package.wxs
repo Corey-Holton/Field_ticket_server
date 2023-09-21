@@ -1,0 +1,17 @@
+﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package Name="CA.Ticketing.Installer" Manufacturer="ReadyDev Technologies" Version="1.0.0.0" UpgradeCode="dd16db44-6f13-4429-aaa4-546e603d4b87">
+    <MajorUpgrade DowngradeErrorMessage="A later version of the application is already installed" />
+	<Icon Id="CAIcon" SourceFile="ca-map.ico"/>
+    <Feature Id="WebApi">
+      <ComponentGroupRef Id="WebApiIssConfiguration" />
+      <ComponentGroupRef Id="WebApiComponent" />
+    </Feature>
+	<Feature Id="WebUi">
+	  <ComponentGroupRef Id="WebUiIssConfiguration" />
+      <ComponentGroupRef Id="WebUiComponent" />
+	</Feature>
+	<Feature Id="Desktop">
+      <ComponentGroupRef Id="DesktopAppComponent" />
+	</Feature>
+  </Package>
+</Wix>

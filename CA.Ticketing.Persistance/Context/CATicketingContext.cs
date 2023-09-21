@@ -51,6 +51,7 @@ namespace CA.Ticketing.Persistance.Context
             builder.Entity<Charge>().HasQueryFilter(x => !x.DeletedDate.HasValue);
             builder.Entity<Equipment>().HasQueryFilter(x => !x.DeletedDate.HasValue);
             builder.Entity<Customer>().HasQueryFilter(x => !x.DeletedDate.HasValue);
+            builder.Entity<CustomerLocation>().HasQueryFilter(x => !x.DeletedDate.HasValue);
             builder.Entity<CustomerContact>().HasQueryFilter(x => !x.DeletedDate.HasValue);
             builder.Entity<Employee>().HasQueryFilter(x => !x.DeletedDate.HasValue);
             builder.Entity<EquipmentFile>().HasQueryFilter(x => !x.DeletedDate.HasValue);

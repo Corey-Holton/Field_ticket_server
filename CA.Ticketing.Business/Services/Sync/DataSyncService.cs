@@ -16,7 +16,7 @@ using System.Timers;
 
 namespace CA.Ticketing.Business.Services.Sync
 {
-    public class DataSyncService : IHostedService, IDataSyncService
+    public class DataSyncService : IDataSyncService
     {
         private readonly IServiceProvider _serviceProvider;
 
@@ -24,7 +24,7 @@ namespace CA.Ticketing.Business.Services.Sync
 
         private readonly System.Timers.Timer _serverCheckTimer;
 
-        private readonly double _syncInterval = TimeSpan.FromSeconds(30).TotalMilliseconds;
+        private readonly double _syncInterval = TimeSpan.FromSeconds(10).TotalMilliseconds;
 
         private readonly double _serverCheckInterval = TimeSpan.FromSeconds(5).TotalMilliseconds;
 
@@ -38,7 +38,7 @@ namespace CA.Ticketing.Business.Services.Sync
 
         private Task<bool> _syncTaskCompleted;
 
-        private ServerStatus _serverStatus = new ServerStatus();
+        private readonly ServerStatus _serverStatus = new();
 
         public DataSyncService(IServiceProvider serviceProvider,
             IOptions<ServerConfiguration> serverConfigurationOptions,
@@ -71,10 +71,21 @@ namespace CA.Ticketing.Business.Services.Sync
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            _syncTimer.Start();
-            _serverCheckTimer.Start();
-            await CheckServerHealth();
             await SetServerStatus();
+
+            try
+            {
+                await CheckServerHealth();
+            }
+            catch
+            {
+                _serverStatus.IsOnline = false;
+            }
+            finally
+            {
+                _syncTimer.Start();
+                _serverCheckTimer.Start();
+            }
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)
@@ -111,12 +122,7 @@ namespace CA.Ticketing.Business.Services.Sync
             if (syncData == null)
             {
                 var syncDataTypeInfoList = TypeExtensions.SyncEntities
-                    .Select(x => new SyncDataTypeInfo
-                    {
-                        EntityType = x.Name,
-                        GetLastModifiedDate = DateTime.MinValue,
-                        PostLastModifiedDate = DateTime.MinValue
-                    })
+                    .Select(x => new SyncDataTypeInfo(x))
                     .ToList();
                 syncData = new SyncData { Changes = JsonConvert.SerializeObject(syncDataTypeInfoList) };
 
@@ -170,9 +176,14 @@ namespace CA.Ticketing.Business.Services.Sync
 
             foreach (var entityType in TypeExtensions.SyncEntities)
             {
-                await SendEntities(entityType, syncDataChanges);
+                if (!syncDataChanges.ContainsKey(entityType))
+                {
+                    syncDataChanges.Add(entityType, new SyncDataTypeInfo(entityType));
+                }
 
-                await GetEntities(entityType, syncDataChanges);
+                await SendEntities(entityType, syncDataChanges, syncProcessor);
+
+                await GetEntities(entityType, syncDataChanges, syncProcessor);
             }
 
             syncData.Changes = JsonConvert.SerializeObject(syncDataChanges.Select(x => x.Value));
@@ -183,7 +194,7 @@ namespace CA.Ticketing.Business.Services.Sync
             await context.SaveChangesAsync();
         }
 
-        private async Task SendEntities(Type entityType, Dictionary<Type, SyncDataTypeInfo> syncDataChanges)
+        private async Task SendEntities(Type entityType, Dictionary<Type, SyncDataTypeInfo> syncDataChanges, ISyncProcessor syncProcessor)
         {
             if (entityType == typeof(IdentityRole) || entityType == typeof(IdentityUserRole<string>))
             {
@@ -194,7 +205,7 @@ namespace CA.Ticketing.Business.Services.Sync
             var methodInfo = typeof(SyncProcessor).GetMethod(nameof(SyncProcessor.GetEntities))!
                 .MakeGenericMethod(entityType);
 
-            var (entities, lastModifiedDate) = await (Task<(IEnumerable<object> entities, DateTime lastModifiedDate)>)methodInfo.Invoke(this, new object[] { syncData.PostLastModifiedDate, true })!;
+            var (entities, lastModifiedDate) = await (Task<(IEnumerable<object> Entities, DateTime LastModifiedDate)>)methodInfo.Invoke(syncProcessor, new object[] { syncData.PostLastModifiedDate, true })!;
 
             syncData.PostLastModifiedDate = lastModifiedDate;
 
@@ -204,11 +215,11 @@ namespace CA.Ticketing.Business.Services.Sync
             response.EnsureSuccessStatusCode();
         }
 
-        private async Task GetEntities(Type entityType, Dictionary<Type, SyncDataTypeInfo> syncDataChanges)
+        private async Task GetEntities(Type entityType, Dictionary<Type, SyncDataTypeInfo> syncDataChanges, ISyncProcessor syncProcessor)
         {
             var syncData = syncDataChanges[entityType];
 
-            using var serverDataResponse = await _httpClient.GetAsync($"api/sync/{entityType.Name.ToLower()}?dateTimeLastModified={syncData.GetLastModifiedDate:yyyyMMddHHmmssffff}");
+            using var serverDataResponse = await _httpClient.GetAsync($"api/sync/{entityType.Name.ToLower()}?dateTimeLastModified={syncData.GetLastModifiedDate:yyyyMMddHHmmssfffffff}");
             serverDataResponse.EnsureSuccessStatusCode();
             var entitiesToUpdateString = await serverDataResponse.Content.ReadAsStringAsync();
             var entitiesToUpdate = JsonConvert.DeserializeObject(entitiesToUpdateString);
@@ -216,7 +227,7 @@ namespace CA.Ticketing.Business.Services.Sync
             var updateMethodInfo = typeof(SyncProcessor).GetMethod(nameof(SyncProcessor.UpdateEntities))!
                 .MakeGenericMethod(entityType);
 
-            var lastUpdated = await (Task<DateTime?>)updateMethodInfo.Invoke(this, new object[] { entitiesToUpdate!, true })!;
+            var lastUpdated = await (Task<DateTime?>)updateMethodInfo.Invoke(syncProcessor, new object[] { entitiesToUpdate!, true })!;
 
             if (lastUpdated != null)
             {

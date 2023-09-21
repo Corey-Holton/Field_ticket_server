@@ -1,6 +1,7 @@
 ﻿using CA.Ticketing.Common.Constants;
 using CA.Ticketing.Common.Enums;
 using CA.Ticketing.Persistance.Models.Abstracts;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CA.Ticketing.Persistance.Models
@@ -30,11 +31,13 @@ namespace CA.Ticketing.Persistance.Models
 
         public double PayRate { get; set; }
 
+        [JsonIgnore]
         public virtual ApplicationUser? ApplicationUser { get; set; }
 
         [ForeignKey(nameof(AssignedRig))]
         public string? AssignedRigId { get; set; }
 
+        [JsonIgnore]
         public virtual Equipment? AssignedRig { get; set; }
 
         [NotMapped]

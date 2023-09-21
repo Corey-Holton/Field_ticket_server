@@ -40,7 +40,7 @@ namespace CA.Ticketing.Business.Services.Settings
         {
             var userId = _userContext.User!.Id;
             var user = await _context.Users.SingleAsync(x => x.Id == userId);
-
+            user.LastModifiedDate = DateTime.UtcNow;
             _mapper.Map(profile, user);
 
             await _context.SaveChangesAsync();

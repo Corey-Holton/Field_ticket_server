@@ -43,12 +43,12 @@ namespace CA.Ticketing.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Get(string entityType, string dateTimeLastModified)
         {
-            var lastModifiedDate = DateTime.ParseExact(dateTimeLastModified, "yyyyMMddHHmmssffff", null);
+            var lastModifiedDate = DateTime.ParseExact(dateTimeLastModified, "yyyyMMddHHmmssfffffff", null);
             var typeRequested = TypeExtensions.GetTypeFromString(entityType);
 
             var methodInfo = typeof(SyncProcessor).GetMethod(nameof(SyncProcessor.GetEntities))!
                 .MakeGenericMethod(typeRequested);
-            var (Entities, LastModifiedDate) = await (Task<(IEnumerable<object> Entities,DateTime LastModifiedDate)>)methodInfo.Invoke(this, new object[] { lastModifiedDate, false })!;
+            var (Entities, LastModifiedDate) = await (Task<(IEnumerable<object> Entities,DateTime LastModifiedDate)>)methodInfo.Invoke(_syncProcessor, new object[] { lastModifiedDate, false })!;
             return Ok(Entities);
         }
 
@@ -62,7 +62,7 @@ namespace CA.Ticketing.Api.Controllers
             var methodInfo = typeof(SyncProcessor).GetMethod(nameof(SyncProcessor.UpdateEntities))!
                 .MakeGenericMethod(typeRequested);
 
-            await (Task<DateTime?>)methodInfo.Invoke(this, new object[] { entities, false })!;
+            await (Task<DateTime?>)methodInfo.Invoke(_syncProcessor, new object[] { entities, false })!;
 
             return Ok();
         }
