@@ -28,6 +28,19 @@ namespace CA.Ticketing.Api.Controllers
         }
 
         /// <summary>
+        /// Get a list of scheduling
+        /// </summary>
+        /// <returns>List of Scheduling</returns>
+        [Route(ApiRoutes.Scheduling.GetForRig)]
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<SchedulingDto>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetUserJobs()
+        {
+            var scheduling = await _schedulingService.GetUserJobs();
+            return Ok(scheduling);
+        }
+
+        /// <summary>
         /// Create a Scheduling
         /// </summary>
         /// <param name="scheduling">SchedulingDto</param>

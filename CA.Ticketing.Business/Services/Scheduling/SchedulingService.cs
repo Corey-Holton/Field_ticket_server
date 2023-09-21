@@ -1,20 +1,25 @@
 ﻿using AutoMapper;
 using CA.Ticketing.Business.Services.Base;
 using CA.Ticketing.Business.Services.Scheduling.Dto;
+using CA.Ticketing.Common.Authentication;
 using CA.Ticketing.Persistance.Context;
+using CA.Ticketing.Persistance.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace CA.Ticketing.Business.Services.Scheduling
 {
     public class SchedulingService : EntityServiceBase, ISchedulingService
     {
+        private readonly IUserContext _userContext;
 
-        public SchedulingService(CATicketingContext context, IMapper mapper) : base(context, mapper)
+        public SchedulingService(CATicketingContext context, IMapper mapper, IUserContext userContext) : base(context, mapper)
         {
+            _userContext = userContext;
         }
 
         public async Task<IEnumerable<SchedulingDto>> GetAll()
         {
+            
             var scheduling = await _context.Scheduling
                                      .Include(s => s.Customer)
                                      .Include(s => s.CustomerLocation)
@@ -23,6 +28,25 @@ namespace CA.Ticketing.Business.Services.Scheduling
 
             return scheduling.Select(x => _mapper.Map<SchedulingDto>(x));
 
+        }
+
+        public async Task<IEnumerable<SchedulingDto>> GetUserJobs()
+        {
+            var user = _context.Users.Include(x => x.Employee).Single(x => x.Id == _userContext.User!.Id);
+
+            if (user.Employee == null || string.IsNullOrEmpty(user.Employee.AssignedRigId))
+            {
+                return new List<SchedulingDto>();
+            } 
+
+            var scheduling = await _context.Scheduling
+                                     .Include(s => s.Customer)
+                                     .Include(s => s.CustomerLocation)
+                                     .Include(s => s.Equipment)
+                                     .Where(s => s.EquipmentId == user.Employee.AssignedRigId && s.StartTime >= DateTime.Today)
+                                     .ToListAsync();
+
+            return scheduling.Select(x => _mapper.Map<SchedulingDto>(x));
         }
 
         public async Task<string> Create(SchedulingDto entity)
