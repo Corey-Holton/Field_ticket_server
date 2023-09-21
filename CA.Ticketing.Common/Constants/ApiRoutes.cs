@@ -188,6 +188,8 @@
 
             public const string List = $"{_root}/list";
 
+            public const string GetForRig = $"{_root}/rigList";
+
             public const string Get = $"{_root}/{{schedulingId}}";
 
             public const string Create = $"{_root}/create";
