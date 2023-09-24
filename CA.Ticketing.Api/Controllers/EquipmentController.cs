@@ -1,12 +1,13 @@
 ﻿using CA.Ticketing.Api.Extensions;
-using CA.Ticketing.Business.Services.Customers.Dto;
 using CA.Ticketing.Business.Services.Equipments;
 using CA.Ticketing.Business.Services.Equipments.Dto;
 using CA.Ticketing.Common.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CA.Ticketing.Api.Controllers
 {
+    [Authorize(Policy = Policies.ApplicationManagers)]
     public class EquipmentController : BaseController
     {
         private readonly IEquipmentService _equipmentService;
@@ -23,6 +24,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Equipment.List)]
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<EquipmentDto>), StatusCodes.Status200OK)]
+        [Authorize(Policy = Policies.CompanyUsers)]
         public async Task<IActionResult> GetAll()
         {
             var equipment = await _equipmentService.GetAll();
@@ -37,6 +39,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Equipment.ListCategory)]
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<EquipmentDto>), StatusCodes.Status200OK)]
+        [Authorize(Policy = Policies.CompanyUsers)]
         public async Task<IActionResult> GetAllByCategory(int equipmentCategory)
         {
             var equipment = await _equipmentService.GetAllByCategory(equipmentCategory);
@@ -51,6 +54,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Equipment.Get)]
         [HttpGet]
         [ProducesResponseType(typeof(EquipmentDetailsDto), StatusCodes.Status200OK)]
+        [Authorize(Policy = Policies.CompanyUsers)]
         public async Task<IActionResult> GetById(string equipmentId)
         {
             var equipment = await _equipmentService.GetById(equipmentId);
@@ -154,6 +158,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Equipment.FilesList)]
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<EquipmentFileDto>), StatusCodes.Status200OK)]
+        [Authorize(Policy = Policies.CompanyUsers)]
         public async Task<IActionResult> GetEquipmentFiles(string equipmentId)
         {
             var files = await _equipmentService.GetFilesList(equipmentId);
@@ -182,6 +187,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Equipment.Download)]
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [Authorize(Policy = Policies.CompanyUsers)]
         public async Task<IActionResult> DownloadFile(string fileId)
         {
             var (FileBytes, FileDto) = await _equipmentService.DownloadFile(fileId);
@@ -196,7 +202,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Equipment.DeleteFile)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> FileUpload(string fileId)
+        public async Task<IActionResult> DeleteFile(string fileId)
         {
             await _equipmentService.DeleteFile(fileId);
             return Ok();

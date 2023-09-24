@@ -6,8 +6,6 @@ namespace CA.Ticketing.Business.Services.Customers.Dto
     {
         public string CustomerId { get; set; }
 
-        public string? CustomerLocationId { get; set; }
-
         public string FirstName { get; set; }
 
         public string LastName { get; set; }
@@ -15,6 +13,8 @@ namespace CA.Ticketing.Business.Services.Customers.Dto
         public string Email { get; set; }
 
         public string PhoneNumber { get; set; }
+
+        public string JobTitle { get; set; }
 
         public bool InviteSent { get; set; }
 

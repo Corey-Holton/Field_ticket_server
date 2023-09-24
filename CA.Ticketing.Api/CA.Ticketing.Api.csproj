@@ -14,6 +14,9 @@
     <DocumentationFile>bin\$(Configuration)\CA.Ticketing.Api.xml</DocumentationFile>
     <NoWarn>1701;1702;1591</NoWarn>
   </PropertyGroup>
+  <ItemGroup>
+    <None Remove="Tickets\SA-1-8b1fccc5-a654-4dd6-9ef3-7cd678707afc.pdf" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.16">

@@ -2,10 +2,12 @@
 using CA.Ticketing.Business.Services.Payroll;
 using CA.Ticketing.Business.Services.Payroll.Dto;
 using CA.Ticketing.Common.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CA.Ticketing.Api.Controllers
 {
+    [Authorize(Policy = Policies.AdminOnly)]
     public class PayrollsController : BaseController
     {
         private readonly IPayrollService _payrollsService;

@@ -8,9 +8,8 @@ namespace CA.Ticketing.Business.Services.Authentication.Dto
         [Required]
         public string Code { get; set; }
 
-        [EmailAddress]
         [Required]
-        public string Email { get; set; }
+        public string Username { get; set; }
 
         [PasswordPropertyText]
         [Required]

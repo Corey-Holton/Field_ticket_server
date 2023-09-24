@@ -14,12 +14,6 @@ namespace CA.Ticketing.Persistance.Models
         [JsonIgnore]
         public virtual Customer Customer { get; set; }
 
-        [ForeignKey(nameof(CustomerLocation))]
-        public string? CustomerLocationId { get; set; }
-
-        [JsonIgnore]
-        public virtual CustomerLocation? CustomerLocation { get; set; }
-
         public string FirstName { get; set; }
 
         public string LastName { get; set; }
@@ -28,11 +22,16 @@ namespace CA.Ticketing.Persistance.Models
 
         public string PhoneNumber { get; set; }
 
+        public string JobTitle { get; set; }
+
         public bool InviteSent { get; set; }
 
         public DateTime? InviteSentOn { get; set; }
 
         [JsonIgnore]
         public virtual ApplicationUser? ApplicationUser { get; set; }
+
+        [NotMapped]
+        public string DisplayName => $"{FirstName} {LastName}";
     }
 }

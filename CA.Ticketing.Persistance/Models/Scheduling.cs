@@ -25,6 +25,12 @@ namespace CA.Ticketing.Persistance.Models
         [JsonIgnore]
         public virtual CustomerLocation? CustomerLocation { get; set; }
 
+        [ForeignKey(nameof(CustomerContact))]
+        public string? CustomerContactId { get; set; }
+
+        [JsonIgnore]
+        public virtual CustomerContact? CustomerContact { get; set; }
+
         public string Description { get; set; }
 
         [ForeignKey(nameof(Equipment))]

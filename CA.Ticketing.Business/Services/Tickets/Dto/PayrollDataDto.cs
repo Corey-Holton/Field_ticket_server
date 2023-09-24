@@ -9,9 +9,15 @@ namespace CA.Ticketing.Business.Services.Tickets.Dto
 
         public string? EmployeeId { get; set; }
 
+        public string DisplayEmployeeId { get; set; }
+
         public EmployeeDto? Employee { get; set; }
 
         public string Name { get; set; }
+
+        public double RigHours { get; set; }
+
+        public double TravelHours { get; set; }
 
         public double YardHours { get; set; }
 

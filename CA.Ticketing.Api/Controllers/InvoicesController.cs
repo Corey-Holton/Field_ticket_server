@@ -2,10 +2,12 @@
 using CA.Ticketing.Business.Services.Invoices;
 using CA.Ticketing.Business.Services.Invoices.Dto;
 using CA.Ticketing.Common.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CA.Ticketing.Api.Controllers
 {
+    [Authorize(Policy = Policies.ApplicationManagers)]
     public class InvoicesController : BaseController
     {
         private readonly IInvoiceService _invoiceService;

@@ -3,6 +3,7 @@ using CA.Ticketing.Business.Services.Authentication;
 using CA.Ticketing.Business.Services.Authentication.Dto;
 using CA.Ticketing.Business.Services.Base;
 using CA.Ticketing.Business.Services.Customers.Dto;
+using CA.Ticketing.Common.Authentication;
 using CA.Ticketing.Persistance.Context;
 using CA.Ticketing.Persistance.Models;
 using Microsoft.EntityFrameworkCore;
@@ -12,21 +13,37 @@ namespace CA.Ticketing.Business.Services.Customers
     public class CustomerService : EntityServiceBase, ICustomerService
     {
         private readonly IAccountsService _accountsService;
-        public CustomerService(CATicketingContext context, IMapper mapper, IAccountsService accountsService) : base(context, mapper)
+
+        private readonly IUserContext _userContext;
+        public CustomerService(CATicketingContext context, IMapper mapper, IAccountsService accountsService, IUserContext userContext) : base(context, mapper)
         {
             _accountsService = accountsService;
+            _userContext = userContext;
         }
 
         public async Task<IEnumerable<CustomerDto>> GetAll()
         {
             var customers = await _context.Customers
                 .ToListAsync();
+
+            if (_userContext.User!.Role == Common.Enums.ApplicationRole.Customer)
+            {
+                var customerContact = _context.CustomerContacts.Single(x => x.Id == _userContext.User!.CustomerContactId!);
+                customers = customers.Where(x => x.Id == customerContact.CustomerId).ToList();
+            }
+
             return customers.Select(x => _mapper.Map<CustomerDto>(x));
         }
 
         public async Task<CustomerDetailsDto> GetById(string id)
         {
             var customer = await GetCustomer(id);
+
+            if (customer == null)
+            {
+                return new CustomerDetailsDto();
+            }
+
             return _mapper.Map<CustomerDetailsDto>(customer);
         }
 
@@ -48,6 +65,12 @@ namespace CA.Ticketing.Business.Services.Customers
         public async Task Delete(string id)
         {
             var customer = await GetCustomer(id);
+
+            if (customer == null)
+            {
+                return;
+            }
+
             _context.Customers.Remove(customer);
             await _context.SaveChangesAsync();
         }
@@ -128,18 +151,13 @@ namespace CA.Ticketing.Business.Services.Customers
             await _accountsService.DeleteUser(customerContact.ApplicationUser!.Id);
         }
 
-        private async Task<Customer> GetCustomer(string? id)
+        private async Task<Customer?> GetCustomer(string? id)
         {
             var customer = await _context.Customers
                 .Include(x => x.Locations)
                 .Include(x => x.Contacts)
                     .ThenInclude(x => x.ApplicationUser)
                 .SingleOrDefaultAsync(x => x.Id == id);
-
-            if (customer == null)
-            {
-                throw new KeyNotFoundException(nameof(Customer));
-            }
 
             return customer;
         }

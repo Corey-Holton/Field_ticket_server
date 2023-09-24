@@ -2,10 +2,12 @@
 using CA.Ticketing.Business.Services.Customers;
 using CA.Ticketing.Business.Services.Customers.Dto;
 using CA.Ticketing.Common.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CA.Ticketing.Api.Controllers
 {
+    [Authorize(Policy = Policies.CompanyUsers)]
     public class CustomerController : BaseController
     {
         private readonly ICustomerService _customerService;
@@ -22,6 +24,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Customers.List)]
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<CustomerDetailsDto>), StatusCodes.Status200OK)]
+        [Authorize]
         public async Task<IActionResult> GetAll()
         {
             var customers = await _customerService.GetAll();

@@ -2,10 +2,12 @@
 using CA.Ticketing.Business.Services.Tickets;
 using CA.Ticketing.Business.Services.Tickets.Dto;
 using CA.Ticketing.Common.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CA.Ticketing.Api.Controllers
 {
+    [Authorize(Policy = Policies.CompanyUsers)]
     public class TicketController : BaseController
     {
         private readonly ITicketService _ticketService;
@@ -22,6 +24,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Tickets.List)]
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<TicketDto>), StatusCodes.Status200OK)]
+        [Authorize]
         public async Task<IActionResult> GetAll()
         {
             var tickets = await _ticketService.GetAll();
@@ -48,6 +51,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Tickets.Get)]
         [HttpGet]
         [ProducesResponseType(typeof(TicketDetailsDto), StatusCodes.Status200OK)]
+        [Authorize]
         public async Task<IActionResult> GetById(string ticketId)
         {
             var ticket = await _ticketService.GetById(ticketId);
@@ -165,6 +169,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Tickets.Preview)]
         [HttpGet]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        [Authorize]
         public async Task<IActionResult> PreviewTicket(string ticketId)
         {
             var previewResult = await _ticketService.PreviewTicket(ticketId);
@@ -191,6 +196,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Tickets.CustomerSignature)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [Authorize]
         public async Task<IActionResult> CustomerSignature(CustomerSignatureDto customerSignatureDto)
         {
             await _ticketService.CustomerSignature(customerSignatureDto);
@@ -205,6 +211,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Tickets.CustomerUpload)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [Authorize]
         public async Task<IActionResult> CustomerUpload(string ticketId, IFormFile ticketPdf)
         {
             await _ticketService.UploadTicket(ticketPdf.OpenReadStream(), ticketId);

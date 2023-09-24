@@ -19,11 +19,11 @@
               Target="[DESKTOPAPPFOLDER]CA.Ticketing.Desktop.exe"
               WorkingDirectory="DESKTOPAPPFOLDER"
 			  Icon="CAIcon" />
-			<RegistryValue Root="HKCU"                
-						   Key="Software\ReadyDev Technologies\CA-Ticketing-Desktop"                
-						   Name="installed"                
-						   Type="integer"                
-						   Value="1"                
+			<RegistryValue Root="HKCU"            
+						   Key="Software\ReadyDev Technologies\CA-Ticketing-Desktop"
+						   Name="installed"
+						   Type="integer"              
+						   Value="1"           
 						   KeyPath="yes" />
 		</Component>
 	</StandardDirectory>

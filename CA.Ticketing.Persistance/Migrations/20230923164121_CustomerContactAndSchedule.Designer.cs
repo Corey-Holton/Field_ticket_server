@@ -4,6 +4,7 @@ using CA.Ticketing.Persistance.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CA.Ticketing.Persistance.Migrations
 {
     [DbContext(typeof(CATicketingContext))]
-    partial class CATicketingContextModelSnapshot : ModelSnapshot
+    [Migration("20230923164121_CustomerContactAndSchedule")]
+    partial class CustomerContactAndSchedule
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -195,10 +197,6 @@ namespace CA.Ticketing.Persistance.Migrations
 
                     b.Property<int>("NetTerm")
                         .HasColumnType("int");
-
-                    b.Property<string>("SendInvoiceTo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("State")
                         .IsRequired()
@@ -686,13 +684,7 @@ namespace CA.Ticketing.Persistance.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("RigHours")
-                        .HasColumnType("float");
-
                     b.Property<double>("RoustaboutHours")
-                        .HasColumnType("float");
-
-                    b.Property<double>("TravelHours")
                         .HasColumnType("float");
 
                     b.Property<double>("YardHours")

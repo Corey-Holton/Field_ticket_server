@@ -11,6 +11,7 @@ using CA.Ticketing.Common.Setup;
 using CA.Ticketing.Persistance.Context;
 using CA.Ticketing.Persistance.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Extensions;
@@ -62,6 +63,9 @@ namespace CA.Ticketing.Business.Services.Authentication
         public async Task<AuthenticationResultDto> Authenticate(LoginDto loginModel)
         {
             var user = await _userManager.FindByNameAsync(loginModel.Username);
+
+            user ??= await _userManager.FindByEmailAsync(loginModel.Username);
+
             if (user == null)
             {
                 return new AuthenticationResultDto();
@@ -81,26 +85,18 @@ namespace CA.Ticketing.Business.Services.Authentication
             return new AuthenticationResultDto(authenticatedUser);
         }
 
-        public async Task<AuthenticationResultDto> EmailAuthenticate(EmailLoginDto loginModel)
+        public async Task<string> GetEmployeeResetPasswordToken(EmployeePasswordResetDto employeePasswordResetDto)
         {
-            var user = await _userManager.FindByEmailAsync(loginModel.Email);
-            if (user == null)
+            var user = await _context.Users
+                .Include(x => x.Employee)
+                .SingleOrDefaultAsync(x => x.NormalizedUserName == employeePasswordResetDto.Username.ToUpper());
+
+            if (user == null || user.Employee == null || user.Employee.SSN.ToUpper() != employeePasswordResetDto.SSN)
             {
-                return new AuthenticationResultDto();
+                throw new Exception("There was an error with password reset");
             }
 
-            var checkPassword = await _userManager.CheckPasswordAsync(user, loginModel.Password);
-
-            if (!checkPassword)
-            {
-                return new AuthenticationResultDto();
-            }
-
-            var claims = await GetUserClaims(user);
-
-            var authenticatedUser = GetAuthenticatedUser(claims, !string.IsNullOrEmpty(user.DisplayName) ? user.DisplayName : user.Email, user.Id);
-
-            return new AuthenticationResultDto(authenticatedUser);
+            return await _userManager.GeneratePasswordResetTokenAsync(user);
         }
 
         public async Task ChangePassword(ChangePasswordDto changePasswordModel)
@@ -222,9 +218,22 @@ namespace CA.Ticketing.Business.Services.Authentication
 
         public async Task SetPasswordFromLink(SetPasswordDto setPasswordModel)
         {
-            var user = await _userManager.FindByEmailAsync(setPasswordModel.Email);
+            var user = await _userManager.FindByNameAsync(setPasswordModel.Username);
+            user ??= await _userManager.FindByEmailAsync(setPasswordModel.Username);
+
+            if (user == null)
+            {
+                throw new Exception("There was an issue while reseting password");
+            }
+
             user.LastModifiedDate = DateTime.UtcNow;
-            await _userManager.ResetPasswordAsync(user, setPasswordModel.Code, setPasswordModel.Password);
+
+            var resetPasswordResult = await _userManager.ResetPasswordAsync(user, setPasswordModel.Code, setPasswordModel.Password);
+
+            if (!resetPasswordResult.Succeeded)
+            {
+                throw new Exception($"There was an error while resetting password. {string.Join("; ", resetPasswordResult.Errors.Select(x => x.Description))}.");
+            }
         }
 
         public async Task AddEmployeeLogin(CreateEmployeeLoginDto createEmployeeLoginDto)
@@ -352,9 +361,9 @@ namespace CA.Ticketing.Business.Services.Authentication
         {
             var emailConfirmationToken = HttpUtility.UrlEncode(await _userManager.GenerateEmailConfirmationTokenAsync(user));
 
-            var callBackUrl = $"{redirectUrl}?code={emailConfirmationToken}&email={user.Email}";
+            var callBackUrl = $"{redirectUrl}?code={emailConfirmationToken}&username={user.UserName}";
 
-            var emailMessage = _messagesComposer.GetEmailComposed(EmailMessageKeys.InviteUser, (3, callBackUrl));
+            var emailMessage = _messagesComposer.GetEmailComposed(EmailMessageKeys.InviteUser, (1, $"{user.DisplayName}"), (4, callBackUrl));
 
             await _notificationService.SendEmail(user.Email, emailMessage);
         }
@@ -365,9 +374,9 @@ namespace CA.Ticketing.Business.Services.Authentication
 
             var emailPasswordResetToken = HttpUtility.UrlEncode(await _userManager.GeneratePasswordResetTokenAsync(user));
 
-            var callBackUrl = $"{redirectUrl}?code={emailPasswordResetToken}";
+            var callBackUrl = $"{redirectUrl}?code={emailPasswordResetToken}&username={user.UserName}";
 
-            var emailMessage = _messagesComposer.GetEmailComposed(EmailMessageKeys.ResetPassword, (3, callBackUrl));
+            var emailMessage = _messagesComposer.GetEmailComposed(EmailMessageKeys.ResetPassword, (4, callBackUrl));
 
             await _notificationService.SendEmail(user.Email, emailMessage);
         }

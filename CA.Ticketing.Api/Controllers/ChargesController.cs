@@ -2,10 +2,12 @@
 using CA.Ticketing.Business.Services.Charges;
 using CA.Ticketing.Business.Services.Charges.Dto;
 using CA.Ticketing.Common.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CA.Ticketing.Api.Controllers
 {
+    [Authorize(Policy = nameof(Policies.ApplicationManagers))]
     public class ChargesController : BaseController
     {
         private readonly IChargesService _chargesService;

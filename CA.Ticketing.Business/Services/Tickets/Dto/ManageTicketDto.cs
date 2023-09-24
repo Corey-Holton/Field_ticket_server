@@ -7,6 +7,8 @@ namespace CA.Ticketing.Business.Services.Tickets.Dto
     {
         public ServiceType ServiceType { get; set; }
 
+        public string TicketId { get; set; }
+
         public string EquipmentId { get; set; }
 
         public string? CustomerId { get; set; }

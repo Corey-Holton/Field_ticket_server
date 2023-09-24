@@ -362,3 +362,4 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /CA.Ticketing.Api/Equipment/
+/CA.Ticketing.Api/Tickets/

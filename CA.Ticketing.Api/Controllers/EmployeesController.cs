@@ -3,10 +3,12 @@ using CA.Ticketing.Business.Services.Employees;
 using CA.Ticketing.Business.Services.Employees.Dto;
 using CA.Ticketing.Common.Constants;
 using CA.Ticketing.Common.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CA.Ticketing.Api.Controllers
 {
+    [Authorize(Policy = Policies.ApplicationManagers)]
     public class EmployeesController : BaseController
     {
         private readonly IEmployeeService _employeeService;
@@ -24,6 +26,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Employees.List)]
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<EmployeeDto>), StatusCodes.Status200OK)]
+        [Authorize(Policy = Policies.CompanyUsers)]
         public async Task<IActionResult> GetAll(EmployeeStatus? status)
         {
             var employees = await _employeeService.GetAll(status);

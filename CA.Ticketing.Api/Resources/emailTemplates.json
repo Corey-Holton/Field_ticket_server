@@ -47,5 +47,17 @@
         "text": "Set Password"
       }
     ]
+  },
+  {
+    "templateKey": "SendInvoice",
+    "title": "Invoice - CA Well Services, LLC",
+    "subject": "New Invoice from CA Well Services, LLC",
+    "paragraphs": [
+      {
+        "order": 1,
+        "paragraphType": 0,
+        "text": "{0}"
+      }
+    ]
   }
 ]

@@ -72,7 +72,7 @@ namespace CA.Ticketing.Business.Services.Pdf.Dto
 
         public string ClassName { get; set; }
 
-        public List<TicketPayrollData> PayrollData => _fieldTicket.PayrollData.Select(x => new TicketPayrollData(_fieldTicket, x)).ToList();
+        public List<TicketPayrollData> PayrollData => _fieldTicket.PayrollData.Select(x => new TicketPayrollData(x)).ToList();
 
         public List<(TicketReportCharge LeftSide, TicketReportCharge RightSide)> Charges()
         {
@@ -157,15 +157,15 @@ namespace CA.Ticketing.Business.Services.Pdf.Dto
 
         public double TotalTime => RigHours + Travel + Yard + Roustabout;
 
-        public TicketPayrollData(FieldTicket ticket, PayrollData payrollData)
+        public TicketPayrollData(PayrollData payrollData)
         {
             Labor = payrollData.Employee != null ? payrollData.Employee.JobTitle.GetJobTitle() : "Other";
             Name = payrollData.Employee != null ? payrollData.Employee.DisplayName : payrollData.Name;
             EmployeeNumber = payrollData.Employee != null ? payrollData.Employee.EmployeeNumber : "0000";
-            RigHours = ticket.TicketSpecifications.SingleOrDefault(x => x.Charge == ChargeNames.Rig)?.Quantity ?? 0;
-            Travel = ticket.TicketSpecifications.SingleOrDefault(x => x.Charge == ChargeNames.TravelTime)?.Quantity ?? 0;
-            Yard = ticket.TicketSpecifications.SingleOrDefault(x => x.Charge == ChargeNames.Rig)?.Quantity ?? 0;
-            Roustabout = ticket.TicketSpecifications.SingleOrDefault(x => x.Charge == ChargeNames.Rig)?.Quantity ?? 0;
+            RigHours = payrollData.RigHours;
+            Travel = payrollData.TravelHours;
+            Yard = payrollData.YardHours;
+            Roustabout = payrollData.RoustaboutHours;
         }
     }
 }

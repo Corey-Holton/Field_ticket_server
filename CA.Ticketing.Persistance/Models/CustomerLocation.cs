@@ -30,9 +30,6 @@ namespace CA.Ticketing.Persistance.Models
         public WellType WellType { get; set; }
 
         [JsonIgnore]
-        public virtual ICollection<CustomerContact> Contacts { get; set; } = new List<CustomerContact>();
-
-        [JsonIgnore]
         public virtual ICollection<FieldTicket> FieldTickets { get; set; } = new List<FieldTicket>();
 
         [NotMapped]

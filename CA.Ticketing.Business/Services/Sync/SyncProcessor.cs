@@ -223,10 +223,7 @@ namespace CA.Ticketing.Business.Services.Sync
                 }
                 else
                 {
-                    if (!entity.DeletedDate.HasValue)
-                    {
-                        dbSet.Add(entity);
-                    }
+                    dbSet.Add(entity);
                 }
 
                 if (entity is IFileEntity fileEntity)
@@ -275,6 +272,8 @@ namespace CA.Ticketing.Business.Services.Sync
             }
 
             _context.SaveChanges();
+
+            _context.ChangeTracker.Clear();
 
             return entities.Select(x => x.LastModifiedDate).Max();
         }

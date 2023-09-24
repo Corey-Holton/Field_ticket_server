@@ -13,6 +13,8 @@
     <HarvestFileGenerateGuidsNow>true</HarvestFileGenerateGuidsNow>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="Back_Large.bmp" />
+    <Content Include="Back_Top.bmp" />
     <Content Include="ca-map.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -38,6 +40,7 @@
   <ItemGroup>
     <PackageReference Include="WixToolset.Heat" Version="4.0.2" />
     <PackageReference Include="WixToolset.Iis.wixext" Version="4.0.2" />
+    <PackageReference Include="WixToolset.UI.wixext" Version="4.0.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CA.Ticketing.Api\CA.Ticketing.Api.csproj" />

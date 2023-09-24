@@ -206,9 +206,9 @@
 
             public const string Login = $"{_root}/login";
 
-            public const string EmailLogin = $"{_root}/email-login";
-
             public const string GenerateResetPasswordLink = $"{_root}/GenerateResetPasswordLink";
+
+            public const string GetEmployeeResetPasswordToken = $"{_root}/reset-employee-password";
 
             public const string SetPasswordFromLink = $"{_root}/SetPasswordFromLink";
 

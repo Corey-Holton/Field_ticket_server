@@ -3,7 +3,6 @@ using CA.Ticketing.Business.Services.Base;
 using CA.Ticketing.Business.Services.Scheduling.Dto;
 using CA.Ticketing.Common.Authentication;
 using CA.Ticketing.Persistance.Context;
-using CA.Ticketing.Persistance.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace CA.Ticketing.Business.Services.Scheduling
@@ -30,13 +29,15 @@ namespace CA.Ticketing.Business.Services.Scheduling
 
         }
 
-        public async Task<IEnumerable<SchedulingDto>> GetUserJobs()
+        public async Task<IEnumerable<SchedulingDtoExtended>> GetUserJobs()
         {
-            var user = _context.Users.Include(x => x.Employee).Single(x => x.Id == _userContext.User!.Id);
+            var user = await _context.Users
+                .Include(x => x.Employee)
+                .SingleAsync(x => x.Id == _userContext.User!.Id);
 
             if (user.Employee == null || string.IsNullOrEmpty(user.Employee.AssignedRigId))
             {
-                return new List<SchedulingDto>();
+                return new List<SchedulingDtoExtended>();
             } 
 
             var scheduling = await _context.Scheduling
@@ -46,7 +47,7 @@ namespace CA.Ticketing.Business.Services.Scheduling
                                      .Where(s => s.EquipmentId == user.Employee.AssignedRigId && s.StartTime >= DateTime.Today)
                                      .ToListAsync();
 
-            return scheduling.Select(x => _mapper.Map<SchedulingDto>(x));
+            return scheduling.Select(x => _mapper.Map<SchedulingDtoExtended>(x));
         }
 
         public async Task<string> Create(SchedulingDto entity)
@@ -87,7 +88,7 @@ namespace CA.Ticketing.Business.Services.Scheduling
 
             if (scheduling == null)
             {
-                throw new KeyNotFoundException(nameof(CA.Ticketing.Persistance.Models.Scheduling));
+                throw new KeyNotFoundException(nameof(Persistance.Models.Scheduling));
             }
 
             return scheduling!;

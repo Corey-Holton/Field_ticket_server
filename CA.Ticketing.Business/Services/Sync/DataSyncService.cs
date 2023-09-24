@@ -165,14 +165,14 @@ namespace CA.Ticketing.Business.Services.Sync
             using var scope = _serviceProvider.CreateScope();
             var services = scope.ServiceProvider;
 
-            var syncProcessor = services.GetRequiredService<ISyncProcessor>();
-
             var context = services.GetRequiredService<CATicketingContext>();
 
             var syncData = await context.SyncData.FirstAsync();
 
             var syncDataChanges = JsonConvert.DeserializeObject<IEnumerable<SyncDataTypeInfo>>(syncData.Changes)!
                 .ToDictionary(x => TypeExtensions.GetTypeFromString(x.EntityType), x => x);
+
+            var syncProcessor = services.GetRequiredService<ISyncProcessor>();
 
             foreach (var entityType in TypeExtensions.SyncEntities)
             {

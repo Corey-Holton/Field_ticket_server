@@ -1,30 +1,5 @@
 ﻿namespace CA.Ticketing.Common.Models
 {
-    public interface IMessageListItem
-    {
-        string Description { get; set; }
-
-        double Quantity { get; set; }
-
-        double Price { get; set; }
-    }
-
-    public class MessageListItem : IMessageListItem
-    {
-        public string Description { get; set; }
-
-        public double Quantity { get; set; }
-
-        public double Price { get; set; }
-
-        public MessageListItem(string description, double quantity, double price)
-        {
-            Description = description;
-            Quantity = quantity;
-            Price = price;
-        }
-    }
-
     public class EmailMessage
     {
         public string Title { get; set; }
@@ -64,8 +39,6 @@
 
         public string ActionUrl { get; set; }
 
-        public IEnumerable<IMessageListItem> ListItems { get; set; }
-
         public ParagraphTypes ParagraphType { get; set; }
 
         public void ApplyParameters(object parameter)
@@ -73,10 +46,6 @@
             if (ParagraphType == ParagraphTypes.Action)
             {
                 ActionUrl = parameter as string ?? string.Empty;
-            }
-            else if (ParagraphType == ParagraphTypes.List)
-            {
-                ListItems = parameter as IEnumerable<IMessageListItem> ?? new List<IMessageListItem>();
             }
             else
             {
@@ -91,14 +60,6 @@
         Text = 0,
         AccessorialText = 1,
         Action = 2,
-        Label = 3,
-        List = 4,
-        GiftMessage = 5
-    }
-
-    public enum MessageListItemType
-    {
-        Simple,
-        Priced
+        Label = 3
     }
 }

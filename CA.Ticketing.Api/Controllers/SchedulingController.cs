@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using CA.Ticketing.Business.Services.Scheduling;
 using CA.Ticketing.Business.Services.Scheduling.Dto;
 using CA.Ticketing.Api.Extensions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CA.Ticketing.Api.Controllers
 {
+    [Authorize(Policy = Policies.ApplicationManagers)]
     public class SchedulingController : BaseController
     {
         private readonly ISchedulingService _schedulingService;
@@ -33,7 +35,8 @@ namespace CA.Ticketing.Api.Controllers
         /// <returns>List of Scheduling</returns>
         [Route(ApiRoutes.Scheduling.GetForRig)]
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<SchedulingDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<SchedulingDtoExtended>), StatusCodes.Status200OK)]
+        [Authorize(Policy = Policies.CompanyUsers)]
         public async Task<IActionResult> GetUserJobs()
         {
             var scheduling = await _schedulingService.GetUserJobs();

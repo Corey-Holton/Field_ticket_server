@@ -12,6 +12,8 @@ namespace CA.Ticketing.Persistance.Models
 
         public int NetTerm { get; set; }
 
+        public string SendInvoiceTo { get; set; } = string.Empty;
+
         [JsonIgnore]
         public virtual ICollection<CustomerLocation> Locations { get; set; } = new List<CustomerLocation>();
 

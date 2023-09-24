@@ -16,8 +16,7 @@ namespace CA.Ticketing.Business.Mappers
                 .ForMember(x => x.CustomerName, dest => dest.MapFrom(src => src.Customer != null ? src.Customer.Name : "None"));
 
             CreateMap<FieldTicket, TicketDetailsDto>()
-                .IncludeBase<FieldTicket, TicketDto>()
-                .ForMember(x => x.TicketSpecifications, dest => dest.MapFrom(src => src.TicketSpecifications.OrderBy(ts => ts.CreatedDate)));
+                .IncludeBase<FieldTicket, TicketDto>();
 
             CreateMap<FieldTicket, TicketInfoDto>();
 
@@ -41,6 +40,7 @@ namespace CA.Ticketing.Business.Mappers
                 .ForMember(x => x.LocationId, dest => dest.MapFrom(src => src.CustomerLocationId));
 
             CreateMap<ManageTicketHoursDto, FieldTicket>()
+                .ForMember(x => x.TicketId, dest => dest.Ignore())
                 .ForMember(x => x.Id, dest => dest.Ignore());
 
             CreateMap<Charge, TicketSpecification>()

@@ -22,6 +22,10 @@ namespace CA.Ticketing.Persistance.Models
 
         public string Name { get; set; }
 
+        public double RigHours { get; set; }
+
+        public double TravelHours { get; set; }
+
         public double YardHours { get; set; }
 
         public double RoustaboutHours { get; set; }

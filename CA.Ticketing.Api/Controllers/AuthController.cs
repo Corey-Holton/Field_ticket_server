@@ -35,17 +35,17 @@ namespace CA.Ticketing.Api.Controllers
         }
 
         /// <summary>
-        /// Authenticate user with email instead of username
+        /// Get Employee Reset password token
         /// </summary>
-        /// <param name="loginModel">loginModel</param>
+        /// <param name="employeeResetPasswordDto">Employee Password Reset Dto</param>
         /// <returns>AuthenticatedUser</returns>
-        [Route(ApiRoutes.Authentication.EmailLogin)]
+        [Route(ApiRoutes.Authentication.GetEmployeeResetPasswordToken)]
         [HttpPost]
-        [ProducesResponseType(typeof(AuthenticatedUser), StatusCodes.Status200OK)]
-        public async Task<IActionResult> EmailLogin(EmailLoginDto loginModel)
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetEmployeeResetPasswordToken(EmployeePasswordResetDto employeeResetPasswordDto)
         {
-            var authUser = await _accountsService.EmailAuthenticate(loginModel);
-            return Ok(authUser);
+            var token = await _accountsService.GetEmployeeResetPasswordToken(employeeResetPasswordDto);
+            return Ok(token);
         }
 
         /// <summary>

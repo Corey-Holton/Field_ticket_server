@@ -2,10 +2,12 @@
 using CA.Ticketing.Business.Services.Settings;
 using CA.Ticketing.Business.Services.Settings.Dto;
 using CA.Ticketing.Common.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CA.Ticketing.Api.Controllers
 {
+    [Authorize(Policy = Policies.ApplicationManagers)]
     public class SettingsController : BaseController
     {
         private readonly ISettingsService _settingsService;
@@ -47,6 +49,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Settings.GetProfile)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [Authorize(Policy = Policies.CompanyUsers)]
         public async Task<IActionResult> GetProfile()
         {
             var profile = await _settingsService.GetProfile();
@@ -60,6 +63,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Settings.UpdateProfile)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [Authorize(Policy = Policies.CompanyUsers)]
         public async Task<IActionResult> UpdateProfile(ProfileDto profileDto)
         {
             await _settingsService.UpdateProfile(profileDto);

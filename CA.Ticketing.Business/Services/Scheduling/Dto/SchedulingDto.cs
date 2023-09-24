@@ -16,6 +16,10 @@ namespace CA.Ticketing.Business.Services.Scheduling.Dto
 
         public string CustomerLocationName { get; set; }
 
+        public string? CustomerContactId { get; set; }
+
+        public string CustomerContactName { get; set; }
+
         public string Description { get; set; }
 
         public string EquipmentId { get; set; }
