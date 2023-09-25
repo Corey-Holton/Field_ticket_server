@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace CA.Ticketing.Api.Controllers
 {
-    [Authorize(Policy = Policies.ApplicationManagers)]
     public class SchedulingController : BaseController
     {
         private readonly ISchedulingService _schedulingService;
