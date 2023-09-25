@@ -179,6 +179,20 @@ namespace CA.Ticketing.Business.Services.Tickets
             await _context.SaveChangesAsync();
         }
 
+        public async Task<List<PayrollDataDto>> GetPayrollData(string ticketId)
+        {
+            var ticket = await _context.FieldTickets.Include(x => x.PayrollData).ThenInclude(p => p.Employee).SingleOrDefaultAsync(x => x.Id == ticketId);
+
+            if (ticket == null)
+            {
+                throw new KeyNotFoundException(nameof(FieldTicket));
+            }
+
+            var payrollDataDto = _mapper.Map<List<PayrollDataDto>>(ticket.PayrollData);
+
+            return payrollDataDto;
+        }
+
         public async Task AddPayroll(PayrollDataDto payrollDataDto)
         {
             var ticket = await _context.FieldTickets
