@@ -137,6 +137,8 @@
 
             public const string UpdateSpecifications = $"{_root}/update-specs";
 
+            public const string GetPayrollData = $"{_root}/payroll/{{ticketId}}";
+
             public const string AddPayrollEntry = $"{_root}/payroll/add";
 
             public const string UpdatePayrollEntry = $"{_root}/payroll/update";

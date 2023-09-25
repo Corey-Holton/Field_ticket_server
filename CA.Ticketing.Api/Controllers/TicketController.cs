@@ -111,6 +111,19 @@ namespace CA.Ticketing.Api.Controllers
         }
 
         /// <summary>
+        /// Get Payroll data
+        /// </summary>
+        /// <returns>Payroll Details</returns>
+        [Route(ApiRoutes.Tickets.GetPayrollData)]
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<List<PayrollDataDto>>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetPayrollData(string ticketId)
+        {
+            var payrollData = await _ticketService.GetPayrollData(ticketId);
+            return Ok(payrollData);
+        }
+
+        /// <summary>
         /// Add Payroll data
         /// </summary>
         /// <param name="payrollDataDto">PayrollDataDto</param>

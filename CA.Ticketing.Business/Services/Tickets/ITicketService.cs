@@ -18,6 +18,8 @@ namespace CA.Ticketing.Business.Services.Tickets
 
         Task Delete(string id);
 
+        Task<List<PayrollDataDto>> GetPayrollData(string ticketId);
+
         Task AddPayroll(PayrollDataDto payrollDataDto);
 
         Task UpdatePayrollData(PayrollDataDto payrollDataDto);
