@@ -15,6 +15,7 @@ namespace CA.Ticketing.Business.Mappers
                 .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Customer.Name))
                 .ForMember(dest => dest.CustomerLocationName, opt => opt.MapFrom(src => src.CustomerLocation != null ? src.CustomerLocation.DisplayName : string.Empty))
                 .ForMember(dest => dest.CustomerContactName, opt => opt.MapFrom(src => src.CustomerContact != null ? src.CustomerContact.DisplayName : string.Empty))
+                .ForMember(dest => dest.CustomerContactPhone, opt => opt.MapFrom(src => src.CustomerContact != null ? src.CustomerContact.PhoneNumber : string.Empty))
                 .ForMember(dest => dest.EquipmentName, opt => opt.MapFrom(src => src.Equipment.Name));
 
             CreateMap<Scheduling, SchedulingDtoExtended>()
