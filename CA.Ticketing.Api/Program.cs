@@ -2,7 +2,6 @@
 using CA.Ticketing.Api.Extensions;
 using CA.Ticketing.Business.Bootstrap;
 using CA.Ticketing.Persistance.Context;
-using CA.Ticketing.Persistance.Seed;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Converters;
 using Serilog;
@@ -46,6 +45,7 @@ builder.Services.AddControllersWithViews()
     {
         options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
         options.SerializerSettings.Converters.Add(new StringEnumConverter());
+        options.SerializerSettings.DateTimeZoneHandling = Newtonsoft.Json.DateTimeZoneHandling.Utc;
     }
 );
 

@@ -104,16 +104,9 @@ namespace CA.Ticketing.Business.Services.Tickets
                 ticketIdentifier = "CA";
             }
 
-            var ticket = new FieldTicket
-            {
-                ExecutionDate = manageTicketDto.ExecutionDate,
-                ServiceType = manageTicketDto.ServiceType,
-                CustomerId = manageTicketDto.CustomerId,
-                LocationId = manageTicketDto.CustomerLocationId,
-                EquipmentId = manageTicketDto.EquipmentId,
-                TicketId = $"{ticketIdentifier}-{createdByUserCount + 1}",
-                CreatedBy = _userContext.User!.Id
-            };
+            var ticket = _mapper.Map<FieldTicket>(manageTicketDto);
+            ticket.TicketId = $"{ticketIdentifier}-{createdByUserCount + 1}";
+            ticket.CreatedBy = _userContext.User!.Id;
 
             await GenerateCharges(ticket);
 
