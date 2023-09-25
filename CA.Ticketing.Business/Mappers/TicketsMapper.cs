@@ -30,7 +30,8 @@ namespace CA.Ticketing.Business.Mappers
                 .ForMember(x => x.AllowUoMChange, dest => dest.Ignore())
                 .ForMember(x => x.Charge, dest => dest.Ignore());
 
-            CreateMap<PayrollData, PayrollDataDto>();
+            CreateMap<PayrollData, PayrollDataDto>()
+                .ForMember(x => x.DisplayEmployeeId, dest => dest.MapFrom(src => src.Employee != null ? src.Employee.EmployeeNumber : "0000"));
 
             CreateMap<PayrollDataDto, PayrollData>()
                 .ForMember(x => x.Id, dest => dest.Ignore());
