@@ -84,12 +84,26 @@ namespace CA.Ticketing.Api.Controllers
         /// <summary>
         /// Delete an invoice
         /// </summary>
+        /// <param name="invoiceId">Invoice Id</param>
         [Route(ApiRoutes.Invoices.Delete)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Delete(string invoiceId)
         {
             await _invoiceService.Delete(invoiceId);
+            return Ok();
+        }
+
+        /// <summary>
+        /// Remove Invoice Fee
+        /// </summary>
+        /// <param name="invoiceFeeId">Invoice Fee Id</param>
+        [Route(ApiRoutes.Invoices.RemoveFee)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> RemoveFee(string invoiceFeeId)
+        {
+            await _invoiceService.RemoveLateFee(invoiceFeeId);
             return Ok();
         }
     }

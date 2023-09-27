@@ -19,5 +19,7 @@ namespace CA.Ticketing.Business.Services.Invoices.Dto
         public double Total { get; set; }
 
         public List<TicketInfoDto> Tickets { get; set; }
+
+        public List<InvoiceLateFeeDto> LateFees { get; set; }
     }
 }

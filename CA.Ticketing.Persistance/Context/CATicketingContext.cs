@@ -35,6 +35,8 @@ namespace CA.Ticketing.Persistance.Context
 
         public DbSet<Invoice> Invoices { get; set; }
 
+        public DbSet<InvoiceLateFee> InvoiceLateFees { get; set; }
+
         public DbSet<Setting> Settings { get; set; }
 
         public DbSet<SyncData> SyncData { get; set; }
@@ -55,6 +57,7 @@ namespace CA.Ticketing.Persistance.Context
             builder.Entity<CustomerContact>().HasQueryFilter(x => !x.DeletedDate.HasValue);
             builder.Entity<Employee>().HasQueryFilter(x => !x.DeletedDate.HasValue);
             builder.Entity<EquipmentFile>().HasQueryFilter(x => !x.DeletedDate.HasValue);
+            builder.Entity<InvoiceLateFee>().HasQueryFilter(x => !x.DeletedDate.HasValue);
             base.OnModelCreating(builder);
         }
 

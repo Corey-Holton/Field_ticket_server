@@ -61,6 +61,7 @@ namespace CA.Ticketing.Business.Services.Tickets
 
             var tickets = await GetTicketIncludes()
                 .Where(ticketsFilter)
+                .AsSingleQuery()
                 .ToListAsync();
 
             return tickets.Select(x => _mapper.Map<TicketDto>(x));

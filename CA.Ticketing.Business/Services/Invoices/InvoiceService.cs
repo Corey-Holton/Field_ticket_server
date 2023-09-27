@@ -34,6 +34,8 @@ namespace CA.Ticketing.Business.Services.Invoices
                 .Include(x => x.Customer)
                 .Include(x => x.Tickets)
                     .ThenInclude(x => x.TicketSpecifications)
+                .Include(x => x.InvoiceLateFees)
+                .AsSplitQuery()
                 .ToListAsync();
             return invoices.Select(x => _mapper.Map<InvoiceDto>(x));
         }
@@ -50,8 +52,8 @@ namespace CA.Ticketing.Business.Services.Invoices
             {
                 InvoiceId = $"A-{currentInvoiceCount + 1}",
                 CustomerId = customer.Id,
-                InvoiceDate = DateTime.UtcNow,
-                DueDate = DateTime.UtcNow.AddDays(netTerm)
+                InvoiceDate = DateTime.UtcNow.AddDays(-95),
+                DueDate = DateTime.UtcNow.AddDays(-65)
             };
 
             var tickets = await _context.FieldTickets
@@ -105,6 +107,14 @@ namespace CA.Ticketing.Business.Services.Invoices
             var invoice = await _context.Invoices
                 .SingleAsync(x => x.Id == id);
             _context.Invoices.Remove(invoice);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task RemoveLateFee(string id)
+        {
+            var invoiceLateFee = await _context.InvoiceLateFees
+                .SingleAsync(x => x.Id == id);
+            _context.Entry(invoiceLateFee).State = EntityState.Deleted;
             await _context.SaveChangesAsync();
         }
 

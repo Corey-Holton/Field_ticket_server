@@ -182,6 +182,8 @@
             public const string Download = $"{_root}/download";
 
             public const string Delete = $"{_root}/delete";
+
+            public const string RemoveFee = $"{_root}/remove-invoice-fee";
         }
 
         public class Scheduling

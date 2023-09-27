@@ -1,9 +1,0 @@
-﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
-  <Package Name="CA.Ticketing.Web.Installer" Manufacturer="TODO Manufacturer" Version="1.0.0.0" UpgradeCode="22a00519-231c-4771-8f38-eb8952463e6c">
-    <MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeError)" />
-
-    <Feature Id="Main">
-      <ComponentGroupRef Id="ExampleComponents" />
-    </Feature>
-  </Package>
-</Wix>

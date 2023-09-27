@@ -1,4 +1,5 @@
-﻿using CA.Ticketing.Business.Services.Sync;
+﻿using CA.Ticketing.Business.Services.Invoices;
+using CA.Ticketing.Business.Services.Sync;
 using CA.Ticketing.Common.Setup;
 using CA.Ticketing.Persistance.Seed;
 using Microsoft.AspNetCore.Builder;
@@ -17,7 +18,11 @@ namespace CA.Ticketing.Business.Bootstrap
             {
                 services.AddSingleton<IDataSyncService, DataSyncService>();
                 services.AddHostedService(serviceCollection => serviceCollection.GetRequiredService<IDataSyncService>());
+                return;
             }
+
+            services.AddSingleton<InvoiceLateFeeService>();
+            services.AddHostedService(serviceCollection => serviceCollection.GetRequiredService<InvoiceLateFeeService>());
         }
 
         public static async Task<IApplicationBuilder> InitiateDatabase(this IApplicationBuilder app, IConfiguration configuration)

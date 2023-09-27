@@ -30,6 +30,7 @@ namespace CA.Ticketing.Business.Services.Payroll
                 .Include(x => x.PayrollData)
                     .ThenInclude(p => p.Employee)
                 .Where(x => x.ExecutionDate >= startTime && x.ExecutionDate <= endTime)
+                .AsSplitQuery()
                 .ToListAsync();
 
             return tickets

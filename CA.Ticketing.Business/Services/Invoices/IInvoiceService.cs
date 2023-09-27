@@ -15,5 +15,7 @@ namespace CA.Ticketing.Business.Services.Invoices
         Task<(string InvoiceId, byte[] InvoiceBytes)> Download(string id);
 
         Task Delete(string id);
+
+        Task RemoveLateFee(string id);
     }
 }

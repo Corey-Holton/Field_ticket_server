@@ -1,6 +1,6 @@
 ﻿namespace CA.Ticketing.Common.Constants
 {
-    public class Business
+    public class BusinessConstants
     {
         public class JobTitles
         {
@@ -27,5 +27,7 @@
             public const string Roustabout = nameof(Roustabout);
             public const string Yard = nameof(Yard);
         }
+
+        public const double InvoiceLateFee = 1.5;
     }
 }

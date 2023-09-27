@@ -23,6 +23,7 @@ namespace CA.Ticketing.Business.Services.Scheduling
                                      .Include(s => s.Customer)
                                      .Include(s => s.CustomerLocation)
                                      .Include(s => s.Equipment)
+                                     .AsSplitQuery()
                                      .ToListAsync();
 
             return scheduling.Select(x => _mapper.Map<SchedulingDto>(x));
@@ -45,6 +46,7 @@ namespace CA.Ticketing.Business.Services.Scheduling
                                      .Include(s => s.CustomerLocation)
                                      .Include(s => s.Equipment)
                                      .Where(s => s.EquipmentId == user.Employee.AssignedRigId && s.StartTime >= DateTime.Today)
+                                     .AsSplitQuery()
                                      .ToListAsync();
 
             return scheduling.Select(x => _mapper.Map<SchedulingDtoExtended>(x));

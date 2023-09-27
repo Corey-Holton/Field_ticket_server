@@ -1,7 +1,7 @@
 ﻿using CA.Ticketing.Common.Constants;
 using CA.Ticketing.Common.Enums;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using static CA.Ticketing.Common.Constants.Business;
+using static CA.Ticketing.Common.Constants.BusinessConstants;
 
 namespace CA.Ticketing.Common.Extensions
 {
