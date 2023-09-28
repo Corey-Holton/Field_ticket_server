@@ -53,10 +53,16 @@ namespace CA.Ticketing.Business.Services.Payroll
                                 // Payroll data can contain Employee or just a name
                                 Name = payrollEntry.Employee?.DisplayName ?? payrollEntry.Name,
                                 Rate = payrollEntry.Employee?.PayRate ?? 20,
-                                // Hours charged only calculated if not a tool pusher for company hours or input hours for everyone
-                                HoursCharged = chargeCompanyHours ? (!isToolPusher ? ticket.CompanyHours : 0) :
-                                    (ticket.ServiceType == ServiceType.Roustabout ?
-                                        payrollEntry.RoustaboutHours : payrollEntry.YardHours),
+                                payrollEntry.RigHours,
+                                payrollEntry.TravelHours,
+                                payrollEntry.YardHours,
+                                payrollEntry.RoustaboutHours,
+                                ticket.CompanyHours,
+                                // Hours charged only calculated if not a tool pusher for company hours or input hours for 
+                                HoursCharged = (ticket.ServiceType < ServiceType.Yard) ? (!isToolPusher ? payrollEntry.RigHours + payrollEntry.TravelHours - ticket.CompanyHours : 0)
+                                       : (ticket.ServiceType == ServiceType.Yard) ? payrollEntry.YardHours - ticket.CompanyHours
+                                       : (ticket.ServiceType == ServiceType.Roustabout) ? payrollEntry.RoustaboutHours - ticket.CompanyHours
+                                       : 0,
                                 // Set week for the entry
                                 Week = (int)Math.Ceiling((ticket.ExecutionDate - startTime).TotalDays / 7),
                                 ticket.Mileage,
@@ -75,13 +81,23 @@ namespace CA.Ticketing.Business.Services.Payroll
                     var payRate = employeePayrollData.First().Rate;
                     var name = employeePayrollData.First().Name;
 
+                    var companyHours = employeePayrollData.Sum(x => x.CompanyHours);
+                    var rigHours = employeePayrollData.Sum(x => x.RigHours);
+                    var travelHours = employeePayrollData.Sum(x => x.TravelHours);
+                    var yardHours = employeePayrollData.Sum(x => x.YardHours);
+                    var roustaboutHours = employeePayrollData.Sum(x => x.RoustaboutHours);
+
+                    roustaboutHours = roustaboutHours > 0 ? roustaboutHours - companyHours : roustaboutHours;
+                    rigHours = rigHours > 0 ? rigHours - companyHours : rigHours;
+                    yardHours = yardHours > 0 ? yardHours - companyHours : yardHours;
+
                     // Get total hours for each week
                     var perWeekTotals = employeePayrollData
                         .GroupBy(x => x.Week)
                         .Select(w => w.Sum(g => g.HoursCharged));
 
                     // Total hours for employee
-                    var totalHours = employeePayrollData.Sum(x => x.HoursCharged);
+                    var totalHours = rigHours + travelHours + yardHours + roustaboutHours;
 
                     // Get overtime hours by calculating 
                     var weeklyRegularHours = 40;
@@ -115,6 +131,10 @@ namespace CA.Ticketing.Business.Services.Payroll
                         TotalJobs = totalJobs,
                         RegularHours = regularHours,
                         OvertimeHours = overTimeHours,
+                        RigHours = rigHours,
+                        TravelHours = travelHours,
+                        YardHours = yardHours,
+                        RoustaboutHours = roustaboutHours,
                         Mileage = mileage,
                         TotalMileage = totalMileage,
                         TotalAmount = amountTotal
