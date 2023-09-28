@@ -14,6 +14,14 @@ namespace CA.Ticketing.Business.Services.Payroll.Dto
 
         public double OvertimeHours { get; set; }
 
+        public double RigHours { get; set; }
+
+        public double TravelHours { get; set; }
+
+        public double YardHours { get; set; }
+
+        public double RoustaboutHours { get; set; }
+
         public double TotalHours { get; set; }
 
         public double Mileage { get; set; }
