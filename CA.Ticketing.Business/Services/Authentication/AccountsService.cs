@@ -349,12 +349,21 @@ namespace CA.Ticketing.Business.Services.Authentication
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
+            var initials = GetInitials(displayName);
             return new AuthenticatedUser()
             {
                 Id = userId,
                 DisplayName = displayName,
-                Token = tokenHandler.WriteToken(token)
+                Token = tokenHandler.WriteToken(token),
+                Initials = initials
             };
+        }
+
+        private static string GetInitials(string displayName)
+        {
+            string[] words = displayName.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            string initials = string.Join("", words.Select(word => word[0]));
+            return initials;
         }
 
         private async Task SendUserInvite(ApplicationUser user, string redirectUrl)

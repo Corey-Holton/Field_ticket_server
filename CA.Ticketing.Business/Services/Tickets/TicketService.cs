@@ -455,6 +455,10 @@ namespace CA.Ticketing.Business.Services.Tickets
         public async Task UploadTicket(Stream fileStream, string ticketId)
         {
             var ticket = await GetTicket(ticketId);
+            if (ticket.HasCustomerSignature)
+            {
+                throw new Exception("Ticket has customer signature");
+            }
             using var memoryStream = new MemoryStream();
             fileStream.CopyTo(memoryStream);
             var fileBytes = memoryStream.ToArray();

@@ -67,6 +67,13 @@ namespace CA.Ticketing.Business.Services.Invoices
                 throw new Exception("Some tickets are already invoiced");
             }
 
+            var ticketsWihoutCustomerSignature = tickets.Any(x => x.HasCustomerSignature == false);
+
+            if (ticketsWihoutCustomerSignature)
+            {
+                throw new Exception("Some tickets are missing customer signature");
+            }
+
             var isCustomer = tickets.All(x => x.CustomerId == invoice.CustomerId);
 
             if (!isCustomer)
