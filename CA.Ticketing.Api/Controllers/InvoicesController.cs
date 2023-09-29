@@ -31,6 +31,19 @@ namespace CA.Ticketing.Api.Controllers
         }
 
         /// <summary>
+        /// Get Invoice by id
+        /// </summary>
+        /// <returns>Invoice details</returns>
+        [Route(ApiRoutes.Invoices.GetInvoice)]
+        [HttpGet]
+        [ProducesResponseType(typeof(InvoiceDto), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetInvoiceById(string invoiceId)
+        {
+            var invoice = await _invoiceService.GetById(invoiceId);
+            return Ok(invoice);
+        }
+
+        /// <summary>
         /// Create an invoice
         /// </summary>
         /// <returns>Invoice Id</returns>

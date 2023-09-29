@@ -172,7 +172,9 @@
             public const string _root = $"{ApiRoutes._root}/invoices";
 
             public const string List = $"{_root}/list";
-                
+
+            public const string GetInvoice = $"{_root}/{{invoiceId}}";
+
             public const string Create = $"{_root}/create";
 
             public const string MarkAsPaid = $"{_root}/mark-paid";

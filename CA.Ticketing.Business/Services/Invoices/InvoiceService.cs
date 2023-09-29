@@ -141,7 +141,7 @@ namespace CA.Ticketing.Business.Services.Invoices
             return (invoice.InvoiceId, pdf);
         }
 
-        private async Task<Invoice> GetInvoice(string? id)
+        public async Task<InvoiceDto> GetById(string id)
         {
             var invoice = await _context.Invoices
                 .Include(x => x.Tickets).ThenInclude(x => x.Customer)
@@ -153,7 +153,7 @@ namespace CA.Ticketing.Business.Services.Invoices
                 throw new KeyNotFoundException(nameof(Invoice));
             }
 
-            return invoice!;
+            return _mapper.Map<InvoiceDto>(invoice)!;
         }        
     }
 }
