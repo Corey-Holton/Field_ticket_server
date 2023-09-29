@@ -218,10 +218,7 @@ namespace CA.Ticketing.Business.Services.Tickets
             var (totalTime, travelTime) = GetTicketTimes(ticket);
             UpdateEmployeePayroll(payrollData, travelTime, totalTime, ticket);
 
-            if (ticket.ServiceType == ServiceType.Roustabout)
-            {
-                UpdateLaborQuantity(ticket);
-            }
+            UpdateLaborQuantity(ticket);
 
             await _context.SaveChangesAsync();
         }
@@ -253,10 +250,7 @@ namespace CA.Ticketing.Business.Services.Tickets
             payrollData.RigHours = payrollDataDto.RigHours;
             payrollData.TravelHours = payrollDataDto.TravelHours;
 
-            if (ticket.ServiceType == ServiceType.Roustabout)
-            {
-                UpdateLaborQuantity(ticket);
-            }
+            UpdateLaborQuantity(ticket);
 
             await _context.SaveChangesAsync();
         }
@@ -283,10 +277,7 @@ namespace CA.Ticketing.Business.Services.Tickets
                 .Include(x => x.TicketSpecifications)
                 .SingleAsync(x => x.Id == payrollData.FieldTicketId);
 
-            if (ticket.ServiceType == ServiceType.Roustabout)
-            {
-                UpdateLaborQuantity(ticket);
-            }
+            UpdateLaborQuantity(ticket);
 
             await _context.SaveChangesAsync();
         }
@@ -333,10 +324,7 @@ namespace CA.Ticketing.Business.Services.Tickets
                 UpdateEmployeePayrolls(ticket);
             }
 
-            if (ticket.ServiceType == ServiceType.Roustabout)
-            {
-                UpdateLaborQuantity(ticket);
-            }
+            UpdateLaborQuantity(ticket);
 
             await _context.SaveChangesAsync();
 
@@ -491,6 +479,18 @@ namespace CA.Ticketing.Business.Services.Tickets
                 return;
             }
 
+            if ((ticket.ServiceType < ServiceType.Yard && manageTicketDto.ServiceType >= ServiceType.Yard)
+                || (ticket.ServiceType >= ServiceType.Yard && manageTicketDto.ServiceType < ServiceType.Yard))
+            {
+                foreach (var payrollData in ticket.PayrollData)
+                {
+                    payrollData.RoustaboutHours = 0;
+                    payrollData.YardHours = 0;
+                    payrollData.RigHours = 0;
+                    payrollData.TravelHours = 0;
+                }
+            }
+
             if (manageTicketDto.ServiceType == ServiceType.PAndA)
             {
                 ticket.TaxRate = 0;
@@ -553,10 +553,7 @@ namespace CA.Ticketing.Business.Services.Tickets
         {
             CalculateCharges(ticket);
             UpdateEmployeePayrolls(ticket);
-            if (ticket.ServiceType == ServiceType.Roustabout)
-            {
-                UpdateLaborQuantity(ticket);
-            }
+            UpdateLaborQuantity(ticket);
         }
 
         private void CalculateCharges(FieldTicket ticket)
@@ -640,6 +637,11 @@ namespace CA.Ticketing.Business.Services.Tickets
 
         private static void UpdateLaborQuantity(FieldTicket ticket)
         {
+            if (ticket.ServiceType != ServiceType.Roustabout)
+            {
+                return;
+            }
+
             var laborCharge = ticket.TicketSpecifications
                 .Single(x => x.Charge == ChargeNames.Labor);
             laborCharge.Quantity = ticket.PayrollData.Sum(x => x.RoustaboutHours);

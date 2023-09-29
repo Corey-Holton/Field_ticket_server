@@ -59,7 +59,7 @@ builder.Services.AddDbContext<CATicketingContext>(options =>
 {
     var connectionString = builder.Configuration["ApplicationSettings:ConnectionString"];
     options.UseSqlServer(connectionString);
-}, contextLifetime: ServiceLifetime.Transient);
+});
 
 builder.Services.RegisterDomainServices();
 
