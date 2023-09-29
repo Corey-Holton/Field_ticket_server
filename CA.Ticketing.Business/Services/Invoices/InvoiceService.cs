@@ -40,6 +40,24 @@ namespace CA.Ticketing.Business.Services.Invoices
             return invoices.Select(x => _mapper.Map<InvoiceDto>(x));
         }
 
+        public async Task<InvoiceDto> GetById(string id)
+        {
+            var invoice = await _context.Invoices
+                .Include(x => x.Customer)
+                .Include(x => x.Tickets)
+                    .ThenInclude(x => x.TicketSpecifications)
+                .Include(x => x.InvoiceLateFees)
+                .AsSplitQuery()
+                .SingleOrDefaultAsync(x => x.Id == id);
+
+            if (invoice == null)
+            {
+                throw new KeyNotFoundException(nameof(Invoice));
+            }
+
+            return _mapper.Map<InvoiceDto>(invoice)!;
+        }
+
         public async Task<string> Create(CreateInvoiceDto entity)
         {
             var currentInvoiceCount = await _context.Invoices.CountAsync();
@@ -140,20 +158,5 @@ namespace CA.Ticketing.Business.Services.Invoices
 
             return (invoice.InvoiceId, pdf);
         }
-
-        public async Task<InvoiceDto> GetById(string id)
-        {
-            var invoice = await _context.Invoices
-                .Include(x => x.Tickets).ThenInclude(x => x.Customer)
-                .Include(x => x.Tickets).ThenInclude(x => x.Equipment)
-                .SingleOrDefaultAsync(x => x.Id == id);
-
-            if (invoice == null)
-            {
-                throw new KeyNotFoundException(nameof(Invoice));
-            }
-
-            return _mapper.Map<InvoiceDto>(invoice)!;
-        }        
     }
 }
