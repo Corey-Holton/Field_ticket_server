@@ -6,6 +6,8 @@ namespace CA.Ticketing.Business.Services.Invoices
     {
         Task<IEnumerable<InvoiceDto>> GetAll();
 
+        Task<InvoiceDto> GetById(string id);
+
         Task<string> Create(CreateInvoiceDto entity);
 
         Task MarkAsPaid(string id);
