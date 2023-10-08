@@ -16,6 +16,8 @@
 
         public double CompanyHours { get; set; }
 
+        public string SendEmailTo { get; set; }
+
         public IEnumerable<TicketSpecificationDto> TicketSpecifications { get; set; } = new List<TicketSpecificationDto>();
 
         public IEnumerable<TicketSpecificationDto> TicketSpecificationsLeft { get; set; } = new List<TicketSpecificationDto>();
@@ -25,5 +27,9 @@
         public IEnumerable<PayrollDataDto> PayrollData { get; set; } = new List<PayrollDataDto>();
 
         public bool HasEmployeeSignature { get; set; }
+
+        public bool IsSentToCustomer { get; set; }
+
+        public DateTime? SentToCustomerOn { get; set; }
     }
 }

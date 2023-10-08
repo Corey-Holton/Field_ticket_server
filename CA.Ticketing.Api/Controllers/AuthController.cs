@@ -1,5 +1,4 @@
-﻿using CA.Ticketing.Api.Extensions;
-using CA.Ticketing.Business.Services.Authentication;
+﻿using CA.Ticketing.Business.Services.Authentication;
 using CA.Ticketing.Business.Services.Authentication.Dto;
 using CA.Ticketing.Common.Constants;
 using CA.Ticketing.Common.Models;
@@ -31,6 +30,20 @@ namespace CA.Ticketing.Api.Controllers
         public async Task<IActionResult> Login(LoginDto loginModel)
         {
             var authUser = await _accountsService.Authenticate(loginModel);
+            return Ok(authUser);
+        }
+
+        /// <summary>
+        /// Authenticate user
+        /// </summary>
+        /// <param name="refreshTokenDto">Refresh Token Model</param>
+        /// <returns>AuthenticatedUser</returns>
+        [Route(ApiRoutes.Authentication.RefreshToken)]
+        [HttpPost]
+        [ProducesResponseType(typeof(AuthenticatedUser), StatusCodes.Status200OK)]
+        public async Task<IActionResult> RefreshToken(RefreshTokenDto refreshTokenDto)
+        {
+            var authUser = await _accountsService.RefreshToken(refreshTokenDto);
             return Ok(authUser);
         }
 

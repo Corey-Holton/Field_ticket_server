@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using CA.Ticketing.Business.Extensions;
 using CA.Ticketing.Business.Services.Authentication;
 using CA.Ticketing.Business.Services.Authentication.Dto;
 using CA.Ticketing.Business.Services.Base;
 using CA.Ticketing.Business.Services.Customers.Dto;
+using CA.Ticketing.Business.Services.Removal;
 using CA.Ticketing.Common.Authentication;
 using CA.Ticketing.Persistance.Context;
 using CA.Ticketing.Persistance.Models;
@@ -15,10 +17,18 @@ namespace CA.Ticketing.Business.Services.Customers
         private readonly IAccountsService _accountsService;
 
         private readonly IUserContext _userContext;
-        public CustomerService(CATicketingContext context, IMapper mapper, IAccountsService accountsService, IUserContext userContext) : base(context, mapper)
+
+        private readonly IRemovalService _removalService;
+        public CustomerService(
+            CATicketingContext context,
+            IMapper mapper,
+            IAccountsService accountsService,
+            IUserContext userContext,
+            IRemovalService removalService) : base(context, mapper)
         {
             _accountsService = accountsService;
             _userContext = userContext;
+            _removalService = removalService;
         }
 
         public async Task<IEnumerable<CustomerDto>> GetAll()
@@ -64,14 +74,21 @@ namespace CA.Ticketing.Business.Services.Customers
 
         public async Task Delete(string id)
         {
-            var customer = await GetCustomer(id);
+            var customer = await _context.Customers
+                .Include(x => x.Locations)
+                    .ThenInclude(x => x.ScheduledJobs)
+                .Include(x => x.Contacts)
+                    .ThenInclude(x => x.ApplicationUser)
+                .Include(x => x.Contacts)
+                    .ThenInclude(x => x.ScheduledJobs)
+                .Include(x => x.Tickets)
+                .Include(x => x.Invoices)
+                .Include(x => x.ScheduledJobs)
+                .AsSplitQuery()
+                .SingleAsync(x => x.Id == id);
 
-            if (customer == null)
-            {
-                return;
-            }
+            _removalService.Remove(customer);
 
-            _context.Customers.Remove(customer);
             await _context.SaveChangesAsync();
         }
 
@@ -92,8 +109,14 @@ namespace CA.Ticketing.Business.Services.Customers
 
         public async Task DeleteLocation(string id)
         {
-            var location = await GetLocation(id);
-            _context.CustomerLocations.Remove(location);
+            var location = await _context.CustomerLocations
+                .Include(x => x.FieldTickets)
+                .Include(x => x.ScheduledJobs)
+                .AsSplitQuery()
+                .SingleAsync(x => x.Id == id);
+
+            _removalService.Remove(location);
+
             await _context.SaveChangesAsync();
         }
 
@@ -114,7 +137,11 @@ namespace CA.Ticketing.Business.Services.Customers
 
         public async Task DeleteContact(string id)
         {
-            var contact = await GetCustomerContact(id);
+            var contact = await _context.CustomerContacts
+               .Include(x => x.ApplicationUser)
+               .Include(x => x.ScheduledJobs)
+               .SingleAsync(x => x.Id == id);
+
             _context.CustomerContacts.Remove(contact);
             await _context.SaveChangesAsync();
         }

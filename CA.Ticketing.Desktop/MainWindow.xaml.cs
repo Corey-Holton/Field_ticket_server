@@ -1,29 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using CA.Ticketing.Desktop.ViewModels;
 using MahApps.Metro.Controls;
+using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace CA.Ticketing.Desktop
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : MetroWindow
     {
         public MainWindow()
         {
             InitializeComponent();
+            var viewModel = new MainWindowViewModel(syncController);
+            this.DataContext = viewModel;
+            this.Loaded += MainWindow_Loaded;
+        }
+
+        private void MainWindow_Loaded(object sender, System.Windows.RoutedEventArgs e)
+        {
+            var viewModel = (MainWindowViewModel)this.DataContext;
+            Task.Run(() => viewModel.Init());
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            var viewModel = (MainWindowViewModel)this.DataContext;
+            viewModel.Dispose();
+            base.OnClosing(e);
         }
     }
 }

@@ -1,9 +1,13 @@
 ﻿using AutoMapper;
 using CA.Ticketing.Business.Extensions;
 using CA.Ticketing.Business.Services.Base;
+using CA.Ticketing.Business.Services.FileManager;
 using CA.Ticketing.Business.Services.Invoices.Dto;
+using CA.Ticketing.Business.Services.Notifications;
 using CA.Ticketing.Business.Services.Pdf;
 using CA.Ticketing.Business.Services.Pdf.Dto;
+using CA.Ticketing.Business.Services.Removal;
+using CA.Ticketing.Common.Constants;
 using CA.Ticketing.Persistance.Context;
 using CA.Ticketing.Persistance.Models;
 using Microsoft.EntityFrameworkCore;
@@ -16,16 +20,32 @@ namespace CA.Ticketing.Business.Services.Invoices
 
         private readonly IRazorViewToStringRenderer _viewRenderer;
 
-        private readonly string _ticketTemplate = "/Views/Invoice/InvoiceTemplate.cshtml";
+        private readonly IRemovalService _removalService;
+
+        private readonly MessagesComposer _messagesComposer;
+
+        private readonly IFileManagerService _fileManagerService;
+
+        private readonly INotificationService _notificationService;
+
+        private readonly string _invoiceTemplate = "/Views/Invoice/InvoiceTemplate.cshtml";
 
         public InvoiceService(
             CATicketingContext context,
             IMapper mapper, 
             IPdfGeneratorService pdfGeneratorService,
-            IRazorViewToStringRenderer viewRenderer) : base(context, mapper)
+            IRazorViewToStringRenderer viewRenderer,
+            IFileManagerService fileManagerService,
+            IRemovalService removalService,
+            MessagesComposer messagesComposer,
+            INotificationService notificationService) : base(context, mapper)
         {
             _pdfGeneratorService = pdfGeneratorService;
             _viewRenderer = viewRenderer;
+            _removalService = removalService;
+            _fileManagerService = fileManagerService;
+            _notificationService = notificationService;
+            _messagesComposer = messagesComposer;
         }
 
         public async Task<IEnumerable<InvoiceDto>> GetAll()
@@ -78,25 +98,19 @@ namespace CA.Ticketing.Business.Services.Invoices
                 .Where(x => entity.TicketIds.Contains(x.Id))
                 .ToListAsync();
 
-            var isAnyTicketInvoiced = tickets.Any(x => !string.IsNullOrEmpty(x.InvoiceId));
-
-            if (isAnyTicketInvoiced)
+            if (tickets.Any(x => !string.IsNullOrEmpty(x.InvoiceId)))
             {
                 throw new Exception("Some tickets are already invoiced");
             }
 
-            var ticketsWihoutCustomerSignature = tickets.Any(x => x.HasCustomerSignature == false);
-
-            if (ticketsWihoutCustomerSignature)
+            if (tickets.Any(x => !x.HasCustomerSignature || string.IsNullOrEmpty(x.FileName)))
             {
                 throw new Exception("Some tickets are missing customer signature");
             }
 
-            var isCustomer = tickets.All(x => x.CustomerId == invoice.CustomerId);
-
-            if (!isCustomer)
+            if (!tickets.All(x => x.CustomerId == invoice.CustomerId))
             {
-                throw new Exception("Some tickets do not have the same customer id");
+                throw new Exception("Some tickets do not belong to same customer");
             }
 
             tickets.ForEach(x => invoice.Tickets.Add(x));
@@ -119,8 +133,36 @@ namespace CA.Ticketing.Business.Services.Invoices
 
         public async Task SendToCustomer(string id)
         {
-            var invoice = await _context.Invoices
-                .SingleAsync(x => x.Id == id);
+            var (invoice, pdf) = await GetInvoiceWithPdf(id);
+
+            if (string.IsNullOrEmpty(invoice.Customer.SendInvoiceTo))
+            {
+                throw new Exception("Customer email is not defined");
+            }
+
+            if (!invoice.Tickets.Any(x => x.CustomerSignedOn.HasValue) || invoice.Tickets.Any(x => string.IsNullOrEmpty(x.FileName)))
+            {
+                throw new Exception("Some tickets are missing customer signature. Please verify.");
+            }
+
+            var tickets = invoice.Tickets
+                .Select(x => new { x.TicketId, TicketBytes = _fileManagerService.GetFileBytes(FilePaths.Tickets, x.FileName) })
+                .ToList();
+
+            var attachments = new List<(Stream, string)>()
+            {
+                (new MemoryStream(pdf), $"{invoice.InvoiceId}-{invoice.Customer.Name}.pdf")
+            };
+
+            foreach (var ticket in tickets)
+            {
+                attachments.Add((new MemoryStream(ticket.TicketBytes), $"{ticket.TicketId}.pdf"));
+            }
+
+            var emailMessage = _messagesComposer.GetEmailComposed(EmailMessageKeys.SendInvoice);
+            var emailAddress = invoice.Customer.SendInvoiceTo;
+
+            await _notificationService.SendEmail(emailAddress, emailMessage, attachments);
 
             invoice.SentToCustomer = DateTime.UtcNow;
 
@@ -130,8 +172,13 @@ namespace CA.Ticketing.Business.Services.Invoices
         public async Task Delete(string id)
         {
             var invoice = await _context.Invoices
+                .Include(x => x.InvoiceLateFees)
+                .Include(x => x.Tickets)
+                .AsSplitQuery()
                 .SingleAsync(x => x.Id == id);
-            _context.Invoices.Remove(invoice);
+
+            _removalService.Remove(invoice);
+
             await _context.SaveChangesAsync();
         }
 
@@ -145,18 +192,29 @@ namespace CA.Ticketing.Business.Services.Invoices
 
         public async Task<(string InvoiceId, byte[] InvoiceBytes)> Download(string id)
         {
+            var (invoice, pdf) = await GetInvoiceWithPdf(id);
+            return (invoice.InvoiceId, pdf);
+        }
+
+        public async Task<(Invoice invoice, byte[] pdf)> GetInvoiceWithPdf(string id)
+        {
             var invoice = await _context.Invoices
-                .Include(x => x.Tickets)
-                .Include(x => x.Customer)
-                .SingleAsync(x => x.Id == id);
+                            .Include(x => x.Customer)
+                            .Include(x => x.Tickets)
+                                .ThenInclude(x => x.TicketSpecifications)
+                            .Include(x => x.Tickets)
+                                .ThenInclude(x => x.Location)
+                            .Include(x => x.InvoiceLateFees)
+                            .AsSplitQuery()
+                            .SingleAsync(x => x.Id == id);
 
             var invoiceReport = new InvoiceReport(invoice);
 
-            var invoiceHtml = await _viewRenderer.RenderViewToStringAsync(_ticketTemplate, invoiceReport);
+            var invoiceHtml = await _viewRenderer.RenderViewToStringAsync(_invoiceTemplate, invoiceReport);
 
-            var pdf = _pdfGeneratorService.GeneratePdf(invoiceHtml);
+            var pdf = _pdfGeneratorService.GeneratePdf(invoiceHtml, true);
 
-            return (invoice.InvoiceId, pdf);
+            return (invoice, pdf);
         }
     }
 }

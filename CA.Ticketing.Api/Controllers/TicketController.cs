@@ -259,5 +259,19 @@ namespace CA.Ticketing.Api.Controllers
             await _ticketService.ResetSignatures(ticketId);
             return Ok();
         }
+
+        /// <summary>
+        /// Send to customer
+        /// </summary>
+        /// <param name="ticketId">Ticket Id</param>
+        /// <param name="redirectUrl">Redirect Url</param>
+        [Route(ApiRoutes.Tickets.SendToCustomer)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> SendToCustomer(string ticketId, string redirectUrl)
+        {
+            await _ticketService.SendToClient(ticketId, redirectUrl);
+            return Ok();
+        }
     }
 }

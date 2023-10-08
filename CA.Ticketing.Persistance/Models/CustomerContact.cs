@@ -31,6 +31,9 @@ namespace CA.Ticketing.Persistance.Models
         [JsonIgnore]
         public virtual ApplicationUser? ApplicationUser { get; set; }
 
+        [JsonIgnore]
+        public virtual ICollection<Scheduling> ScheduledJobs { get; set; } = new List<Scheduling>();
+
         [NotMapped]
         public string DisplayName => $"{FirstName} {LastName}";
     }

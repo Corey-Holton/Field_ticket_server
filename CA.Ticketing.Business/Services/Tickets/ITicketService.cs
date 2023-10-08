@@ -40,5 +40,6 @@ namespace CA.Ticketing.Business.Services.Tickets
 
         Task ResetSignatures(string ticketId);
 
+        Task SendToClient(string ticketId, string redirectUrl);
     }
 }

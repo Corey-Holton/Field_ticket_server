@@ -2,6 +2,13 @@
 {
     public class BusinessConstants
     {
+        public class LocalServer
+        {
+            public const string ApiBaseUrl = "https://localhost:7057";
+
+            public const string WebBaseUrl = "http://localhost:3000";
+        }
+
         public class JobTitles
         {
             public const string ToolPusher = "Tool Pusher";
@@ -29,5 +36,10 @@
         }
 
         public const double InvoiceLateFee = 1.5;
+
+        public class BackgroundJobNames
+        {
+            public const string InvoiceLateFees = nameof(InvoiceLateFee);
+        }
     }
 }

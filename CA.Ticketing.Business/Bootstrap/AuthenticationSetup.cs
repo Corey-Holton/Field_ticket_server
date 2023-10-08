@@ -1,9 +1,9 @@
-﻿using CA.Ticketing.Common.Constants;
+﻿using CA.Ticketing.Business.Extensions;
+using CA.Ticketing.Common.Constants;
 using CA.Ticketing.Common.Setup;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 namespace CA.Ticketing.Business.Bootstrap
@@ -34,21 +34,12 @@ namespace CA.Ticketing.Business.Bootstrap
             {
                 x.RequireHttpsMetadata = false;
                 x.SaveToken = true;
-                x.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    RequireAudience = false,
-                    RequireSignedTokens = false
-                };
+                x.TokenValidationParameters = AuthenticationExtensions.GetTokenValidationParameters(true, key, securitySettings.Issuer);
                 x.Events = new JwtBearerEvents()
                 {
                     OnMessageReceived = c =>
                     {
                         var accessToken = c.Request.Query["access_token"];
-
                         var path = c.HttpContext.Request.Path;
                         if (!string.IsNullOrEmpty(accessToken) &&
                             path.StartsWithSegments("/chat"))

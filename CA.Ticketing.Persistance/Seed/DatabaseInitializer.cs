@@ -45,6 +45,7 @@ namespace CA.Ticketing.Persistance.Seed
             await CreateBaseUser();
             await InitiateCharges();
             await InitiateSettings();
+            await InitiateBackgroundJobs();
         }
 
         private async Task CreateRoles()
@@ -170,6 +171,19 @@ namespace CA.Ticketing.Persistance.Seed
             });
 
             await _context.SaveChangesAsync();
+        }
+
+        private async Task InitiateBackgroundJobs()
+        {
+            var backgroundJobs = await _context.BackgroundJobs.ToListAsync();
+
+            var invoiceLateFeesJob= backgroundJobs.SingleOrDefault(x => x.Name == BusinessConstants.BackgroundJobNames.InvoiceLateFees);
+            
+            if (invoiceLateFeesJob == null)
+            {
+                _context.BackgroundJobs.Add(new BackgroundJob { Name = BusinessConstants.BackgroundJobNames.InvoiceLateFees });
+                await _context.SaveChangesAsync();
+            }
         }
 
         private static IEnumerable<Charge> GetCharges()

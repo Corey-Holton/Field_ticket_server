@@ -3,6 +3,7 @@ using CA.Ticketing.Business.Services.Authentication;
 using CA.Ticketing.Business.Services.Authentication.Dto;
 using CA.Ticketing.Business.Services.Base;
 using CA.Ticketing.Business.Services.Employees.Dto;
+using CA.Ticketing.Business.Services.Removal;
 using CA.Ticketing.Common.Enums;
 using CA.Ticketing.Common.Extensions;
 using CA.Ticketing.Persistance.Context;
@@ -16,9 +17,16 @@ namespace CA.Ticketing.Business.Services.Employees
     {
         private readonly IAccountsService _accountsService;
 
-        public EmployeeService(CATicketingContext context, IMapper mapper, IAccountsService accountsService) : base(context, mapper)
+        private readonly IRemovalService _removalService;
+
+        public EmployeeService(
+            CATicketingContext context,
+            IMapper mapper,
+            IAccountsService accountsService,
+            IRemovalService removalService) : base(context, mapper)
         {
             _accountsService = accountsService;
+            _removalService = removalService;
         }
 
         public async Task<IEnumerable<EmployeeDto>> GetAll(EmployeeStatus? status)
@@ -68,22 +76,28 @@ namespace CA.Ticketing.Business.Services.Employees
 
         public async Task Delete(string id)
         {
-            var employee = await GetEmployee(id);
-            _context.Employees.Remove(employee);
+            var employee = await _context.Employees
+                .Include(x => x.ApplicationUser)
+                .Include(x => x.Payrolls)
+                .AsSplitQuery()
+                .SingleAsync(x => x.Id == id);
+
+            _removalService.Remove(employee);
+
             await _context.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<EmployeeDateDto>> GetEmployeesBirthdays()
         {
             return (await _context.Employees.ToListAsync())
-                .Where(x => DayTimeExtensions.IsWithinMonth(x.DoB))
+                .Where(x => DateTimeExtensions.IsWithinMonth(x.DoB))
                 .Select(x => _mapper.Map<EmployeeDateDto>(x));
         }
 
         public async Task<IEnumerable<EmployeeDateDto>> GetEmployeesAnniversaries()
         {
             return (await _context.Employees.ToListAsync())
-                .Where(x => DayTimeExtensions.IsWithinMonth(x.HireDate))
+                .Where(x => DateTimeExtensions.IsWithinMonth(x.HireDate))
                 .Select(x => _mapper.Map<EmployeeDateDto>(x));
         }
 

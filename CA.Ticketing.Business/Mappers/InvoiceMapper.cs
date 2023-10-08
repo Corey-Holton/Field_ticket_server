@@ -15,7 +15,7 @@ namespace CA.Ticketing.Business.Mappers
                 .ForMember(x => x.SentToCustomer, dest => dest.MapFrom(src => src.SentToCustomer.HasValue))
                 .ForMember(x => x.Total, dest => dest.MapFrom((src, dest) => 
                 {
-                    var ticketsTotal = src.Tickets.Sum(x => x.Total);
+                    var ticketsTotal = src.Tickets.Sum(x => x.TotalWithTaxes);
                     if (!src.InvoiceLateFees.Any())
                     {
                         return ticketsTotal;

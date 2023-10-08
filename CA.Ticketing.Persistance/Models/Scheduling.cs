@@ -9,15 +9,15 @@ namespace CA.Ticketing.Persistance.Models
 
     public class Scheduling : IdentityModel
     {
-        public DateTime? StartTime { get; set; }
+        public DateTime StartTime { get; set; }
 
-        public DateTime? EndTime { get; set; }
+        public DateTime EndTime { get; set; }
 
         [ForeignKey(nameof(Customer))]
         public string CustomerId { get; set; }
 
         [JsonIgnore]
-        public virtual Customer Customer { get; set;}
+        public virtual Customer Customer { get; set; }
 
         [ForeignKey(nameof(CustomerLocation))]
         public string? CustomerLocationId { get; set; }

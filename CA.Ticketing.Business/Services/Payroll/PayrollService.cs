@@ -1,11 +1,9 @@
 ﻿using AutoMapper;
 using CA.Ticketing.Business.Services.Base;
 using CA.Ticketing.Business.Services.Payroll.Dto;
-using CA.Ticketing.Business.Services.Tickets.Dto;
 using CA.Ticketing.Common.Constants;
 using CA.Ticketing.Common.Enums;
 using CA.Ticketing.Persistance.Context;
-using CA.Ticketing.Persistance.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 

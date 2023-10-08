@@ -158,6 +158,8 @@
             public const string Download = $"{_root}/download";
 
             public const string Reset = $"{_root}/reset";
+
+            public const string SendToCustomer = $"{_root}/send-to-customer";
         }
 
         public class Payrolls
@@ -212,6 +214,8 @@
 
             public const string Login = $"{_root}/login";
 
+            public const string RefreshToken = $"{_root}/refresh-token";
+
             public const string GenerateResetPasswordLink = $"{_root}/GenerateResetPasswordLink";
 
             public const string GetEmployeeResetPasswordToken = $"{_root}/reset-employee-password";
@@ -245,6 +249,8 @@
             public const string GetOrUpdateGeneric = $"{_root}/{{entityType}}";
 
             public const string Status = $"{_root}/status";
+
+            public const string Run = $"{_root}/run";
 
             public const string Health = $"{_root}/health";
         }

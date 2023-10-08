@@ -45,7 +45,7 @@ namespace CA.Ticketing.Business.Services.Scheduling
                                      .Include(s => s.Customer)
                                      .Include(s => s.CustomerLocation)
                                      .Include(s => s.Equipment)
-                                     .Where(s => s.EquipmentId == user.Employee.AssignedRigId && s.StartTime >= DateTime.Today)
+                                     .Where(s => s.EquipmentId == user.Employee.AssignedRigId && s.EndTime >= DateTime.Today)
                                      .AsSplitQuery()
                                      .ToListAsync();
 
@@ -54,6 +54,7 @@ namespace CA.Ticketing.Business.Services.Scheduling
 
         public async Task<string> Create(SchedulingDto entity)
         {
+
             var scheduling = _mapper.Map<Persistance.Models.Scheduling>(entity);
 
             _context.Scheduling.Add(scheduling);

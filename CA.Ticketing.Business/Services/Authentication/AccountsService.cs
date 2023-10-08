@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
@@ -63,9 +64,6 @@ namespace CA.Ticketing.Business.Services.Authentication
         public async Task<AuthenticationResultDto> Authenticate(LoginDto loginModel)
         {
             var user = await _userManager.FindByNameAsync(loginModel.Username);
-
-            user ??= await _userManager.FindByEmailAsync(loginModel.Username);
-
             if (user == null)
             {
                 return new AuthenticationResultDto();
@@ -78,9 +76,44 @@ namespace CA.Ticketing.Business.Services.Authentication
                 return new AuthenticationResultDto();
             }
 
+            if (string.IsNullOrEmpty(user.RefreshToken))
+            {
+                user.RefreshToken = GenerateRefreshToken();
+                user.LastModifiedDate = DateTime.UtcNow;
+                await _userManager.UpdateAsync(user);
+            }
+
             var claims = await GetUserClaims(user);
 
-            var authenticatedUser = GetAuthenticatedUser(claims, !string.IsNullOrEmpty(user.DisplayName) ? user.DisplayName : user.Email, user.Id);
+            var authenticatedUser = GetAuthenticatedUser(claims, !string.IsNullOrEmpty(user.DisplayName) ? user.DisplayName : user.Email, user.Id, user.RefreshToken);
+
+            return new AuthenticationResultDto(authenticatedUser);
+        }
+
+        public async Task<AuthenticationResultDto> RefreshToken(RefreshTokenDto refreshTokenDto)
+        {
+            var userPrincipal = GetPrincipalFromExpiredToken(refreshTokenDto.Token);
+
+            if (userPrincipal == null)
+            {
+                throw new Exception("Invalid request");
+            }
+
+            var user = await _userManager.FindByIdAsync(userPrincipal.Identity!.Name);
+
+            if (user == null)
+            {
+                return new AuthenticationResultDto();
+            }
+
+            if (user.RefreshToken != refreshTokenDto.RefreshToken)
+            {
+                throw new Exception("Invalid token request");
+            }
+
+            var claims = await GetUserClaims(user);
+
+            var authenticatedUser = GetAuthenticatedUser(claims, !string.IsNullOrEmpty(user.DisplayName) ? user.DisplayName : user.Email, user.Id, user.RefreshToken);
 
             return new AuthenticationResultDto(authenticatedUser);
         }
@@ -134,11 +167,11 @@ namespace CA.Ticketing.Business.Services.Authentication
                 throw new Exception($"User for Customer Contact Id {customerContactLoginModel.CustomerContactId} was already created");
             }
 
-            existingUser = await _userManager.FindByEmailAsync(customerContactLoginModel.Email);
+            existingUser = await _userManager.FindByNameAsync(customerContactLoginModel.Email);
 
             if (existingUser != null)
             {
-                throw new Exception($"There is already a user with email {customerContactLoginModel.Email}");
+                throw new Exception($"There is already a user with username {customerContactLoginModel.Email}");
             }
 
             var userAdded = _mapper.Map<ApplicationUser>(customerContactLoginModel);
@@ -162,7 +195,7 @@ namespace CA.Ticketing.Business.Services.Authentication
 
         public async Task<AuthenticationResultDto> SetCustomerPassword(SetCustomerPasswordDto setCustomerPasswordModel)
         {
-            var user = await _userManager.FindByEmailAsync(setCustomerPasswordModel.Email);
+            var user = await _userManager.FindByNameAsync(setCustomerPasswordModel.Email);
 
             if (user == null)
             {
@@ -175,6 +208,10 @@ namespace CA.Ticketing.Business.Services.Authentication
             }
 
             user.LastModifiedDate = DateTime.UtcNow;
+            if (string.IsNullOrEmpty(user.RefreshToken))
+            {
+                user.RefreshToken = GenerateRefreshToken();
+            }
 
             var emailConfirmationResult = await _userManager.ConfirmEmailAsync(user, setCustomerPasswordModel.Code);
 
@@ -192,7 +229,7 @@ namespace CA.Ticketing.Business.Services.Authentication
 
             var claims = await GetUserClaims(user);
 
-            var authenticatedUser = GetAuthenticatedUser(claims, !string.IsNullOrEmpty(user.DisplayName) ? user.DisplayName : user.Email, user.Id);
+            var authenticatedUser = GetAuthenticatedUser(claims, !string.IsNullOrEmpty(user.DisplayName) ? user.DisplayName : user.Email, user.Id, user.RefreshToken);
 
             return new AuthenticationResultDto(authenticatedUser);
         }
@@ -205,7 +242,7 @@ namespace CA.Ticketing.Business.Services.Authentication
 
         public async Task ResetPassword(ResetPasswordDto resetPasswordModel)
         {
-            var user = await _userManager.FindByEmailAsync(resetPasswordModel.Email);
+            var user = await _userManager.FindByNameAsync(resetPasswordModel.Email);
 
             if (user == null)
             {
@@ -219,7 +256,6 @@ namespace CA.Ticketing.Business.Services.Authentication
         public async Task SetPasswordFromLink(SetPasswordDto setPasswordModel)
         {
             var user = await _userManager.FindByNameAsync(setPasswordModel.Username);
-            user ??= await _userManager.FindByEmailAsync(setPasswordModel.Username);
 
             if (user == null)
             {
@@ -337,15 +373,16 @@ namespace CA.Ticketing.Business.Services.Authentication
             return userClaims;
         }
 
-        private AuthenticatedUser GetAuthenticatedUser(IEnumerable<Claim> userClaims, string displayName, string userId)
+        private AuthenticatedUser GetAuthenticatedUser(IEnumerable<Claim> userClaims, string displayName, string userId, string refreshToken)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_securitySettings.Secret);
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
+                Issuer = _securitySettings.Issuer,
                 Subject = new ClaimsIdentity(userClaims),
-                Expires = DateTime.UtcNow.AddDays(7),
+                Expires = DateTime.UtcNow.AddMinutes(30),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
@@ -355,8 +392,32 @@ namespace CA.Ticketing.Business.Services.Authentication
                 Id = userId,
                 DisplayName = displayName,
                 Token = tokenHandler.WriteToken(token),
+                RefreshToken = refreshToken,
                 Initials = initials
             };
+        }
+
+        private ClaimsPrincipal? GetPrincipalFromExpiredToken(string? token)
+        {
+            var key = Encoding.ASCII.GetBytes(_securitySettings.Secret);
+            var tokenValidationParameters = AuthenticationExtensions.GetTokenValidationParameters(false, key, _securitySettings.Issuer);
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken securityToken);
+            if (securityToken is not JwtSecurityToken)
+            {
+                throw new SecurityTokenException("Invalid token");
+            }
+
+            return principal;
+        }
+
+        private static string GenerateRefreshToken()
+        {
+            var randomNumber = new byte[64];
+            using var rng = RandomNumberGenerator.Create();
+            rng.GetBytes(randomNumber);
+            return Convert.ToBase64String(randomNumber);
         }
 
         private static string GetInitials(string displayName)
@@ -385,7 +446,7 @@ namespace CA.Ticketing.Business.Services.Authentication
 
             var callBackUrl = $"{redirectUrl}?code={emailPasswordResetToken}&username={user.UserName}";
 
-            var emailMessage = _messagesComposer.GetEmailComposed(EmailMessageKeys.ResetPassword, (4, callBackUrl));
+            var emailMessage = _messagesComposer.GetEmailComposed(EmailMessageKeys.ResetPassword, (3, callBackUrl));
 
             await _notificationService.SendEmail(user.Email, emailMessage);
         }
@@ -393,6 +454,7 @@ namespace CA.Ticketing.Business.Services.Authentication
         private async Task<string> CreateUserInternal(ApplicationUser user, string password, string role)
         {
             user.LastModifiedDate = DateTime.UtcNow;
+            user.RefreshToken = GenerateRefreshToken();
             var userCreateResult = !string.IsNullOrEmpty(password) ? 
                 await _userManager.CreateAsync(user, password) : 
                 await _userManager.CreateAsync(user);

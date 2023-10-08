@@ -81,6 +81,10 @@ namespace CA.Ticketing.Persistance.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<string>("RefreshToken")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -118,6 +122,30 @@ namespace CA.Ticketing.Persistance.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("CA.Ticketing.Persistance.Models.BackgroundJob", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime?>("LastRunOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Schedule")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BackgroundJobs");
                 });
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.Charge", b =>
@@ -587,6 +615,13 @@ namespace CA.Ticketing.Persistance.Migrations
                     b.Property<double>("Mileage")
                         .HasColumnType("float");
 
+                    b.Property<string>("SendEmailTo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("SentToCustomerOn")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("ServiceType")
                         .HasColumnType("int");
 
@@ -760,7 +795,7 @@ namespace CA.Ticketing.Persistance.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("EndTime")
+                    b.Property<DateTime>("EndTime")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("EquipmentId")
@@ -770,7 +805,7 @@ namespace CA.Ticketing.Persistance.Migrations
                     b.Property<DateTime>("LastModifiedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("StartTime")
+                    b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
@@ -1094,7 +1129,7 @@ namespace CA.Ticketing.Persistance.Migrations
                         .HasForeignKey("CustomerId");
 
                     b.HasOne("CA.Ticketing.Persistance.Models.Equipment", "Equipment")
-                        .WithMany()
+                        .WithMany("Tickets")
                         .HasForeignKey("EquipmentId");
 
                     b.HasOne("CA.Ticketing.Persistance.Models.Invoice", "Invoice")
@@ -1139,7 +1174,7 @@ namespace CA.Ticketing.Persistance.Migrations
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.PayrollData", b =>
                 {
                     b.HasOne("CA.Ticketing.Persistance.Models.Employee", "Employee")
-                        .WithMany()
+                        .WithMany("Payrolls")
                         .HasForeignKey("EmployeeId");
 
                     b.HasOne("CA.Ticketing.Persistance.Models.FieldTicket", "FieldTicket")
@@ -1156,21 +1191,21 @@ namespace CA.Ticketing.Persistance.Migrations
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.Scheduling", b =>
                 {
                     b.HasOne("CA.Ticketing.Persistance.Models.CustomerContact", "CustomerContact")
-                        .WithMany()
+                        .WithMany("ScheduledJobs")
                         .HasForeignKey("CustomerContactId");
 
                     b.HasOne("CA.Ticketing.Persistance.Models.Customer", "Customer")
-                        .WithMany()
+                        .WithMany("ScheduledJobs")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("CA.Ticketing.Persistance.Models.CustomerLocation", "CustomerLocation")
-                        .WithMany()
+                        .WithMany("ScheduledJobs")
                         .HasForeignKey("CustomerLocationId");
 
                     b.HasOne("CA.Ticketing.Persistance.Models.Equipment", "Equipment")
-                        .WithMany()
+                        .WithMany("ScheduledJobs")
                         .HasForeignKey("EquipmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1254,22 +1289,30 @@ namespace CA.Ticketing.Persistance.Migrations
 
                     b.Navigation("Locations");
 
+                    b.Navigation("ScheduledJobs");
+
                     b.Navigation("Tickets");
                 });
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.CustomerContact", b =>
                 {
                     b.Navigation("ApplicationUser");
+
+                    b.Navigation("ScheduledJobs");
                 });
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.CustomerLocation", b =>
                 {
                     b.Navigation("FieldTickets");
+
+                    b.Navigation("ScheduledJobs");
                 });
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.Employee", b =>
                 {
                     b.Navigation("ApplicationUser");
+
+                    b.Navigation("Payrolls");
                 });
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.Equipment", b =>
@@ -1279,6 +1322,10 @@ namespace CA.Ticketing.Persistance.Migrations
                     b.Navigation("Crew");
 
                     b.Navigation("Files");
+
+                    b.Navigation("ScheduledJobs");
+
+                    b.Navigation("Tickets");
                 });
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.FieldTicket", b =>

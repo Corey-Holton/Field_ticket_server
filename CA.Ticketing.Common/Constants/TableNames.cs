@@ -29,5 +29,7 @@
         public const string Settings = nameof(Settings);
 
         public const string SyncData = nameof(SyncData);
+
+        public const string BackgroundJobs = nameof(BackgroundJobs);
     }
 }

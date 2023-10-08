@@ -28,6 +28,9 @@ namespace CA.Ticketing.Persistance.Models
         public double FuelConsumption { get; set; }
 
         [JsonIgnore]
+        public virtual ICollection<FieldTicket> Tickets { get; set; } = new List<FieldTicket>();
+
+        [JsonIgnore]
         public virtual ICollection<EquipmentCharge> Charges { get; set; } = new List<EquipmentCharge>();
 
         [JsonIgnore]
@@ -35,5 +38,8 @@ namespace CA.Ticketing.Persistance.Models
 
         [JsonIgnore]
         public virtual ICollection<EquipmentFile> Files { get; set; } = new List<EquipmentFile>();
+
+        [JsonIgnore]
+        public virtual ICollection<Scheduling> ScheduledJobs { get; set; } = new List<Scheduling>();
     }
 }

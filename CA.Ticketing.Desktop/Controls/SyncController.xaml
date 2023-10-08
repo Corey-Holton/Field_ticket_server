@@ -1,0 +1,36 @@
+﻿<UserControl x:Class="CA.Ticketing.Desktop.Controls.SyncController"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:viewmodels="clr-namespace:CA.Ticketing.Desktop.ViewModels" 
+             d:DataContext="{d:DesignInstance Type=viewmodels:SyncControllerViewModel}"
+             mc:Ignorable="d" 
+             Height="40">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <Button IsEnabled="{Binding CanReload}" Height="30" Width="30" Command="{Binding ReloadCommand}" Cursor="Hand">
+            <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
+                <iconPacks:PackIconModern Width="18" VerticalAlignment="Center" HorizontalAlignment="Center"
+                                        Height="18"
+                                        Foreground="White"
+                                        Kind="Home" />
+            </Grid>
+        </Button>
+        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+            <Label Content="Server Status:" Foreground="White" />
+            <Label Content="{Binding ServerStatus}" Foreground="White" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Grid.Column="2" VerticalAlignment="Center" Margin="10,0">
+            <Label Content="Last Synced On:" Foreground="White" />
+            <Label Content="{Binding StatusLastChecked}" Foreground="White" />
+        </StackPanel>
+        <Button Content="Sync Now" IsEnabled="{Binding CanRunSync}" Command="{Binding RunSyncCommand}" Grid.Column="3" Height="30" Padding="10,0" Margin="0" Cursor="Hand" />
+    </Grid>
+</UserControl>

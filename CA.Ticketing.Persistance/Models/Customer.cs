@@ -25,5 +25,8 @@ namespace CA.Ticketing.Persistance.Models
 
         [JsonIgnore]
         public virtual ICollection<FieldTicket> Tickets { get; set; } = new List<FieldTicket>();
+
+        [JsonIgnore]
+        public virtual ICollection<Scheduling> ScheduledJobs { get; set; } = new List<Scheduling>();
     }
 }

@@ -67,6 +67,10 @@ namespace CA.Ticketing.Persistance.Models
 
         public string CustomerSignedBy { get; set; } = string.Empty;
 
+        public string SendEmailTo { get; set; } = string.Empty;
+
+        public DateTime? SentToCustomerOn { get; set; }
+
         public string FileName { get; set; } = string.Empty;
 
         [JsonIgnore]
@@ -82,6 +86,9 @@ namespace CA.Ticketing.Persistance.Models
         public double Total => TicketSpecifications.Sum(x => x.Quantity * x.Rate);
 
         [NotMapped]
+        public double TotalWithTaxes => Total + Total * TaxRate / 100;
+
+        [NotMapped]
         public bool HasCustomerSignature => CustomerSignedOn.HasValue;
 
         [NotMapped]
@@ -89,5 +96,8 @@ namespace CA.Ticketing.Persistance.Models
 
         [NotMapped]
         public byte[]? FileBytes { get; set; }
+
+        [NotMapped]
+        public bool IsSentToCustomer => SentToCustomerOn.HasValue;
     }
 }

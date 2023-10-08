@@ -6,10 +6,14 @@
         xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
         xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-        mc:Ignorable="d"
+        xmlns:controls="clr-namespace:CA.Ticketing.Desktop.Controls" xmlns:viewmodels="clr-namespace:CA.Ticketing.Desktop.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:MainWindowViewModel}"
+                 mc:Ignorable="d"
         ResizeMode="CanResizeWithGrip"
-        WindowStartupLocation="CenterScreen"
-        Title="CA Ticketing Desktop" Height="450" Width="800" GlowBrush="{DynamicResource MahApps.Brushes.WindowTitle}">
+        WindowStartupLocation="CenterScreen" Title="CA Ticketing Desktop" Height="450" Width="800"
+        GlowBrush="{DynamicResource MahApps.Brushes.WindowTitle}" WindowState="Maximized">
+    <mah:MetroWindow.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    </mah:MetroWindow.Resources>
     <mah:MetroWindow.IconTemplate>
         <DataTemplate>
             <Grid Height="30" Width="30">
@@ -20,7 +24,15 @@
             </Grid>
         </DataTemplate>
     </mah:MetroWindow.IconTemplate>
+    <mah:MetroWindow.RightWindowCommands>
+        <mah:WindowCommands>
+            <controls:SyncController VerticalAlignment="Center" x:Name="syncController"/>
+        </mah:WindowCommands>
+    </mah:MetroWindow.RightWindowCommands>
     <Grid>
-        <wv2:WebView2 x:Name="webView" Source="http://localhost:7058"></wv2:WebView2>
+        <wv2:WebView2 x:Name="webView" Visibility="{Binding WebViewVisible, Converter={StaticResource BooleanToVisibilityConverter}}" Source="{Binding ServerUrl}"></wv2:WebView2>
+        <Grid Background="#7FFFFFFF" x:Name="overlayGrid" Visibility="{Binding IsOverlayVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Label Content="{Binding OverlayMessage}" VerticalAlignment="Center" HorizontalAlignment="Center" />
+        </Grid>
     </Grid>
 </mah:MetroWindow>

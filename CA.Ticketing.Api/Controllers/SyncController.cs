@@ -1,5 +1,6 @@
 ﻿using CA.Ticketing.Business.Extensions;
 using CA.Ticketing.Business.Services.Sync;
+using CA.Ticketing.Business.Services.Sync.Dto;
 using CA.Ticketing.Common.Constants;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,11 +32,20 @@ namespace CA.Ticketing.Api.Controllers
 
         [HttpGet]
         [Route(ApiRoutes.Sync.Status)]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ServerStatus), StatusCodes.Status200OK)]
         public IActionResult Status()
         {
             var result = _dataSyncService.GetServerStatus();
             return Ok(result);
+        }
+
+        [HttpPost]
+        [Route(ApiRoutes.Sync.Run)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> Run()
+        {
+            await _dataSyncService.RunSync();
+            return Ok();
         }
 
         [HttpGet]

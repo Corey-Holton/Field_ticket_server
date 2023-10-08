@@ -7,6 +7,8 @@ namespace CA.Ticketing.Business.Services.Authentication
     {
         Task<AuthenticationResultDto> Authenticate(LoginDto loginModel);
 
+        Task<AuthenticationResultDto> RefreshToken(RefreshTokenDto refreshToken);
+
         Task<string> GetEmployeeResetPasswordToken(EmployeePasswordResetDto employeePasswordResetDto);
 
         Task ResetPassword(ResetPasswordDto resetPasswordModel);

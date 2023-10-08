@@ -42,5 +42,8 @@ namespace CA.Ticketing.Persistance.Models
 
         [NotMapped]
         public string DisplayName => $"{FirstName} {LastName}";
+
+        [JsonIgnore]
+        public virtual ICollection<PayrollData> Payrolls { get; set; } = new List<PayrollData>();
     }
 }

@@ -48,7 +48,6 @@ namespace CA.Ticketing.Business.Services.Notifications
             }
 
             var emailMessage = new EmailMessage(emailTemplate.Title, emailTemplate.Subject, paragraphs);
-            emailMessage.ApplyParameters(parameters);
             return emailMessage;
         }
     }

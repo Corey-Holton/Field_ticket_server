@@ -2,8 +2,10 @@
 using CA.Ticketing.Business.Extensions;
 using CA.Ticketing.Business.Services.Base;
 using CA.Ticketing.Business.Services.FileManager;
+using CA.Ticketing.Business.Services.Notifications;
 using CA.Ticketing.Business.Services.Pdf;
 using CA.Ticketing.Business.Services.Pdf.Dto;
+using CA.Ticketing.Business.Services.Removal;
 using CA.Ticketing.Business.Services.Tickets.Dto;
 using CA.Ticketing.Common.Authentication;
 using CA.Ticketing.Common.Constants;
@@ -26,6 +28,12 @@ namespace CA.Ticketing.Business.Services.Tickets
 
         private readonly IFileManagerService _fileManagerService;
 
+        private readonly IRemovalService _removalService;
+
+        private readonly MessagesComposer _messagesComposer;
+
+        private readonly INotificationService _notificationService;
+
         private readonly string _ticketTemplate = "/Views/Tickets/TicketTemplate.cshtml";
 
         public TicketService(
@@ -34,12 +42,18 @@ namespace CA.Ticketing.Business.Services.Tickets
             IUserContext userContext,
             IRazorViewToStringRenderer viewRenderer,
             IPdfGeneratorService pdfGeneratorService,
-            IFileManagerService fileManagerService) : base(context, mapper)
+            IFileManagerService fileManagerService,
+            IRemovalService removalService,
+            MessagesComposer messagesComposer,
+            INotificationService notificationService) : base(context, mapper)
         {
             _userContext = userContext;
             _viewRenderer = viewRenderer;
             _pdfGeneratorService = pdfGeneratorService;
             _fileManagerService = fileManagerService;
+            _removalService = removalService;
+            _notificationService = notificationService;
+            _messagesComposer = messagesComposer;
         }
         
         public async Task<IEnumerable<TicketDto>> GetAll()
@@ -61,6 +75,7 @@ namespace CA.Ticketing.Business.Services.Tickets
 
             var tickets = await GetTicketIncludes()
                 .Where(ticketsFilter)
+                .OrderByDescending(x => x.CreatedDate)
                 .AsSingleQuery()
                 .ToListAsync();
 
@@ -108,6 +123,12 @@ namespace CA.Ticketing.Business.Services.Tickets
             var ticket = _mapper.Map<FieldTicket>(manageTicketDto);
             ticket.TicketId = $"{ticketIdentifier}-{createdByUserCount + 1}";
             ticket.CreatedBy = _userContext.User!.Id;
+
+            if (!string.IsNullOrEmpty(ticket.CustomerId))
+            {
+                var customer = await _context.Customers.SingleAsync(x => x.Id == ticket.CustomerId);
+                ticket.SendEmailTo = customer.SendInvoiceTo;
+            }
 
             await GenerateCharges(ticket);
 
@@ -165,11 +186,15 @@ namespace CA.Ticketing.Business.Services.Tickets
 
         public async Task Delete(string id)
         {
-            var ticket = await GetTicket(id);
+            var ticket = await _context.FieldTickets
+                .Include(x => x.TicketSpecifications)
+                .Include(x => x.PayrollData)
+                .AsSplitQuery()
+                .SingleAsync(x => x.Id == id);
 
             VerifyCanUpdateTicket(ticket);
 
-            _context.FieldTickets.Remove(ticket);
+            _removalService.Remove(ticket);
             await _context.SaveChangesAsync();
         }
 
@@ -433,11 +458,7 @@ namespace CA.Ticketing.Business.Services.Tickets
                 return _fileManagerService.GetFileBytes(FilePaths.Tickets, fieldTicket.FileName);
             }
 
-            var employeeNumber = await GetEmployeePhoneNumber(fieldTicket.SignedBy);
-            var model = new TicketReport(fieldTicket, employeeNumber);
-            var ticketPreviewHtml = await _viewRenderer.RenderViewToStringAsync(_ticketTemplate, model);
-
-            return _pdfGeneratorService.GeneratePdf(ticketPreviewHtml);
+            return await GetTicketPdf(fieldTicket);
         }
 
         public async Task UploadTicket(Stream fileStream, string ticketId)
@@ -468,6 +489,42 @@ namespace CA.Ticketing.Business.Services.Tickets
 
             _fileManagerService.DeleteFile(FilePaths.Tickets, ticket.FileName);
             ticket.FileName = string.Empty;
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task SendToClient(string ticketId, string redirectUrl)
+        {
+            var fieldTicket = await GetTicket(ticketId);
+
+            if (string.IsNullOrEmpty(fieldTicket.SendEmailTo) && string.IsNullOrEmpty(fieldTicket.Customer!.SendInvoiceTo))
+            {
+                throw new Exception("There is no email defined for this customer");
+            }
+
+            if (fieldTicket.CustomerSignedOn.HasValue)
+            {
+                throw new Exception("Can't send a ticket that has already been signed");
+            }
+
+            var ticketPdf = await GetTicketPdf(fieldTicket);
+
+            var ticketStream = new MemoryStream(ticketPdf);
+
+            var callBackUrl = $"{redirectUrl}/dashboard/tickets/edit/{ticketId}";
+
+            var emailMessage = _messagesComposer.GetEmailComposed(EmailMessageKeys.SendTicket, (4, callBackUrl));
+
+            var attachments = new List<(Stream, string)>()
+            {
+                (ticketStream, $"{fieldTicket.TicketId}-{fieldTicket.Customer!.Name}.pdf")
+            };
+
+            var emailAddress = !string.IsNullOrEmpty(fieldTicket.SendEmailTo) ? fieldTicket.SendEmailTo : fieldTicket.Customer!.SendInvoiceTo;
+
+            await _notificationService.SendEmail(emailAddress, emailMessage, attachments);
+
+            fieldTicket.SentToCustomerOn = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
         }
@@ -698,6 +755,15 @@ namespace CA.Ticketing.Business.Services.Tickets
             {
                 throw new Exception("Unable to modify ticket after it has been signed");
             }
+        }
+
+        private async Task<byte[]> GetTicketPdf(FieldTicket fieldTicket)
+        {
+            var employeeNumber = await GetEmployeePhoneNumber(fieldTicket.SignedBy);
+            var model = new TicketReport(fieldTicket, employeeNumber);
+            var ticketPreviewHtml = await _viewRenderer.RenderViewToStringAsync(_ticketTemplate, model);
+
+            return _pdfGeneratorService.GeneratePdf(ticketPreviewHtml);
         }
     }
 }

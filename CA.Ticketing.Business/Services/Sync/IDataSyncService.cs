@@ -6,5 +6,7 @@ namespace CA.Ticketing.Business.Services.Sync
     public interface IDataSyncService : IHostedService
     {
         ServerStatus GetServerStatus();
+
+        Task RunSync();
     }
 }

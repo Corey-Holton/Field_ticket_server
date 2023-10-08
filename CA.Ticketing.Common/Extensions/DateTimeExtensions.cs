@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CA.Ticketing.Common.Extensions
+﻿namespace CA.Ticketing.Common.Extensions
 {
-    public class DayTimeExtensions
+    public static class DateTimeExtensions
     {
         public static bool IsWithinMonth(DateTime? date)
         {
@@ -23,6 +17,11 @@ namespace CA.Ticketing.Common.Extensions
             }
 
             return false;
+        }
+
+        public static string ToUSDateTime(this DateTime date)
+        {
+            return date.ToString("dd/MM/yyyy");
         }
     }
 }

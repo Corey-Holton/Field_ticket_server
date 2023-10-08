@@ -81,16 +81,15 @@ namespace CA.Ticketing.Api.Controllers
         }
 
         /// <summary>
-        /// Update an invoice
+        /// Download invoice
         /// </summary>
         [Route(ApiRoutes.Invoices.Download)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> Update(string invoiceId)
+        public async Task<IActionResult> Download(string invoiceId)
         {
             var (InvoiceId, InvoiceBytes) = await _invoiceService.Download(invoiceId);
             var stream = new MemoryStream(InvoiceBytes);
-
             return File(stream, "application/pdf", $"Invoice_{InvoiceId}.pdf");
         }
 

@@ -1,4 +1,5 @@
-﻿using CA.Ticketing.Persistance.Context;
+﻿using CA.Ticketing.Common.Constants;
+using CA.Ticketing.Persistance.Context;
 using CA.Ticketing.Persistance.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,7 +16,7 @@ namespace CA.Ticketing.Business.Services.Invoices
 
         private readonly IServiceProvider _serviceProvider;
 
-        private readonly double _timerInterval = TimeSpan.FromMinutes(1).TotalMilliseconds;
+        private readonly double _timerInterval = TimeSpan.FromHours(1).TotalMilliseconds;
 
         private ILogger<InvoiceLateFeeService> _logger;
 
@@ -70,10 +71,24 @@ namespace CA.Ticketing.Business.Services.Invoices
             using var scope = _serviceProvider.CreateScope();
             using var context = scope.ServiceProvider.GetRequiredService<CATicketingContext>();
 
+            var backgroundJob = await context.BackgroundJobs.SingleOrDefaultAsync(x => x.Name == BusinessConstants.BackgroundJobNames.InvoiceLateFees);
+
+            if (backgroundJob == null)
+            {
+                return;
+            }
+
+            if (backgroundJob.LastRunOn.HasValue && (backgroundJob.LastRunOn.Value - DateTime.UtcNow).TotalDays > 1)
+            {
+                return;
+            }
+
             var unpaidInvoices = await context.Invoices
                 .Include(x => x.Customer)
                 .Where(x => !x.Paid && DateTime.UtcNow > x.DueDate)
                 .ToListAsync();
+
+            var modifiedInvoices = new List<Invoice>();
 
             foreach (var unpaidInvoice in unpaidInvoices)
             {
@@ -84,11 +99,31 @@ namespace CA.Ticketing.Business.Services.Invoices
                     .IgnoreQueryFilters()
                     .CountAsync(x => x.InvoiceId == unpaidInvoice.Id);
 
-                if (currentLateFeesCount < monthsLate)
+                if (currentLateFeesCount < monthsLate && unpaidInvoice.SentToCustomer.HasValue)
+                {
+                    modifiedInvoices.Add(unpaidInvoice);
+                }
+
+                while (currentLateFeesCount < monthsLate)
                 {
                     unpaidInvoice.InvoiceLateFees.Add(new InvoiceLateFee() { SentToCustomer = true });
+                    currentLateFeesCount++;
                 }
             }
+
+            await context.SaveChangesAsync();
+
+            if (modifiedInvoices.Any())
+            {
+                var invoicesService = scope.ServiceProvider.GetRequiredService<IInvoiceService>();
+                
+                foreach (var invoice in modifiedInvoices)
+                {
+                    await invoicesService.SendToCustomer(invoice.Id);
+                }
+            }
+
+            backgroundJob.LastRunOn = DateTime.UtcNow;
 
             await context.SaveChangesAsync();
         }

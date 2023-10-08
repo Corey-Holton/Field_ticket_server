@@ -56,7 +56,34 @@
       {
         "order": 1,
         "paragraphType": 0,
-        "text": "{0}"
+        "text": "A new invoice from CA Well Services has been issued. The invoice and related field tickets are attached to this email."
+      }
+    ]
+  },
+  {
+    "templateKey": "SendTicket",
+    "title": "Ticket - CA Well Services, LLC",
+    "subject": "New Ticket from CA Well Services, LLC",
+    "paragraphs": [
+      {
+        "order": 1,
+        "paragraphType": 0,
+        "text": "There is a new ticket from CA Well Services."
+      },
+      {
+        "order": 2,
+        "paragraphType": 0,
+        "text": "You can sign the ticket and send it by email to corey@cawellservices.com."
+      },
+      {
+        "order": 3,
+        "paragraphType": 0,
+        "text": "If you have a login in CA Well Services Web application, you can sign the ticket online or upload a signed ticket by clicking the button below."
+      },
+      {
+        "order": 4,
+        "paragraphType": 2,
+        "text": "Sign Ticket"
       }
     ]
   }

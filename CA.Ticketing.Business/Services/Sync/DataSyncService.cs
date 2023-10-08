@@ -1,5 +1,6 @@
 ﻿using CA.Ticketing.Business.Extensions;
 using CA.Ticketing.Business.Services.Sync.Dto;
+using CA.Ticketing.Common.Constants;
 using CA.Ticketing.Common.Models;
 using CA.Ticketing.Common.Setup;
 using CA.Ticketing.Persistance.Context;
@@ -7,7 +8,6 @@ using CA.Ticketing.Persistance.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -24,9 +24,9 @@ namespace CA.Ticketing.Business.Services.Sync
 
         private readonly System.Timers.Timer _serverCheckTimer;
 
-        private readonly double _syncInterval = TimeSpan.FromSeconds(10).TotalMilliseconds;
+        private readonly double _syncInterval = TimeSpan.FromMinutes(5).TotalMilliseconds;
 
-        private readonly double _serverCheckInterval = TimeSpan.FromSeconds(5).TotalMilliseconds;
+        private readonly double _serverCheckInterval = TimeSpan.FromSeconds(15).TotalMilliseconds;
 
         private bool _syncInProgress = false;
 
@@ -71,11 +71,11 @@ namespace CA.Ticketing.Business.Services.Sync
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            await SetServerStatus();
-
             try
             {
+                await SetServerStatus();
                 await CheckServerHealth();
+                _ = Task.Run(() => SyncProcess(null, null));
             }
             catch
             {
@@ -83,14 +83,13 @@ namespace CA.Ticketing.Business.Services.Sync
             }
             finally
             {
-                _syncTimer.Start();
                 _serverCheckTimer.Start();
             }
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)
         {
-            if (_syncInProgress)
+            if (_serverStatus.SyncInProgress)
             {
                 await _syncTaskCompleted;
             }
@@ -109,6 +108,23 @@ namespace CA.Ticketing.Business.Services.Sync
         }
 
         public ServerStatus GetServerStatus() => _serverStatus;
+
+        public async Task RunSync()
+        {
+            if (!_serverStatus.IsOnline)
+            {
+                return;
+            }
+
+            if (_serverStatus.SyncInProgress)
+            {
+                await _syncTaskCompleted;
+                return;
+            }
+
+            _syncTimer.Stop();
+            SyncProcess(null, null);
+        }
 
         private async Task SetServerStatus()
         {
@@ -133,20 +149,23 @@ namespace CA.Ticketing.Business.Services.Sync
             _serverStatus.LastSyncDate = syncData.LastSyncDate;
         }
 
-        private void SyncProcess(object? sender, ElapsedEventArgs e)
+        private void SyncProcess(object? sender, ElapsedEventArgs? e)
         {
-            if (!_serverStatus.IsOnline)
+            if (!_serverStatus.IsOnline || _serverStatus.SyncInProgress)
             {
                 _syncTimer.Start();
                 return;
             }
-
             try
             {
-                _syncInProgress = true;
+                _serverStatus.SyncInProgress = true;
                 SetTask();
                 var processTask = ExecuteSyncProcess();
                 processTask.Wait();
+                if (_serverStatus.InitialSyncInProgress)
+                {
+                    _serverStatus.InitialSyncInProgress = false;
+                }
             }
             catch (Exception ex)
             {
@@ -154,8 +173,9 @@ namespace CA.Ticketing.Business.Services.Sync
             }
             finally
             {
+                _serverStatus.NextSyncOn = DateTime.UtcNow.AddMilliseconds(_syncInterval);
                 _syncTimer.Start();
-                _syncInProgress = false;
+                _serverStatus.SyncInProgress = false;
                 _syncTaskCompletionSource.SetResult(true);
             }
         }
@@ -237,7 +257,7 @@ namespace CA.Ticketing.Business.Services.Sync
 
         private void CheckServerStatus(object? sender, ElapsedEventArgs e)
         {
-            if (_syncInProgress)
+            if (_serverStatus.SyncInProgress)
             {
                 _serverCheckTimer.Start();
                 return;
@@ -260,7 +280,7 @@ namespace CA.Ticketing.Business.Services.Sync
 
         private async Task CheckServerHealth()
         {
-            using var serverDataResponse = await _httpClient.GetAsync($"api/sync/health");
+            using var serverDataResponse = await _httpClient.GetAsync(ApiRoutes.Sync.Health);
             serverDataResponse.EnsureSuccessStatusCode();
             _serverStatus.IsOnline = true;
         }

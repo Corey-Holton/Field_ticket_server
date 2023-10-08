@@ -16,5 +16,7 @@ namespace CA.Ticketing.Business.Services.Tickets.Dto
         public string? CustomerLocationId { get; set; }
 
         public DateTime ExecutionDate { get; set; }
+
+        public string? SendEmailTo { get; set; }
     }
 }

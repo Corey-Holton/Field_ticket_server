@@ -4,6 +4,6 @@ namespace CA.Ticketing.Business.Services.Pdf
 {
     public interface IPdfGeneratorService
     {
-        byte[] GeneratePdf(string htmlInput);
+        byte[] GeneratePdf(string htmlInput, bool isInvoice = false);
     }
 }

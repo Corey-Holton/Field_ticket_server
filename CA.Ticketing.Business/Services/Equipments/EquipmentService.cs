@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using CA.Ticketing.Common.Extensions;
 using CA.Ticketing.Business.Services.FileManager;
 using CA.Ticketing.Common.Constants;
+using CA.Ticketing.Business.Services.Removal;
 
 namespace CA.Ticketing.Business.Services.Equipments
 {
@@ -15,9 +16,16 @@ namespace CA.Ticketing.Business.Services.Equipments
     {
         private readonly IFileManagerService _fileManagerService;
 
-        public EquipmentService(CATicketingContext context, IMapper mapper, IFileManagerService fileManagerService) : base (context, mapper) 
+        private readonly IRemovalService _removalService;
+
+        public EquipmentService(
+            CATicketingContext context,
+            IMapper mapper,
+            IFileManagerService fileManagerService,
+            IRemovalService removalService) : base (context, mapper) 
         {
             _fileManagerService = fileManagerService;
+            _removalService = removalService;
         }
 
         public async Task<IEnumerable<EquipmentDto>> GetAll()
@@ -76,9 +84,16 @@ namespace CA.Ticketing.Business.Services.Equipments
 
         public async Task Delete(string id)
         {
-            var equipment = await GetEquipment(id);
+            var equipment = await _context.Equipment
+                .Include(x => x.Crew)
+                .Include(x => x.Files)
+                .Include(x => x.Tickets)
+                .Include(x => x.ScheduledJobs)
+                .Include(x => x.Charges)
+                .AsSplitQuery()
+                .SingleAsync(x => x.Id == id);
 
-            _context.Equipment.Remove(equipment);
+            _removalService.Remove(equipment);
 
             await _context.SaveChangesAsync();
         }
@@ -127,7 +142,7 @@ namespace CA.Ticketing.Business.Services.Equipments
         public async Task<IEnumerable<EquipmentDetailsDto>> GetExpiringPermitEquipment()
         {
             return (await _context.Equipment.ToListAsync())
-                .Where(x => DayTimeExtensions.IsWithinMonth(x.PermitExpirationDate))
+                .Where(x => DateTimeExtensions.IsWithinMonth(x.PermitExpirationDate))
                 .Select(x => _mapper.Map<EquipmentDetailsDto>(x));
         }
 
@@ -140,7 +155,7 @@ namespace CA.Ticketing.Business.Services.Equipments
                 {
                     var nextJob = _context.Scheduling
                         .OrderBy(schedule => schedule.StartTime)
-                        .FirstOrDefault(x => x.EquipmentId == rig.Id && x.StartTime > DateTime.UtcNow);
+                        .FirstOrDefault(x => x.EquipmentId == rig.Id && x.EndTime >= DateTime.UtcNow);
 
                     var lastJob = _context.FieldTickets
                         .OrderByDescending(x => x.ExecutionDate)
@@ -148,10 +163,25 @@ namespace CA.Ticketing.Business.Services.Equipments
 
                     var rigDto = _mapper.Map<EquipmentDto>(rig);
 
+                    var getDaysUntilNextJob = () => 
+                    { 
+                        if (nextJob == null)
+                        {
+                            return -1;
+                        }
+
+                        if (nextJob.StartTime > DateTime.UtcNow)
+                        {
+                            return (nextJob.StartTime - DateTime.UtcNow).Days;
+                        }
+
+                        return 0;
+                    };
+
                     return new RigWithNextJobDto
                     {
                         Rig = rigDto,
-                        DaysUntilNextJob = (nextJob?.StartTime - DateTime.UtcNow)?.Days ?? -1,
+                        DaysUntilNextJob = getDaysUntilNextJob(),
                         DaysSinceLastJob = (DateTime.UtcNow - lastJob?.ExecutionDate)?.Days ?? -1
                     };
                 });

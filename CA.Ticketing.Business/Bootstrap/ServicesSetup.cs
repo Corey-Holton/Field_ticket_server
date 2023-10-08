@@ -10,6 +10,7 @@ using CA.Ticketing.Business.Services.Invoices;
 using CA.Ticketing.Business.Services.Notifications;
 using CA.Ticketing.Business.Services.Payroll;
 using CA.Ticketing.Business.Services.Pdf;
+using CA.Ticketing.Business.Services.Removal;
 using CA.Ticketing.Business.Services.Scheduling;
 using CA.Ticketing.Business.Services.Settings;
 using CA.Ticketing.Business.Services.Sync;
@@ -49,6 +50,7 @@ namespace CA.Ticketing.Business.Bootstrap
         private static void RegisterBaseServices(this IServiceCollection services)
         {
             services.AddScoped<IUserContext, UserContext>();
+            services.AddScoped<IRemovalService, RemovalService>();
         }
     }
 }
