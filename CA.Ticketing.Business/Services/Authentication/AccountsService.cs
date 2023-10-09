@@ -43,6 +43,8 @@ namespace CA.Ticketing.Business.Services.Authentication
 
         private readonly SecuritySettings _securitySettings;
 
+        private readonly ServerConfiguration _serverConfiguration;
+
         public AccountsService(
             IMapper mapper, 
             UserManager<ApplicationUser> userManager, 
@@ -50,7 +52,8 @@ namespace CA.Ticketing.Business.Services.Authentication
             IUserContext userContext, 
             MessagesComposer messagesComposer,
             IOptions<SecuritySettings> securitySettings,
-            CATicketingContext context)
+            CATicketingContext context,
+            IOptions<ServerConfiguration> serverConfiguration)
         {
             _mapper = mapper;
             _userManager = userManager;
@@ -59,6 +62,7 @@ namespace CA.Ticketing.Business.Services.Authentication
             _messagesComposer = messagesComposer;
             _securitySettings = securitySettings.Value;
             _context = context;
+            _serverConfiguration = serverConfiguration.Value;
         }
 
         public async Task<AuthenticationResultDto> Authenticate(LoginDto loginModel)
@@ -76,6 +80,17 @@ namespace CA.Ticketing.Business.Services.Authentication
                 return new AuthenticationResultDto();
             }
 
+            var userRoles = await _userManager.GetRolesAsync(user);
+
+            if (!_serverConfiguration.IsMainServer)
+            {
+                var userRole = userRoles.First();
+                if (userRole != RoleNames.ToolPusher)
+                {
+                    return new AuthenticationResultDto("Only tool pushers can login in the desktop application");
+                }
+            }
+
             if (string.IsNullOrEmpty(user.RefreshToken))
             {
                 user.RefreshToken = GenerateRefreshToken();
@@ -83,7 +98,7 @@ namespace CA.Ticketing.Business.Services.Authentication
                 await _userManager.UpdateAsync(user);
             }
 
-            var claims = await GetUserClaims(user);
+            var claims = GetUserClaims(user, userRoles);
 
             var authenticatedUser = GetAuthenticatedUser(claims, !string.IsNullOrEmpty(user.DisplayName) ? user.DisplayName : user.Email, user.Id, user.RefreshToken);
 
@@ -111,7 +126,9 @@ namespace CA.Ticketing.Business.Services.Authentication
                 throw new Exception("Invalid token request");
             }
 
-            var claims = await GetUserClaims(user);
+            var userRoles = await _userManager.GetRolesAsync(user);
+
+            var claims = GetUserClaims(user, userRoles);
 
             var authenticatedUser = GetAuthenticatedUser(claims, !string.IsNullOrEmpty(user.DisplayName) ? user.DisplayName : user.Email, user.Id, user.RefreshToken);
 
@@ -227,7 +244,9 @@ namespace CA.Ticketing.Business.Services.Authentication
                 throw new Exception($"There was an error while setting user password. {string.Join("; ", setPasswordResult.Errors.Select(x => x.Description))}.");
             }
 
-            var claims = await GetUserClaims(user);
+            var userRoles = await _userManager.GetRolesAsync(user);
+
+            var claims = GetUserClaims(user, userRoles);
 
             var authenticatedUser = GetAuthenticatedUser(claims, !string.IsNullOrEmpty(user.DisplayName) ? user.DisplayName : user.Email, user.Id, user.RefreshToken);
 
@@ -340,9 +359,8 @@ namespace CA.Ticketing.Business.Services.Authentication
             await ResetUserPasswordInternal(user, resetUserPasswordDto.Password);
         }
 
-        private async Task<IEnumerable<Claim>> GetUserClaims(ApplicationUser user)
+        private IEnumerable<Claim> GetUserClaims(ApplicationUser user, IList<string> userRoles)
         {
-            var userRoles = await _userManager.GetRolesAsync(user);
             var userClaims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.Id.ToString())

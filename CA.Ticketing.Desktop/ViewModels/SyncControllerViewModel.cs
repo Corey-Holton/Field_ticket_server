@@ -148,13 +148,13 @@ namespace CA.Ticketing.Desktop.ViewModels
             {
                 StatusLastChecked += $" - Next sync in {serverStatus.NextSyncIn} minutes";
                 CanReload = true;
-                ServerInitialized?.Invoke(this, null);
+                ServerInitialized?.Invoke(this, EventArgs.Empty);
             }
 
             CanRunSync = !serverStatus.SyncInProgress && serverStatus.IsOnline;
         }
 
-        public async void RunSync(object o)
+        public async void RunSync(object? o)
         {
             CanRunSync = false;
             _manualSyncInProgress = true;
