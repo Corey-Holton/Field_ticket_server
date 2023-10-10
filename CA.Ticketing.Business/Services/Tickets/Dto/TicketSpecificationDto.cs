@@ -9,7 +9,7 @@ namespace CA.Ticketing.Business.Services.Tickets.Dto
 
         public UnitOfMeasure UoM { get; set; }
 
-        public int Quantity { get; set; }
+        public double Quantity { get; set; }
 
         public double Rate { get; set; }
 
