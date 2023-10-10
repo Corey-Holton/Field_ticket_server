@@ -4,9 +4,9 @@
     {
         public class LocalServer
         {
-            public const string ApiBaseUrl = "https://localhost:7057";
+            public const string ApiBaseUrl = "http://localhost:7057";
 
-            public const string WebBaseUrl = "http://localhost:3000";
+            public const string WebBaseUrl = "http://localhost:7058";
         }
 
         public class JobTitles
