@@ -208,6 +208,7 @@ namespace CA.Ticketing.Business.Services.Sync
 
             syncData.Changes = JsonConvert.SerializeObject(syncDataChanges.Select(x => x.Value));
             syncData.LastSyncDate = DateTime.UtcNow;
+            context.Entry(syncData).State = EntityState.Modified;
 
             _serverStatus.LastSyncDate = DateTime.UtcNow;
 

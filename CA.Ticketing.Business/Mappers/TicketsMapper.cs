@@ -20,9 +20,17 @@ namespace CA.Ticketing.Business.Mappers
 
             CreateMap<FieldTicket, TicketInfoDto>();
 
-            CreateMap<TicketSpecification, TicketSpecificationDto>()
-                .ForMember(x => x.Total, dest => dest.MapFrom(src => src.Quantity * src.Rate))
-                .ForMember(x => x.IsReadOnly, dest => dest.MapFrom(src => ChargesInfo.ReadonlyCharges.Contains(src.Charge)));
+            CreateMap<(bool isAdmin, TicketSpecification ticketSpec), TicketSpecificationDto>()
+                .ForMember(x => x.Id, dest => dest.MapFrom(src => src.ticketSpec.Id))
+                .ForMember(x => x.Charge, dest => dest.MapFrom(src => src.ticketSpec.Charge))
+                .ForMember(x => x.UoM, dest => dest.MapFrom(src => src.ticketSpec.UoM))
+                .ForMember(x => x.Quantity, dest => dest.MapFrom(src => src.ticketSpec.Quantity))
+                .ForMember(x => x.Rate, dest => dest.MapFrom(src => src.ticketSpec.Rate))
+                .ForMember(x => x.AllowRateAdjustment, dest => dest.MapFrom(src => src.ticketSpec.AllowRateAdjustment))
+                .ForMember(x => x.AllowUoMChange, dest => dest.MapFrom(src => src.ticketSpec.AllowUoMChange))
+                .ForMember(x => x.Total, dest => dest.MapFrom(src => src.ticketSpec.Quantity * src.ticketSpec.Rate))
+                .ForMember(x => x.IsReadOnly, dest => dest.MapFrom(src => src.isAdmin ? 
+                    false : ChargesInfo.ReadonlyCharges.Contains(src.ticketSpec.Charge)));
 
             CreateMap<TicketSpecificationDto, TicketSpecification>()
                 .ForMember(x => x.FieldTicketId, dest => dest.Ignore())

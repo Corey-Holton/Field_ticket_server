@@ -18,8 +18,6 @@
 
         public string SendEmailTo { get; set; }
 
-        public IEnumerable<TicketSpecificationDto> TicketSpecifications { get; set; } = new List<TicketSpecificationDto>();
-
         public IEnumerable<TicketSpecificationDto> TicketSpecificationsLeft { get; set; } = new List<TicketSpecificationDto>();
 
         public IEnumerable<TicketSpecificationDto> TicketSpecificationsRight { get; set; } = new List<TicketSpecificationDto>();

@@ -62,7 +62,7 @@ namespace CA.Ticketing.Business.Services.Tickets
 
             if (_userContext.User!.Role == ApplicationRole.ToolPusher)
             {
-                ticketsFilter = x => x.CreatedBy == _userContext.User.Id;
+                ticketsFilter = x => x.CreatedBy == _userContext.User.Id || x.HasEmployeeSignature;
             }
 
             if (_userContext.User!.Role == ApplicationRole.Customer)
@@ -99,9 +99,9 @@ namespace CA.Ticketing.Business.Services.Tickets
             var leftSide = ticket.TicketSpecifications.Take(half).ToList();
             var rightSide = ticket.TicketSpecifications.Skip(half).ToList();
             var ticketDetailsDto = _mapper.Map<TicketDetailsDto>(ticket);
-
-            ticketDetailsDto.TicketSpecificationsLeft = leftSide.Select(x => _mapper.Map<TicketSpecificationDto>(x));
-            ticketDetailsDto.TicketSpecificationsRight = rightSide.Select(x => _mapper.Map<TicketSpecificationDto>(x));
+            var isAdmin = _userContext.User!.Role == ApplicationRole.Admin;
+            ticketDetailsDto.TicketSpecificationsLeft = leftSide.Select(x => _mapper.Map<TicketSpecificationDto>((isAdmin, x)));
+            ticketDetailsDto.TicketSpecificationsRight = rightSide.Select(x => _mapper.Map<TicketSpecificationDto>((isAdmin, x)));
 
             return ticketDetailsDto;
         }
@@ -327,7 +327,8 @@ namespace CA.Ticketing.Business.Services.Tickets
                 throw new Exception("You are not allowed to modify rate on this charge");
             }
 
-            if (ChargesInfo.ReadonlyCharges.Contains(ticketSpecification.Charge))
+            var isAdmin = _userContext.User!.Role == ApplicationRole.Admin;
+            if (!isAdmin && ChargesInfo.ReadonlyCharges.Contains(ticketSpecification.Charge))
             {
                 throw new Exception("This is a readonly charge");
             }
@@ -344,7 +345,7 @@ namespace CA.Ticketing.Business.Services.Tickets
 
             _mapper.Map(ticketSpecificationDto, ticketSpec);
 
-            if (ticketSpec.Charge == ChargeNames.TravelTime)
+            if (ticketSpec.Charge == ChargeNames.TravelTime || ticketSpec.Charge == ChargeNames.Rig)
             {
                 UpdateEmployeePayrolls(ticket);
             }
@@ -359,7 +360,7 @@ namespace CA.Ticketing.Business.Services.Tickets
             return new UpdateTicketSpecResponse
             {
                 TicketTotal = ticketTotal,
-                TicketSpecification = _mapper.Map<TicketSpecificationDto>(ticketSpec)
+                TicketSpecification = _mapper.Map<TicketSpecificationDto>((isAdmin, ticketSpec))
             };
         }
 
