@@ -103,12 +103,13 @@ namespace CA.Ticketing.Business.Services.Pdf.Dto
 
         public string GetServiceTypeSelection(ServiceType? serviceType = null)
         {
+            var serviceTypes = _fieldTicket.ServiceTypes.ToList();
             if (serviceType.HasValue)
             {
-                return _fieldTicket.ServiceType == serviceType.Value ? "X" : "";
+                return serviceTypes.Contains(serviceType.Value) ? "X" : "";
             }
 
-            return _fieldTicket.ServiceType.GetServiceType();
+            return _fieldTicket.ServiceTypes.First().GetServiceType();
         }
     }
 

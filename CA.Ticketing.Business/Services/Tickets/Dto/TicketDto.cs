@@ -18,6 +18,8 @@ namespace CA.Ticketing.Business.Services.Tickets.Dto
 
         public ServiceType ServiceType { get; set; }
 
+        public ServiceType[] ServiceTypes { get; set; }
+
         public bool IsInvoiced { get; set; }
 
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]

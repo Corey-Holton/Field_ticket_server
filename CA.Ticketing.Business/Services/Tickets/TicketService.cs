@@ -120,6 +120,8 @@ namespace CA.Ticketing.Business.Services.Tickets
                 ticketIdentifier = "CA";
             }
 
+            ValidateTicketServiceTypes(manageTicketDto);
+
             var ticket = _mapper.Map<FieldTicket>(manageTicketDto);
             ticket.TicketId = $"{ticketIdentifier}-{createdByUserCount + 1}";
             ticket.CreatedBy = _userContext.User!.Id;
@@ -132,7 +134,7 @@ namespace CA.Ticketing.Business.Services.Tickets
 
             await GenerateCharges(ticket);
 
-            if (ticket.ServiceType != ServiceType.PAndA && ticket.ServiceType != ServiceType.Yard)
+            if (ticket.IsTaxable())
             {
                 var settings = await _context.Settings.FirstAsync();
                 ticket.TaxRate = settings.TaxRate;
@@ -160,9 +162,13 @@ namespace CA.Ticketing.Business.Services.Tickets
 
             VerifyCanUpdateTicket(ticket);
 
+            ValidateTicketServiceTypes(manageTicketDto);
+
             await VerifyTicketServiceType(ticket, manageTicketDto);
 
             _mapper.Map(manageTicketDto, ticket);
+
+            ticket.ServiceTypes = manageTicketDto.ServiceTypes;
 
             await GenerateCharges(ticket);
 
@@ -532,13 +538,13 @@ namespace CA.Ticketing.Business.Services.Tickets
 
         private async Task VerifyTicketServiceType(FieldTicket ticket, ManageTicketDto manageTicketDto)
         {
-            if (ticket.ServiceType == manageTicketDto.ServiceType)
+            if (ticket.ServiceTypeOrdered == manageTicketDto.ServiceTypesOrdered)
             {
                 return;
             }
 
-            if ((ticket.ServiceType < ServiceType.Yard && manageTicketDto.ServiceType >= ServiceType.Yard)
-                || (ticket.ServiceType >= ServiceType.Yard && manageTicketDto.ServiceType < ServiceType.Yard))
+            if ((ticket.IsRigWork() && manageTicketDto.IsNotRigWork())
+                || (ticket.IsNotRigWork() && manageTicketDto.IsRigWork()))
             {
                 foreach (var payrollData in ticket.PayrollData)
                 {
@@ -549,27 +555,61 @@ namespace CA.Ticketing.Business.Services.Tickets
                 }
             }
 
-            if (manageTicketDto.ServiceType == ServiceType.PAndA)
+            if (manageTicketDto.ServiceTypes.Contains(ServiceType.PAndA))
             {
                 ticket.TaxRate = 0;
                 return;
             }
 
-            if (manageTicketDto.ServiceType == ServiceType.Yard)
+            if (manageTicketDto.ServiceTypes.First() == ServiceType.Yard)
             {
                 ticket.TicketSpecifications.Clear();
             }
 
-            if (manageTicketDto.ServiceType != ServiceType.PAndA && manageTicketDto.ServiceType != ServiceType.Yard)
+            if (ticket.IsTaxable())
             {
                 var settings = await _context.Settings.FirstAsync();
                 ticket.TaxRate = settings.TaxRate;
             }
         }
 
+        private void ValidateTicketServiceTypes(ManageTicketDto manageTicket)
+        {
+            if (!manageTicket.ServiceTypes.Any() && manageTicket.ServiceType.HasValue)
+            {
+                manageTicket.ServiceTypes = new ServiceType[] { manageTicket.ServiceType.Value };
+                return;
+            }
+
+            if (!manageTicket.ServiceTypes.Any())
+            {
+                throw new Exception("Ticket must have any service type selected");
+            }
+
+            if (manageTicket.ServiceTypes.Length == 1)
+            {
+                return;
+            }
+
+            var onlySingleAllowed = new ServiceType[] { ServiceType.Yard, ServiceType.Roustabout, ServiceType.StandBy };
+
+            if (manageTicket.ServiceTypes.Any(x => onlySingleAllowed.Contains(x)))
+            {
+                throw new Exception("Service types Yard, Roustabout and Standby are not allowed with multiple selections");
+            }
+
+            if (manageTicket.ServiceTypes.Contains(ServiceType.PAndA))
+            {
+                if (manageTicket.ServiceTypes.Any(x => x != ServiceType.PAndA && x != ServiceType.Workover))
+                {
+                    throw new Exception("P&A is allowed only with Service type Workover");
+                }
+            }
+        }
+
         private async Task GenerateCharges(FieldTicket ticket)
         {
-            if (ticket.ServiceType == ServiceType.Yard || ticket.TicketSpecifications.Any())
+            if (ticket.IsServiceType(ServiceType.Yard) || ticket.TicketSpecifications.Any())
             {
                 return;
             }
@@ -620,14 +660,14 @@ namespace CA.Ticketing.Business.Services.Tickets
 
             var totalTime = ticket.StartTime.HasValue && ticket.EndTime.HasValue ? (ticket.EndTime.Value - ticket.StartTime.Value).TotalHours : 0;
 
-            if (ticket.ServiceType == ServiceType.StandBy)
+            if (ticket.IsServiceType(ServiceType.StandBy))
             {
                 UpdateChargeQuantity(ticket, ChargeNames.Fuel, 0);
                 UpdateChargeQuantity(ticket, ChargeNames.Rig, totalTime);
                 return;
             }
 
-            if (ticket.ServiceType == ServiceType.Roustabout)
+            if (ticket.IsServiceType(ServiceType.Roustabout))
             {
                 UpdateChargeQuantity(ticket, ChargeNames.Rig, 0);
                 UpdateChargeQuantity(ticket, ChargeNames.Fuel, 0);
@@ -676,13 +716,13 @@ namespace CA.Ticketing.Business.Services.Tickets
         {
             payrollData.TravelHours = travelTime;
 
-            if (ticket.ServiceType == ServiceType.Roustabout)
+            if (ticket.IsServiceType(ServiceType.Roustabout))
             {
                 payrollData.RoustaboutHours = totalTime;
                 return;
             }
 
-            if (ticket.ServiceType == ServiceType.Yard)
+            if (ticket.IsServiceType(ServiceType.Yard))
             {
                 payrollData.YardHours = totalTime;
                 return;
@@ -693,7 +733,7 @@ namespace CA.Ticketing.Business.Services.Tickets
 
         private static void UpdateLaborQuantity(FieldTicket ticket)
         {
-            if (ticket.ServiceType != ServiceType.Roustabout)
+            if (!ticket.IsServiceType(ServiceType.Roustabout))
             {
                 return;
             }

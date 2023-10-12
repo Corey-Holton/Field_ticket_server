@@ -77,7 +77,16 @@ public class InvoiceFieldTicket
 
     public InvoiceFieldTicket(FieldTicket ticket)
     {
-        ServiceType = ticket.ServiceType.GetServiceType();
+        var ticketServiceTypes = ticket.ServiceTypes.OrderBy(x => (int)x).ToList();
+
+        var allExceptLast = () => ticketServiceTypes
+            .Take(ticketServiceTypes.Count - 1)
+            .Select(x => x.GetServiceType());
+
+        var lastServiceType = () => ticketServiceTypes[ticketServiceTypes.Count - 1].GetServiceType();
+
+        ServiceType = ticketServiceTypes.Count == 1 ? ticketServiceTypes.First().GetServiceType()
+            : $"{string.Join(", ", allExceptLast())} and {lastServiceType()}";
         ServiceDate = ticket.ExecutionDate.ToUSDateTime();
         Description = $"{ServiceType} on {ticket.Location?.DisplayName}, Field Ticket # {ticket.TicketId}";
         SubTotal = ticket.Total;

@@ -17,6 +17,34 @@ namespace CA.Ticketing.Persistance.Models
 
         public ServiceType ServiceType { get; set; }
 
+        public string ServiceTypesSelection { get; set; }
+
+        public string ServiceTypeOrdered
+        {
+            get
+            {
+                return string.Join(",", ServiceTypes.OrderBy(x => (int)x));
+            }
+        }
+
+        [NotMapped]
+        public ServiceType[] ServiceTypes
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(ServiceTypesSelection))
+                {
+                    return Array.Empty<ServiceType>();
+                }
+
+                return ServiceTypesSelection.Split(",").Select(x => Enum.Parse<ServiceType>(x)).ToArray();
+            }
+            set
+            {
+                ServiceTypesSelection = string.Join(",", value);
+            }
+        }
+
         public double TaxRate { get; set; }
 
         [ForeignKey(nameof(Equipment))]

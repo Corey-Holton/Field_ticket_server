@@ -35,7 +35,9 @@ namespace CA.Ticketing.Persistance.Seed
             {
                 await _context.Database.MigrateAsync();
             }
-            
+
+            await TransformTickets();
+
             if (!isMainServer)
             {
                 return;
@@ -184,6 +186,31 @@ namespace CA.Ticketing.Persistance.Seed
                 _context.BackgroundJobs.Add(new BackgroundJob { Name = BusinessConstants.BackgroundJobNames.InvoiceLateFees });
                 await _context.SaveChangesAsync();
             }
+        }
+
+        private async Task TransformTickets()
+        {
+            if (!await _context.FieldTickets.IgnoreQueryFilters().AnyAsync())
+            {
+                return;
+            }
+
+            var firstTicket = await _context.FieldTickets.IgnoreQueryFilters()
+                .FirstAsync();
+
+            if (!string.IsNullOrEmpty(firstTicket.ServiceTypesSelection))
+            {
+                return;
+            }
+
+            var tickets = await _context.FieldTickets.IgnoreQueryFilters().ToListAsync();
+
+            foreach (var ticket in tickets)
+            {
+                ticket.ServiceTypes = new ServiceType[] { ticket.ServiceType };
+            }
+
+            await _context.SaveChangesAsync();
         }
 
         private static IEnumerable<Charge> GetCharges()

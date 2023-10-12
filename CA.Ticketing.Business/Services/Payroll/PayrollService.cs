@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CA.Ticketing.Business.Extensions;
 using CA.Ticketing.Business.Services.Base;
 using CA.Ticketing.Business.Services.Payroll.Dto;
 using CA.Ticketing.Common.Constants;
@@ -34,7 +35,7 @@ namespace CA.Ticketing.Business.Services.Payroll
                 .SelectMany(ticket => ticket.PayrollData
                     .Select(payrollEntry =>
                         {
-                            var isRigWork = ticket.ServiceType < ServiceType.Yard;
+                            var isRigWork = ticket.IsRigWork();
                             
                             var isToolPusher = payrollEntry.Employee?.JobTitle == JobTitle.ToolPusher;
 
@@ -48,7 +49,7 @@ namespace CA.Ticketing.Business.Services.Payroll
                                 }
                                 else
                                 {
-                                    hoursTotal = ticket.ServiceType == ServiceType.Roustabout
+                                    hoursTotal = ticket.IsServiceType(ServiceType.Roustabout)
                                         ? payrollEntry.RoustaboutHours
                                         : payrollEntry.YardHours;
                                 }
@@ -79,9 +80,9 @@ namespace CA.Ticketing.Business.Services.Payroll
                                 Rate = payrollEntry.Employee?.PayRate ?? 20,
                                 RigHours = isRigWork ? TrySubtractCompanyHours(payrollEntry.RigHours) : 0,
                                 TravelHours = isRigWork ? payrollEntry.TravelHours : 0,
-                                YardHours = ticket.ServiceType == ServiceType.Yard 
+                                YardHours = ticket.IsServiceType(ServiceType.Yard) 
                                     ? TrySubtractCompanyHours(payrollEntry.YardHours) : 0,
-                                RoustaboutHours = ticket.ServiceType == ServiceType.Roustabout
+                                RoustaboutHours = ticket.IsServiceType(ServiceType.Roustabout)
                                     ? TrySubtractCompanyHours(payrollEntry.RoustaboutHours) : 0,
                                 HoursToPay = CalculateHours(),
                                 Week = (int)Math.Ceiling((ticket.ExecutionDate - startTime).TotalDays / 7),
