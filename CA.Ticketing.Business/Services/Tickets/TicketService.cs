@@ -62,7 +62,7 @@ namespace CA.Ticketing.Business.Services.Tickets
 
             if (_userContext.User!.Role == ApplicationRole.ToolPusher)
             {
-                ticketsFilter = x => x.CreatedBy == _userContext.User.Id || x.HasEmployeeSignature;
+                ticketsFilter = x => x.CreatedBy == _userContext.User.Id || x.SignedOn.HasValue;
             }
 
             if (_userContext.User!.Role == ApplicationRole.Customer)
