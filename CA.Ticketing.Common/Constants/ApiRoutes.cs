@@ -223,6 +223,8 @@
             public const string SetPasswordFromLink = $"{_root}/SetPasswordFromLink";
 
             public const string ChangePassword = $"{_root}/account/change-password";
+
+            public const string AddPassword = $"{_root}/addPassword";
         }
 
         public class Users

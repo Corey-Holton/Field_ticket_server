@@ -20,9 +20,9 @@ namespace CA.Ticketing.Business.Bootstrap
             service.AddAuthorization(options =>
             {
                 options.AddPolicy(Policies.AdminOnly, policy => policy.RequireRole(new string[] { RoleNames.Admin, RoleNames.Manager, RoleNames.ToolPusher }));
-                options.AddPolicy(Policies.ApplicationManagers, policy => policy.RequireRole(new string[] { RoleNames.Admin, RoleNames.Manager, RoleNames.ToolPusher }));
-                options.AddPolicy(Policies.Limited, policy => policy.RequireRole(new string[] { RoleNames.Admin, RoleNames.Customer, RoleNames.ToolPusher  }));
-                options.AddPolicy(Policies.CompanyUsers, policy => policy.RequireRole(new string[] { RoleNames.Admin, RoleNames.Manager, RoleNames.ToolPusher }));
+                options.AddPolicy(Policies.ApplicationManagers, policy => policy.RequireRole(new string[] { RoleNames.Admin, RoleNames.Manager, RoleNames.ToolPusher, RoleNames.Customer }));
+                options.AddPolicy(Policies.Limited, policy => policy.RequireRole(new string[] { RoleNames.Admin, RoleNames.Customer, RoleNames.ToolPusher, RoleNames.Customer }));
+                options.AddPolicy(Policies.CompanyUsers, policy => policy.RequireRole(new string[] { RoleNames.Admin, RoleNames.Manager, RoleNames.ToolPusher, RoleNames.Customer }));
             });
 
             service.AddAuthentication(x =>

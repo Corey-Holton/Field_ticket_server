@@ -88,6 +88,19 @@ namespace CA.Ticketing.Api.Controllers
         }
 
         /// <summary>
+        /// Set Customer password
+        /// </summary>
+        /// <param name="setPasswordDto"></param>
+        [Route(ApiRoutes.Authentication.AddPassword)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> SetCustomerPassword(SetPasswordDto setPasswordDto)
+        {
+            await _accountsService.SetUserPassword(setPasswordDto);
+            return Ok();
+        }
+
+        /// <summary>
         /// Change own password
         /// </summary>
         /// <param name="changePasswordDto">ChangePasswordDto</param>

@@ -149,6 +149,37 @@ namespace CA.Ticketing.Business.Services.Authentication
             return await _userManager.GeneratePasswordResetTokenAsync(user);
         }
 
+        public async Task SetUserPassword(SetPasswordDto setPasswordDto)
+        {
+            var user = await _userManager.FindByNameAsync(setPasswordDto.Username);
+
+            if (user == null)
+            {
+                throw new Exception("There was an issue while reseting password");
+            }
+
+            user.LastModifiedDate = DateTime.UtcNow;
+
+            if (await _userManager.IsEmailConfirmedAsync(user))
+            {
+                throw new Exception("Can't use this code again. Please use Forgot password link instead");
+            }
+
+            var emailConfirmationResult = await _userManager.ConfirmEmailAsync(user, setPasswordDto.Code);
+
+            if (!emailConfirmationResult.Succeeded)
+            {
+                throw new Exception($"There was an error while setting password. {string.Join("; ", emailConfirmationResult.Errors.Select(x => x.Description))}.");
+            }
+
+            var addPasswordResult = await _userManager.AddPasswordAsync(user, setPasswordDto.Password);
+
+            if (!addPasswordResult.Succeeded)
+            {
+                throw new Exception($"There was an error while setting password. {string.Join("; ", addPasswordResult.Errors.Select(x => x.Description))}.");
+            }
+        }
+
         public async Task ChangePassword(ChangePasswordDto changePasswordModel)
         {
             var userId = _userContext.User?.Id;
@@ -282,7 +313,7 @@ namespace CA.Ticketing.Business.Services.Authentication
             }
 
             user.LastModifiedDate = DateTime.UtcNow;
-
+            
             var resetPasswordResult = await _userManager.ResetPasswordAsync(user, setPasswordModel.Code, setPasswordModel.Password);
 
             if (!resetPasswordResult.Succeeded)
@@ -451,7 +482,7 @@ namespace CA.Ticketing.Business.Services.Authentication
 
             var callBackUrl = $"{redirectUrl}?code={emailConfirmationToken}&username={user.UserName}";
 
-            var emailMessage = _messagesComposer.GetEmailComposed(EmailMessageKeys.InviteUser, (1, $"{user.DisplayName}"), (4, callBackUrl));
+            var emailMessage = _messagesComposer.GetEmailComposed(EmailMessageKeys.InviteUser, (1, new string[] { $"{user.DisplayName}" }), (4, callBackUrl));
 
             await _notificationService.SendEmail(user.Email, emailMessage);
         }

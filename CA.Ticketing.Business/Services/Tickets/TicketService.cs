@@ -600,11 +600,8 @@ namespace CA.Ticketing.Business.Services.Tickets
                 ticket.TicketSpecifications.Add(ticketSpec);
             }
 
-            if (ticket.ServiceType != ServiceType.Roustabout)
-            {
-                UpdateChargeQuantity(ticket, ChargeNames.ToolPusher, 1);
-                UpdateChargeQuantity(ticket, ChargeNames.TravelTime, 1);
-            }
+            UpdateChargeQuantity(ticket, ChargeNames.ToolPusher, 1);
+            UpdateChargeQuantity(ticket, ChargeNames.TravelTime, 1);
         }
 
         private void UpdateTicketData(FieldTicket ticket)
@@ -626,6 +623,7 @@ namespace CA.Ticketing.Business.Services.Tickets
             if (ticket.ServiceType == ServiceType.StandBy)
             {
                 UpdateChargeQuantity(ticket, ChargeNames.Fuel, 0);
+                UpdateChargeQuantity(ticket, ChargeNames.Rig, totalTime);
                 return;
             }
 
@@ -665,7 +663,7 @@ namespace CA.Ticketing.Business.Services.Tickets
         {
             var travelTime = ticket.TicketSpecifications.SingleOrDefault(x => x.Charge == ChargeNames.TravelTime)?.Quantity ?? 0;
 
-            var totalTime = (ticket.StartTime.HasValue && ticket.EndTime.HasValue ? (ticket.EndTime.Value - ticket.StartTime.Value).TotalHours : 0) - travelTime;
+            var totalTime = (ticket.StartTime.HasValue && ticket.EndTime.HasValue ? (ticket.EndTime.Value - ticket.StartTime.Value).TotalHours : 0);
 
             if (totalTime < 0)
             {

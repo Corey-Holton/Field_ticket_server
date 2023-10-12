@@ -142,7 +142,8 @@ namespace CA.Ticketing.Business.Services.Customers
                .Include(x => x.ScheduledJobs)
                .SingleAsync(x => x.Id == id);
 
-            _context.CustomerContacts.Remove(contact);
+            _removalService.Remove(contact);
+            
             await _context.SaveChangesAsync();
         }
 
