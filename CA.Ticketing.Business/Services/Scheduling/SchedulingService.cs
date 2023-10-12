@@ -45,6 +45,7 @@ namespace CA.Ticketing.Business.Services.Scheduling
                                      .Include(s => s.Customer)
                                      .Include(s => s.CustomerLocation)
                                      .Include(s => s.Equipment)
+                                     .Include(s => s.CustomerContact)
                                      .Where(s => s.EquipmentId == user.Employee.AssignedRigId && s.EndTime >= DateTime.Today)
                                      .AsSplitQuery()
                                      .ToListAsync();
