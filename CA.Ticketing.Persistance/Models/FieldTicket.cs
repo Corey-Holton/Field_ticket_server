@@ -101,6 +101,8 @@ namespace CA.Ticketing.Persistance.Models
 
         public string FileName { get; set; } = string.Empty;
 
+        public double Total { get; set; } = 0;
+
         [JsonIgnore]
         public virtual ICollection<TicketSpecification> TicketSpecifications { get; set; } = new List<TicketSpecification>();
 
@@ -109,9 +111,6 @@ namespace CA.Ticketing.Persistance.Models
 
         [NotMapped]
         public bool IsInvoiced => InvoiceId != null;
-
-        [NotMapped]
-        public double Total => TicketSpecifications.Sum(x => x.Quantity * x.Rate);
 
         [NotMapped]
         public double TotalWithTaxes => Total + Total * TaxRate / 100;

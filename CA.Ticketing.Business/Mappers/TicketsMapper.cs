@@ -17,7 +17,11 @@ namespace CA.Ticketing.Business.Mappers
                 .ForMember(x => x.CustomerName, dest => dest.MapFrom(src => src.Customer != null ? src.Customer.Name : "None"));
 
             CreateMap<FieldTicket, TicketDetailsDto>()
-                .IncludeBase<FieldTicket, TicketDto>();
+                .IncludeBase<FieldTicket, TicketDto>()
+                .AfterMap((fieldTicket, ticketDto) => 
+                { 
+                    ticketDto.PayrollData = ticketDto.PayrollData.OrderBy(x => x.JobTitle).ToList();
+                });
 
             CreateMap<FieldTicket, TicketInfoDto>();
 
@@ -40,6 +44,7 @@ namespace CA.Ticketing.Business.Mappers
                 .ForMember(x => x.Charge, dest => dest.Ignore());
 
             CreateMap<PayrollData, PayrollDataDto>()
+                .ForMember(x => x.JobTitle, dest => dest.MapFrom(src => src.Employee != null ? src.Employee.JobTitle : Common.Enums.JobTitle.Other))
                 .ForMember(x => x.DisplayEmployeeId, dest => dest.MapFrom(src => src.Employee != null ? src.Employee.EmployeeNumber : "0000"));
 
             CreateMap<PayrollDataDto, PayrollData>()

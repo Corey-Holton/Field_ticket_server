@@ -53,7 +53,6 @@ namespace CA.Ticketing.Business.Services.Invoices
             var invoices = await _context.Invoices
                 .Include(x => x.Customer)
                 .Include(x => x.Tickets)
-                    .ThenInclude(x => x.TicketSpecifications)
                 .Include(x => x.InvoiceLateFees)
                 .AsSplitQuery()
                 .ToListAsync();
@@ -65,7 +64,6 @@ namespace CA.Ticketing.Business.Services.Invoices
             var invoice = await _context.Invoices
                 .Include(x => x.Customer)
                 .Include(x => x.Tickets)
-                    .ThenInclude(x => x.TicketSpecifications)
                 .Include(x => x.InvoiceLateFees)
                 .AsSplitQuery()
                 .SingleOrDefaultAsync(x => x.Id == id);
@@ -200,8 +198,6 @@ namespace CA.Ticketing.Business.Services.Invoices
         {
             var invoice = await _context.Invoices
                             .Include(x => x.Customer)
-                            .Include(x => x.Tickets)
-                                .ThenInclude(x => x.TicketSpecifications)
                             .Include(x => x.Tickets)
                                 .ThenInclude(x => x.Location)
                             .Include(x => x.InvoiceLateFees)

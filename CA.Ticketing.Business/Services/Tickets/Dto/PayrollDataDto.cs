@@ -1,10 +1,18 @@
 ﻿using CA.Ticketing.Business.Services.Base;
 using CA.Ticketing.Business.Services.Employees.Dto;
+using CA.Ticketing.Common.Enums;
+using CA.Ticketing.Common.Extensions;
+using Newtonsoft.Json;
 
 namespace CA.Ticketing.Business.Services.Tickets.Dto
 {
     public class PayrollDataDto : EntityDtoBase
     {
+        [JsonIgnore]
+        public JobTitle JobTitle { get; set; }
+
+        public string Labor => JobTitle.GetJobTitle();
+
         public string FieldTicketId { get; set; }
 
         public string? EmployeeId { get; set; }

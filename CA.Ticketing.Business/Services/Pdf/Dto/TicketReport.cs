@@ -44,13 +44,13 @@ namespace CA.Ticketing.Business.Services.Pdf.Dto
 
         public string ExecutionDate => _fieldTicket.ExecutionDate.ToString("yyyy-MM-dd");
 
-        public string StartTime => _fieldTicket.StartTime.HasValue ? _fieldTicket.StartTime.Value.ToString("HH:mm") : string.Empty;
+        public string StartTime => _fieldTicket.StartTime.HasValue ? _fieldTicket.StartTime.Value.ToString("hh:mm tt") : string.Empty;
 
-        public string EndTime => _fieldTicket.EndTime.HasValue ? _fieldTicket.EndTime.Value.ToString("HH:mm") : string.Empty;
+        public string EndTime => _fieldTicket.EndTime.HasValue ? _fieldTicket.EndTime.Value.ToString("hh:mm tt") : string.Empty;
 
         public string Description => _fieldTicket.Description;
 
-        public double Subtotal => _fieldTicket.TicketSpecifications.Select(x => new { Total = x.Quantity * x.Rate }).Sum(x => x.Total);
+        public double Subtotal => _fieldTicket.Total;
 
         public string TaxRate => $"{_fieldTicket.TaxRate:#.##}%";
 
@@ -72,11 +72,15 @@ namespace CA.Ticketing.Business.Services.Pdf.Dto
 
         public string ClassName { get; set; }
 
-        public List<TicketPayrollData> PayrollData => _fieldTicket.PayrollData.Select(x => new TicketPayrollData(x)).ToList();
+        public List<TicketPayrollData> PayrollData => _fieldTicket.PayrollData
+            .Select(x => new TicketPayrollData(x))
+            .OrderBy(x => x.JobTitle)
+            .ToList();
 
         public List<(TicketReportCharge LeftSide, TicketReportCharge RightSide)> Charges()
         {
             var result = new List<(TicketReportCharge, TicketReportCharge)>();
+            _fieldTicket.TicketSpecifications = _fieldTicket.TicketSpecifications.OrderBy(x => x.CreatedDate).ToList();
             var chargesCount = _fieldTicket.TicketSpecifications.Count;
             var half = (int)Math.Ceiling((decimal)chargesCount / 2);
             var leftSide = _fieldTicket.TicketSpecifications.Take(half).ToList();
@@ -109,7 +113,8 @@ namespace CA.Ticketing.Business.Services.Pdf.Dto
                 return serviceTypes.Contains(serviceType.Value) ? "X" : "";
             }
 
-            return _fieldTicket.ServiceTypes.First().GetServiceType();
+            ServiceType? otherServiceType = _fieldTicket.ServiceTypes.Any(x => x > ServiceType.Completion) ? _fieldTicket.ServiceTypes.First(x => x > ServiceType.Completion) : null;
+            return otherServiceType?.GetServiceType() ?? string.Empty;
         }
     }
 
@@ -142,6 +147,8 @@ namespace CA.Ticketing.Business.Services.Pdf.Dto
 
     public class TicketPayrollData
     {
+        public JobTitle JobTitle { get; set; }
+
         public string Labor { get; set; }
 
         public string Name { get; set; }
@@ -160,6 +167,7 @@ namespace CA.Ticketing.Business.Services.Pdf.Dto
 
         public TicketPayrollData(PayrollData payrollData)
         {
+            JobTitle = payrollData.Employee != null ? payrollData.Employee.JobTitle : JobTitle.Other;
             Labor = payrollData.Employee != null ? payrollData.Employee.JobTitle.GetJobTitle() : "Other";
             Name = payrollData.Employee != null ? payrollData.Employee.DisplayName : payrollData.Name;
             EmployeeNumber = payrollData.Employee != null ? payrollData.Employee.EmployeeNumber : "0000";

@@ -24,7 +24,7 @@ namespace CA.Ticketing.Business.Services.Payroll
             endTime = endTime.AddDays(1);
 
             var tickets = await _context.FieldTickets
-                .Include(x => x.TicketSpecifications)
+                .Include(x => x.TicketSpecifications.Where(ts => ts.Charge == ChargeNames.ToolPusher))
                 .Include(x => x.PayrollData)
                     .ThenInclude(p => p.Employee)
                 .Where(x => x.ExecutionDate >= startTime && x.ExecutionDate <= endTime)

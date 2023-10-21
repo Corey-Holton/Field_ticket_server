@@ -15,6 +15,7 @@ using CA.Ticketing.Persistance.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 using System.Linq.Expressions;
+using System.Security.Cryptography.Xml;
 
 namespace CA.Ticketing.Business.Services.Tickets
 {
@@ -76,7 +77,7 @@ namespace CA.Ticketing.Business.Services.Tickets
             var tickets = await GetTicketIncludes()
                 .Where(ticketsFilter)
                 .OrderByDescending(x => x.CreatedDate)
-                .AsSingleQuery()
+                .AsSplitQuery()
                 .ToListAsync();
 
             return tickets.Select(x => _mapper.Map<TicketDto>(x));
@@ -251,6 +252,8 @@ namespace CA.Ticketing.Business.Services.Tickets
 
             UpdateLaborQuantity(ticket);
 
+            UpdateTicketTotal(ticket);
+
             await _context.SaveChangesAsync();
         }
 
@@ -283,6 +286,8 @@ namespace CA.Ticketing.Business.Services.Tickets
 
             UpdateLaborQuantity(ticket);
 
+            UpdateTicketTotal(ticket);
+
             await _context.SaveChangesAsync();
         }
 
@@ -309,6 +314,8 @@ namespace CA.Ticketing.Business.Services.Tickets
                 .SingleAsync(x => x.Id == payrollData.FieldTicketId);
 
             UpdateLaborQuantity(ticket);
+
+            UpdateTicketTotal(ticket);
 
             await _context.SaveChangesAsync();
         }
@@ -358,14 +365,13 @@ namespace CA.Ticketing.Business.Services.Tickets
 
             UpdateLaborQuantity(ticket);
 
-            await _context.SaveChangesAsync();
+            UpdateTicketTotal(ticket);
 
-            var ticketTotal = ticket
-                .TicketSpecifications.Sum(x => x.Quantity * x.Rate);
+            await _context.SaveChangesAsync();
 
             return new UpdateTicketSpecResponse
             {
-                TicketTotal = ticketTotal,
+                TicketTotal = ticket.Total,
                 TicketSpecification = _mapper.Map<TicketSpecificationDto>((isAdmin, ticketSpec))
             };
         }
@@ -415,7 +421,14 @@ namespace CA.Ticketing.Business.Services.Tickets
                 throw new Exception("This document is already signed");
             }
 
-            var employeeNumber = await GetEmployeePhoneNumber(!string.IsNullOrEmpty(fieldTicket.SignedBy) ? fieldTicket.SignedBy : null);
+            if (string.IsNullOrEmpty(fieldTicket.SignedBy))
+            {
+                var user = await _context.Users.SingleAsync(x => x.Id == _userContext.User!.Id);
+                fieldTicket.SignedBy = _userContext.User!.Id;
+                fieldTicket.EmployeePrintedName = user.DisplayName;
+            }
+
+            var employeeNumber = await GetEmployeePhoneNumber(fieldTicket.SignedBy);
 
             var model = new TicketReport(fieldTicket, employeeNumber)
             {
@@ -649,6 +662,7 @@ namespace CA.Ticketing.Business.Services.Tickets
             CalculateCharges(ticket);
             UpdateEmployeePayrolls(ticket);
             UpdateLaborQuantity(ticket);
+            UpdateTicketTotal(ticket);
         }
 
         private void CalculateCharges(FieldTicket ticket)
@@ -690,6 +704,8 @@ namespace CA.Ticketing.Business.Services.Tickets
             }
             charge.Quantity = chargeQuantity;
         }
+
+        private static void UpdateTicketTotal(FieldTicket ticket) => ticket.Total = ticket.TicketSpecifications.Sum(x => x.Quantity * x.Rate);
 
         private static void UpdateEmployeePayrolls(FieldTicket ticket)
         {
@@ -761,7 +777,6 @@ namespace CA.Ticketing.Business.Services.Tickets
             var baseIncludes = _context.FieldTickets
                 .Include(x => x.Customer)
                 .Include(x => x.Equipment)
-                .Include(x => x.TicketSpecifications)
                 .Include(x => x.Invoice)
                 .Include(x => x.Location);
 
@@ -771,21 +786,23 @@ namespace CA.Ticketing.Business.Services.Tickets
             }
 
             return baseIncludes
+                .Include(x => x.TicketSpecifications)
                 .Include(x => x.PayrollData)
                     .ThenInclude(p => p.Employee);
         }
 
-        private async Task<string?> GetEmployeePhoneNumber(string? signedBy = null)
+        private async Task<string> GetEmployeePhoneNumber(string? signedBy = null)
         {
+            var defaultNumber = "(989) 640-0967";
             var userId = signedBy ?? _userContext.User!.Id;
             var user = await _context.Users.SingleAsync(x => x.Id == userId);
             if (string.IsNullOrEmpty(user.EmployeeId))
             {
-                return null;
+                return defaultNumber;
             }
 
             var employee = _context.Employees.SingleOrDefault(x => x.Id == user.EmployeeId);
-            return employee?.Phone;
+            return employee?.Phone ?? defaultNumber;
         }
 
         private static void VerifyCanUpdateTicket(FieldTicket ticket)

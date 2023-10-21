@@ -119,7 +119,19 @@ namespace CA.Ticketing.Business.Services.Invoices
                 
                 foreach (var invoice in modifiedInvoices)
                 {
-                    await invoicesService.SendToCustomer(invoice.Id);
+                    if (!invoice.SentToCustomer.HasValue)
+                    {
+                        continue;
+                    }
+
+                    try
+                    {
+                        await invoicesService.SendToCustomer(invoice.Id);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Unable to send customer invoice.");
+                    }
                 }
             }
 

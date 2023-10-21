@@ -59,7 +59,7 @@ builder.Services.AddSwaggerGenNewtonsoftSupport();
 builder.Services.AddDbContext<CATicketingContext>(options =>
 {
     var connectionString = builder.Configuration["ApplicationSettings:ConnectionString"];
-    options.UseSqlServer(connectionString);
+    options.UseSqlServer(connectionString, o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery));
 });
 
 builder.Services.RegisterDomainServices();

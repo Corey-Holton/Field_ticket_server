@@ -37,6 +37,7 @@ namespace CA.Ticketing.Persistance.Seed
             }
 
             await TransformTickets();
+            await UpdateTicketTotals();
 
             if (!isMainServer)
             {
@@ -208,6 +209,28 @@ namespace CA.Ticketing.Persistance.Seed
             foreach (var ticket in tickets)
             {
                 ticket.ServiceTypes = new ServiceType[] { ticket.ServiceType };
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+        private async Task UpdateTicketTotals()
+        {
+            var isAnyTotalUpdated = _context.FieldTickets.Any(x => x.Total > 0);
+
+            if (isAnyTotalUpdated)
+            {
+                return;
+            }
+
+            var allTickets = await _context.FieldTickets
+                .Include(x => x.TicketSpecifications)
+                .IgnoreQueryFilters()
+                .ToListAsync();
+
+            foreach (var ticket in allTickets)
+            {
+                ticket.Total = ticket.TicketSpecifications.Sum(x => x.Quantity * x.Rate);
             }
 
             await _context.SaveChangesAsync();
