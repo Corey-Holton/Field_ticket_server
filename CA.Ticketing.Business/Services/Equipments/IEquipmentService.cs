@@ -22,7 +22,7 @@ namespace CA.Ticketing.Business.Services.Equipments
 
         Task<IEnumerable<EquipmentDetailsDto>> GetExpiringPermitEquipment();
 
-        Task<IEnumerable<RigWithNextJobDto>> GetRigsWithJobData();
+        Task<IEnumerable<RigWithNextJobDto>> GetRigsWithJobData(DateTime today);
 
         Task UploadFile(Stream fileStream, string equipmentId, string assignedName, string fileName, string contentType);
 

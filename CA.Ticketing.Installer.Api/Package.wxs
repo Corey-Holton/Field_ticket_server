@@ -2,7 +2,7 @@
 	 xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
   <Package Name="CA Ticketing" 
 		   Manufacturer="ReadyDev Technologies" 
-		   Version="1.5.0.0" 
+		   Version="1.7.0.0" 
 	       UpgradeCode="dd16db44-6f13-4429-aaa4-546e603d4b87">
     <MajorUpgrade DowngradeErrorMessage="A later version of the application is already installed" />
 	<Property Id="ARPPRODUCTICON" Value="CAIcon" />

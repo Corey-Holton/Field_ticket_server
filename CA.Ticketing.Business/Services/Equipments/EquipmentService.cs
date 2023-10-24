@@ -146,7 +146,7 @@ namespace CA.Ticketing.Business.Services.Equipments
                 .Select(x => _mapper.Map<EquipmentDetailsDto>(x));
         }
 
-        public async Task<IEnumerable<RigWithNextJobDto>> GetRigsWithJobData()
+        public async Task<IEnumerable<RigWithNextJobDto>> GetRigsWithJobData(DateTime today)
         {
             return (await _context.Equipment
                 .Where(x => x.Category == EquipmentCategory.Rig)
@@ -155,7 +155,7 @@ namespace CA.Ticketing.Business.Services.Equipments
                 {
                     var nextJob = _context.Scheduling
                         .OrderBy(schedule => schedule.StartTime)
-                        .FirstOrDefault(x => x.EquipmentId == rig.Id && x.EndTime >= DateTime.UtcNow);
+                        .FirstOrDefault(x => x.EquipmentId == rig.Id && x.EndTime >= today);
 
                     var lastJob = _context.FieldTickets
                         .OrderByDescending(x => x.ExecutionDate)
@@ -170,9 +170,9 @@ namespace CA.Ticketing.Business.Services.Equipments
                             return -1;
                         }
 
-                        if (nextJob.StartTime > DateTime.UtcNow)
+                        if (nextJob.StartTime > today)
                         {
-                            return (nextJob.StartTime - DateTime.UtcNow).Days;
+                            return (nextJob.StartTime - today).Days;
                         }
 
                         return 0;
@@ -182,7 +182,7 @@ namespace CA.Ticketing.Business.Services.Equipments
                     {
                         Rig = rigDto,
                         DaysUntilNextJob = getDaysUntilNextJob(),
-                        DaysSinceLastJob = (DateTime.UtcNow - lastJob?.ExecutionDate)?.Days ?? -1
+                        DaysSinceLastJob = (today - lastJob?.ExecutionDate)?.Days ?? -1
                     };
                 });
         }

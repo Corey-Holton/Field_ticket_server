@@ -11,8 +11,6 @@ namespace CA.Ticketing.Persistance.Models
 
         public double OvertimePercentageIncrease { get; set; }
 
-        public int MileageCost { get; set; }
-
-        public double FuelCalculationMultiplier { get; set; }
+        public double MileageCost { get; set; }
     }
 }

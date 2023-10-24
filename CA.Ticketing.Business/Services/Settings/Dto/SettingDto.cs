@@ -7,7 +7,5 @@
         public double OvertimePercentageIncrease { get; set; }
 
         public int MileageCost { get; set; }
-
-        public double FuelCalculationMultiplier { get; set; }
     }
 }

@@ -88,8 +88,8 @@ namespace CA.Ticketing.Business.Services.Invoices
             {
                 InvoiceId = $"A-{currentInvoiceCount + 1}",
                 CustomerId = customer.Id,
-                InvoiceDate = DateTime.UtcNow.AddDays(-95),
-                DueDate = DateTime.UtcNow.AddDays(-65)
+                InvoiceDate = DateTime.UtcNow,
+                DueDate = DateTime.UtcNow.AddDays(netTerm)
             };
 
             var tickets = await _context.FieldTickets

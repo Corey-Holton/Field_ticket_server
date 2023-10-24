@@ -3,6 +3,7 @@ using CA.Ticketing.Business.Services.Invoices.Dto;
 using CA.Ticketing.Business.Services.Tickets.Dto;
 using CA.Ticketing.Common.Constants;
 using CA.Ticketing.Persistance.Models;
+using Microsoft.AspNetCore.Routing.Constraints;
 
 namespace CA.Ticketing.Business.Mappers
 {
@@ -34,8 +35,7 @@ namespace CA.Ticketing.Business.Mappers
                 .ForMember(x => x.AllowRateAdjustment, dest => dest.MapFrom(src => src.ticketSpec.AllowRateAdjustment))
                 .ForMember(x => x.AllowUoMChange, dest => dest.MapFrom(src => src.ticketSpec.AllowUoMChange))
                 .ForMember(x => x.Total, dest => dest.MapFrom(src => src.ticketSpec.Quantity * src.ticketSpec.Rate))
-                .ForMember(x => x.IsReadOnly, dest => dest.MapFrom(src => src.isAdmin ? 
-                    false : ChargesInfo.ReadonlyCharges.Contains(src.ticketSpec.Charge)));
+                .ForMember(x => x.IsReadOnly, dest => dest.MapFrom(src => !src.isAdmin && ChargesInfo.ReadonlyCharges.Contains(src.ticketSpec.Charge)));
 
             CreateMap<TicketSpecificationDto, TicketSpecification>()
                 .ForMember(x => x.FieldTicketId, dest => dest.Ignore())
@@ -56,6 +56,14 @@ namespace CA.Ticketing.Business.Mappers
                 .ForMember(x => x.LocationId, dest => dest.MapFrom(src => !string.IsNullOrEmpty(src.CustomerLocationId) ? src.CustomerLocationId : null));
 
             CreateMap<ManageTicketHoursDto, FieldTicket>()
+                .ForMember(x => x.StartTime, dest => dest.MapFrom((src, dest) => 
+                {  
+                    return new DateTime(dest.ExecutionDate.Year, dest.ExecutionDate.Month, dest.ExecutionDate.Day, src.StartTime.Hour, src.StartTime.Minute, 0);
+                }))
+                .ForMember(x => x.EndTime, dest => dest.MapFrom((src, dest) =>
+                {
+                    return new DateTime(dest.ExecutionDate.Year, dest.ExecutionDate.Month, dest.ExecutionDate.Day, src.EndTime.Hour, src.EndTime.Minute, 0);
+                }))
                 .ForMember(x => x.TicketId, dest => dest.Ignore())
                 .ForMember(x => x.Id, dest => dest.Ignore());
 

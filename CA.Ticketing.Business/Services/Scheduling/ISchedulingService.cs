@@ -12,6 +12,6 @@ namespace CA.Ticketing.Business.Services.Scheduling
 
         Task Delete(string id);
 
-        Task<IEnumerable<SchedulingDtoExtended>> GetUserJobs();
+        Task<IEnumerable<SchedulingDtoExtended>> GetUserJobs(DateTime today);
     }
 }

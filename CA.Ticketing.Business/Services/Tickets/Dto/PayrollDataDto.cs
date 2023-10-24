@@ -9,9 +9,9 @@ namespace CA.Ticketing.Business.Services.Tickets.Dto
     public class PayrollDataDto : EntityDtoBase
     {
         [JsonIgnore]
-        public JobTitle JobTitle { get; set; }
+        public JobTitle? JobTitle { get; set; }
 
-        public string Labor => JobTitle.GetJobTitle();
+        public string Labor => JobTitle?.GetJobTitle() ?? string.Empty;
 
         public string FieldTicketId { get; set; }
 

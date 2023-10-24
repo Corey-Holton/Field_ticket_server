@@ -36,7 +36,7 @@ namespace CA.Ticketing.Business.Services.Employees
 
             if (status.HasValue)
             {
-                var terminationDateCutoff = GetEndofDay(DateTime.Now);
+                var terminationDateCutoff = DateTime.Today.GetEndofDay();
                 Expression<Func<Employee, bool>> statusFilter = status == EmployeeStatus.Active ?
                     x => !x.TerminationDate.HasValue || x.TerminationDate > terminationDateCutoff :
                     x => x.TerminationDate.HasValue && x.TerminationDate < terminationDateCutoff;
@@ -151,12 +151,6 @@ namespace CA.Ticketing.Business.Services.Employees
             }
 
             return employee!;
-        }
-
-        private DateTime GetEndofDay(DateTime initialDate)
-        {
-            var date = initialDate.AddDays(1);
-            return new DateTime(date.Year, date.Month, date.Day, 0, 0, 0);
         }
     }
 }
