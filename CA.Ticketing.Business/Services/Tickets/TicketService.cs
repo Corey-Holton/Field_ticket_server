@@ -155,6 +155,8 @@ namespace CA.Ticketing.Business.Services.Tickets
 
             UpdateTicketData(ticket);
 
+            ticket.Equipment = null;
+
             _context.FieldTickets.Add(ticket);
             await _context.SaveChangesAsync();
             return ticket.Id;
@@ -695,8 +697,6 @@ namespace CA.Ticketing.Business.Services.Tickets
                 UpdateChargeQuantity(ticket, ChargeNames.Fuel, 0);
                 return;
             }
-
-            var settings = _context.Settings.First();
 
             UpdateChargeQuantity(ticket, ChargeNames.Rig, totalTime);
             UpdateChargeQuantity(ticket, ChargeNames.Fuel, totalTime * ticket.Equipment!.FuelConsumption);
