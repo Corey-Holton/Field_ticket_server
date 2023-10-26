@@ -50,7 +50,7 @@ namespace CA.Ticketing.Business.Services.Invoices
             _messagesComposer = messagesComposer;
         }
 
-        public async Task<IEnumerable<InvoiceDto>> GetAll(int index, int size, string sorting, string order, string searchString)
+        public async Task<(IEnumerable<InvoiceDto>,int)> GetAll(int index, int size, string sorting, string order, string searchString)
         {
 
             var invoices = _context.Invoices
@@ -75,28 +75,9 @@ namespace CA.Ticketing.Business.Services.Invoices
                 .AsSplitQuery()
                 .ToListAsync();
 
-            return invoicesList.Select(x => _mapper.Map<InvoiceDto>(x));
-        }
-
-        public async Task<int> GetInvoiceCount(string searchString)
-        {
-
-            var invoices = _context.Invoices
-               .Include(x => x.Customer)
-               .Include(x => x.Tickets)
-               .Include(x => x.InvoiceLateFees)
-               .AsQueryable();
-
-            if (!String.IsNullOrEmpty(searchString))
-            {
-                invoices = invoices.Where(invoice => invoice.Customer.Name.Contains(searchString));
-            }
-
-            var invoicesList = await invoices
-                .AsSplitQuery()
-                .ToListAsync();
-
-            return invoicesList.Count;
+            var lista = invoicesList.Select(x => _mapper.Map<InvoiceDto>(x));
+            var returnObj = (lista, invoicesList.Count);
+            return returnObj;
         }
 
         public async Task<InvoiceDto> GetById(string id)

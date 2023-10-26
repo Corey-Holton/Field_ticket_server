@@ -27,9 +27,9 @@ namespace CA.Ticketing.Api.Controllers
         [ProducesResponseType(typeof(IEnumerable<InvoiceDto>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAll(int index, int size, string sorting, string order, string searchString)
         {
-            var invoices = await _invoiceService.GetAll(index, size, sorting, order, searchString);
-            var numInvoices = await _invoiceService.GetInvoiceCount(searchString);
-            return Ok(new { invoices, numInvoices }); ;
+            var (invoices, numInvoices) = await _invoiceService.GetAll(index, size, sorting, order, searchString);
+            var returnObj = new { invoices, numInvoices };
+            return Ok(returnObj); ;
         }
 
         /// <summary>

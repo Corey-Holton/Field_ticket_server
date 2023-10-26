@@ -27,9 +27,9 @@ namespace CA.Ticketing.Api.Controllers
         [Authorize]
         public async Task<IActionResult> GetAll(int index, int size, string sorting, string order, string searchString )
         {
-            var tickets = await _ticketService.GetAll(index, size, sorting, order, searchString);
-            var numTickets = await _ticketService.GetTicketCount(searchString);
-            return Ok(new { tickets, numTickets });
+            var (tickets,numTickets) = await _ticketService.GetAll(index, size, sorting, order, searchString);
+            var returnObj = new { tickets, numTickets };
+            return Ok(returnObj);
         }
 
         /// <summary>
