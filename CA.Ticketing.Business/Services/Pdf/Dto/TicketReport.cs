@@ -139,9 +139,9 @@ namespace CA.Ticketing.Business.Services.Pdf.Dto
 
             Item = ticketSpecification.Charge;
             UoM = ticketSpecification.UoM.ToString();
-            Rate = ticketSpecification.Rate.ToString("0.00");
+            Rate = ticketSpecification.Rate.ToString("N2");
             Quantity = ticketSpecification.Quantity.ToString();
-            Amount = (ticketSpecification.Quantity * ticketSpecification.Rate).ToString("0.00");
+            Amount = (ticketSpecification.Quantity * ticketSpecification.Rate).ToString("N2");
         }
     }
 

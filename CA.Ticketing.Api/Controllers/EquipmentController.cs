@@ -145,9 +145,9 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Equipment.RigsNotWorking)]
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<RigWithNextJobDto>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetRigsNotWorking()
+        public async Task<IActionResult> GetRigsNotWorking(DateTime? today)
         {
-            var rigs = await _equipmentService.GetRigsWithJobData();
+            var rigs = await _equipmentService.GetRigsWithJobData(today ?? DateTime.Today);
             return Ok(rigs);
         }
 

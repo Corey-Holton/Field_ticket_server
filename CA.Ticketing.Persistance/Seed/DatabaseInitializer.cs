@@ -36,7 +36,6 @@ namespace CA.Ticketing.Persistance.Seed
                 await _context.Database.MigrateAsync();
             }
 
-            await TransformTickets();
             await UpdateTicketTotals();
 
             if (!isMainServer)
@@ -49,6 +48,7 @@ namespace CA.Ticketing.Persistance.Seed
             await InitiateCharges();
             await InitiateSettings();
             await InitiateBackgroundJobs();
+            await UpdateTimes();
         }
 
         private async Task CreateRoles()
@@ -166,8 +166,7 @@ namespace CA.Ticketing.Persistance.Seed
             }
 
             _context.Settings.Add(new Setting 
-            { 
-                FuelCalculationMultiplier = 15,
+            {
                 TaxRate = 7.5,
                 MileageCost = 1,
                 OvertimePercentageIncrease = 10
@@ -189,31 +188,6 @@ namespace CA.Ticketing.Persistance.Seed
             }
         }
 
-        private async Task TransformTickets()
-        {
-            if (!await _context.FieldTickets.IgnoreQueryFilters().AnyAsync())
-            {
-                return;
-            }
-
-            var firstTicket = await _context.FieldTickets.IgnoreQueryFilters()
-                .FirstAsync();
-
-            if (!string.IsNullOrEmpty(firstTicket.ServiceTypesSelection))
-            {
-                return;
-            }
-
-            var tickets = await _context.FieldTickets.IgnoreQueryFilters().ToListAsync();
-
-            foreach (var ticket in tickets)
-            {
-                ticket.ServiceTypes = new ServiceType[] { ticket.ServiceType };
-            }
-
-            await _context.SaveChangesAsync();
-        }
-
         private async Task UpdateTicketTotals()
         {
             var isAnyTotalUpdated = _context.FieldTickets.Any(x => x.Total > 0);
@@ -231,6 +205,38 @@ namespace CA.Ticketing.Persistance.Seed
             foreach (var ticket in allTickets)
             {
                 ticket.Total = ticket.TicketSpecifications.Sum(x => x.Quantity * x.Rate);
+            }
+
+            _context.SaveChanges();
+        }
+
+        private async Task UpdateTimes()
+        {
+            var allUpdated = (await _context.FieldTickets
+                .ToListAsync())
+                .All(x => x.ExecutionDate.TimeOfDay.TotalSeconds == 0);
+
+            if (allUpdated)
+            {
+                return;
+            }
+
+            var allTickets = await _context.FieldTickets
+                .IgnoreQueryFilters()
+                .ToListAsync();
+
+            foreach (var ticket in allTickets)
+            {
+                ticket.ExecutionDate = ticket.ExecutionDate.Date;
+                if (ticket.StartTime.HasValue)
+                {
+                    ticket.StartTime = new DateTime(ticket.ExecutionDate.Year, ticket.ExecutionDate.Month, ticket.ExecutionDate.Day, ticket.StartTime.Value.Hour, ticket.StartTime.Value.Minute, 0);
+                }
+
+                if (ticket.EndTime.HasValue)
+                {
+                    ticket.EndTime = new DateTime(ticket.ExecutionDate.Year, ticket.ExecutionDate.Month, ticket.ExecutionDate.Day, ticket.EndTime.Value.Hour, ticket.EndTime.Value.Minute, 0);
+                }
             }
 
             await _context.SaveChangesAsync();

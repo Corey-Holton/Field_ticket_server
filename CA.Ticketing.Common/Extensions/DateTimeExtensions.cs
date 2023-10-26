@@ -23,5 +23,11 @@
         {
             return date.ToString("dd/MM/yyyy");
         }
+
+        public static DateTime GetEndofDay(this DateTime initialDate)
+        {
+            var date = initialDate.AddDays(1);
+            return new DateTime(date.Year, date.Month, date.Day, 0, 0, 0);
+        }
     }
 }

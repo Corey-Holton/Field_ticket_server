@@ -10,6 +10,7 @@ using CA.Ticketing.Business.Services.Tickets.Dto;
 using CA.Ticketing.Common.Authentication;
 using CA.Ticketing.Common.Constants;
 using CA.Ticketing.Common.Enums;
+using CA.Ticketing.Common.Extensions;
 using CA.Ticketing.Persistance.Context;
 using CA.Ticketing.Persistance.Models;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +19,6 @@ using System.Data;
 using System.Drawing;
 using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
-using System.Security.Cryptography.Xml;
 
 namespace CA.Ticketing.Business.Services.Tickets
 {
@@ -169,9 +169,9 @@ namespace CA.Ticketing.Business.Services.Tickets
                 var settings = await _context.Settings.FirstAsync();
                 ticket.TaxRate = settings.TaxRate;
             }
-
+            var terminationCuttoffTime = ticket.ExecutionDate.GetEndofDay();
             var employees = await _context.Employees
-                .Where(x => x.AssignedRigId == manageTicketDto.EquipmentId)
+                .Where(x => x.AssignedRigId == manageTicketDto.EquipmentId && (!x.TerminationDate.HasValue || x.TerminationDate > terminationCuttoffTime))
                 .ToListAsync();
 
             foreach (var employee in employees)
@@ -179,7 +179,12 @@ namespace CA.Ticketing.Business.Services.Tickets
                 ticket.PayrollData.Add(new PayrollData { EmployeeId = employee.Id, Name = employee.DisplayName });
             }
 
+            ticket.Equipment = _context.Equipment.First(x => x.Id == ticket.EquipmentId);
+            _context.Entry(ticket.Equipment).State = EntityState.Detached;
+
             UpdateTicketData(ticket);
+
+            ticket.Equipment = null;
 
             _context.FieldTickets.Add(ticket);
             await _context.SaveChangesAsync();
@@ -412,6 +417,11 @@ namespace CA.Ticketing.Business.Services.Tickets
             if (fieldTicket.SignedOn.HasValue)
             {
                 throw new Exception("This document is already signed.");
+            }
+
+            if (!fieldTicket.StartTime.HasValue || !fieldTicket.EndTime.HasValue)
+            {
+                throw new Exception("Can't sign ticket without adding working hours");
             }
 
             if (!string.IsNullOrEmpty(fieldTicket.SignedBy))
@@ -717,10 +727,8 @@ namespace CA.Ticketing.Business.Services.Tickets
                 return;
             }
 
-            var settings = _context.Settings.First();
-
             UpdateChargeQuantity(ticket, ChargeNames.Rig, totalTime);
-            UpdateChargeQuantity(ticket, ChargeNames.Fuel, totalTime * settings.FuelCalculationMultiplier);
+            UpdateChargeQuantity(ticket, ChargeNames.Fuel, totalTime * ticket.Equipment!.FuelConsumption);
         }
 
         private static void UpdateChargeQuantity(FieldTicket ticket, string chargeName, double chargeQuantity)
