@@ -4,7 +4,9 @@ namespace CA.Ticketing.Business.Services.Invoices
 {
     public interface IInvoiceService
     {
-        Task<IEnumerable<InvoiceDto>> GetAll();
+        Task<IEnumerable<InvoiceDto>> GetAll(int index, int size, string sorting, string order, string searchString);
+
+        Task<int> GetInvoiceCount(string searchString);
 
         Task<InvoiceDto> GetById(string id);
 

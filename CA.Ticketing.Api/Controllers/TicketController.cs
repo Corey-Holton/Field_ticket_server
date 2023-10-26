@@ -25,10 +25,11 @@ namespace CA.Ticketing.Api.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<TicketDto>), StatusCodes.Status200OK)]
         [Authorize]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(int index, int size, string sorting, string order, string searchString )
         {
-            var tickets = await _ticketService.GetAll();
-            return Ok(tickets);
+            var tickets = await _ticketService.GetAll(index, size, sorting, order, searchString);
+            var numTickets = await _ticketService.GetTicketCount(searchString);
+            return Ok(new { tickets, numTickets });
         }
 
         /// <summary>

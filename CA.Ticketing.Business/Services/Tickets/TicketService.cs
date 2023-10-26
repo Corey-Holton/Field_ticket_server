@@ -13,7 +13,10 @@ using CA.Ticketing.Common.Enums;
 using CA.Ticketing.Persistance.Context;
 using CA.Ticketing.Persistance.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Data;
+using System.Drawing;
+using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 using System.Security.Cryptography.Xml;
 
@@ -56,8 +59,8 @@ namespace CA.Ticketing.Business.Services.Tickets
             _notificationService = notificationService;
             _messagesComposer = messagesComposer;
         }
-        
-        public async Task<IEnumerable<TicketDto>> GetAll()
+
+        public async Task<IEnumerable<TicketDto>> GetAll(int index, int size, string sorting, string order, string searchString)
         {
             Expression<Func<FieldTicket, bool>> ticketsFilter = x => true;
 
@@ -74,13 +77,71 @@ namespace CA.Ticketing.Business.Services.Tickets
                 ticketsFilter = x => x.CustomerId == customerId;
             }
 
-            var tickets = await GetTicketIncludes()
-                .Where(ticketsFilter)
-                .OrderByDescending(x => x.CreatedDate)
+
+            
+            if (sorting == "isInvoiced")
+            {
+                sorting = "InvoiceId";
+            }
+
+            if (sorting == "hasCustomerSignature")
+            {
+                sorting = "CustomerSignedOn";
+            }
+
+            var tickets = GetTicketIncludes()
+                .Where(ticketsFilter);
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                tickets = tickets.Where(ticket => ticket.Customer!.Name.Contains(searchString));
+            }
+
+            if (!String.IsNullOrEmpty(sorting))
+            {
+                tickets = tickets.OrderBy(sorting + " " + order);
+            }
+
+            var ticketList = await tickets
+                .Skip(index * size)
+                .Take(size)
                 .AsSplitQuery()
                 .ToListAsync();
 
-            return tickets.Select(x => _mapper.Map<TicketDto>(x));
+            return ticketList.Select(x => _mapper.Map<TicketDto>(x));
+        }
+
+        public async Task<int> GetTicketCount(string searchString)
+        {
+            Expression<Func<FieldTicket, bool>> ticketsFilter = x => true;
+
+            if (_userContext.User!.Role == ApplicationRole.ToolPusher)
+            {
+                ticketsFilter = x => x.CreatedBy == _userContext.User.Id || x.SignedOn.HasValue;
+            }
+
+            if (_userContext.User!.Role == ApplicationRole.Customer)
+            {
+                var customerId = (await _context.CustomerContacts
+                    .FirstAsync(x => x.Id == _userContext.User.CustomerContactId)).CustomerId;
+
+                ticketsFilter = x => x.CustomerId == customerId;
+            }
+
+            var tickets = GetTicketIncludes()
+              .Where(ticketsFilter);
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+
+                tickets = tickets.Where(ticket => ticket.Customer!.Name.Contains(searchString));
+   
+            }
+            var ticketsList = await tickets
+                .AsSplitQuery()
+                .ToListAsync();
+
+            return ticketsList.Count;
         }
 
         public async Task<IEnumerable<TicketDto>> GetByDates(DateTime startDate, DateTime endDate)

@@ -11,6 +11,8 @@ using CA.Ticketing.Common.Constants;
 using CA.Ticketing.Persistance.Context;
 using CA.Ticketing.Persistance.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Dynamic.Core;
+using static CA.Ticketing.Common.Constants.ApiRoutes;
 
 namespace CA.Ticketing.Business.Services.Invoices
 {
@@ -48,15 +50,53 @@ namespace CA.Ticketing.Business.Services.Invoices
             _messagesComposer = messagesComposer;
         }
 
-        public async Task<IEnumerable<InvoiceDto>> GetAll()
+        public async Task<IEnumerable<InvoiceDto>> GetAll(int index, int size, string sorting, string order, string searchString)
         {
-            var invoices = await _context.Invoices
-                .Include(x => x.Customer)
-                .Include(x => x.Tickets)
-                .Include(x => x.InvoiceLateFees)
+
+            var invoices = _context.Invoices
+               .Include(x => x.Customer)
+               .Include(x => x.Tickets)
+               .Include(x => x.InvoiceLateFees)
+               .AsQueryable();
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                invoices = invoices.Where(invoice => invoice.Customer.Name.Contains(searchString));
+            }
+
+            if (!String.IsNullOrEmpty(sorting))
+            {
+                invoices = invoices.OrderBy(sorting + " " + order);
+            }
+
+            var invoicesList = await invoices
+                .Skip(index * size)
+                .Take(size)
                 .AsSplitQuery()
                 .ToListAsync();
-            return invoices.Select(x => _mapper.Map<InvoiceDto>(x));
+
+            return invoicesList.Select(x => _mapper.Map<InvoiceDto>(x));
+        }
+
+        public async Task<int> GetInvoiceCount(string searchString)
+        {
+
+            var invoices = _context.Invoices
+               .Include(x => x.Customer)
+               .Include(x => x.Tickets)
+               .Include(x => x.InvoiceLateFees)
+               .AsQueryable();
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                invoices = invoices.Where(invoice => invoice.Customer.Name.Contains(searchString));
+            }
+
+            var invoicesList = await invoices
+                .AsSplitQuery()
+                .ToListAsync();
+
+            return invoicesList.Count;
         }
 
         public async Task<InvoiceDto> GetById(string id)

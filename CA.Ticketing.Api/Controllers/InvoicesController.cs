@@ -4,6 +4,7 @@ using CA.Ticketing.Business.Services.Invoices.Dto;
 using CA.Ticketing.Common.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using static CA.Ticketing.Common.Constants.ApiRoutes;
 
 namespace CA.Ticketing.Api.Controllers
 {
@@ -24,10 +25,11 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Invoices.List)]
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<InvoiceDto>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(int index, int size, string sorting, string order, string searchString)
         {
-            var invoices = await _invoiceService.GetAll();
-            return Ok(invoices);
+            var invoices = await _invoiceService.GetAll(index, size, sorting, order, searchString);
+            var numInvoices = await _invoiceService.GetInvoiceCount(searchString);
+            return Ok(new { invoices, numInvoices }); ;
         }
 
         /// <summary>

@@ -4,7 +4,9 @@ namespace CA.Ticketing.Business.Services.Tickets
 {
     public interface ITicketService
     {
-        Task<IEnumerable<TicketDto>> GetAll();
+        Task<IEnumerable<TicketDto>> GetAll(int index, int size, string sorting,string order, string searchString);
+
+        Task<int> GetTicketCount(string searchString);
 
         Task<IEnumerable<TicketDto>> GetByDates(DateTime startDate, DateTime endDate);
 
