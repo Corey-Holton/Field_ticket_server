@@ -155,7 +155,7 @@ namespace CA.Ticketing.Business.Services.Customers
             customerAddLoginModel.RedirectUrl = customerLoginDto.RedirectUrl;
             await _accountsService.CreateCustomerContactLogin(customerAddLoginModel);
             customerContact.InviteSent = true;
-            customerContact.InviteSentOn = DateTime.Now;
+            customerContact.InviteSentOn = DateTime.UtcNow;
                 
             await _context.SaveChangesAsync();
         }
@@ -164,7 +164,7 @@ namespace CA.Ticketing.Business.Services.Customers
         {
             var customerContact = await GetCustomerContact(customerLoginDto.CustomerContactId);
             await _accountsService.ResendCustomerContactEmail(customerLoginDto);
-            customerContact.InviteSentOn = DateTime.Now;
+            customerContact.InviteSentOn = DateTime.UtcNow;
             await _context.SaveChangesAsync();
         }
 

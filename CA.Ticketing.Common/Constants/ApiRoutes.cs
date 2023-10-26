@@ -167,6 +167,8 @@
             public const string _root = $"{ApiRoutes._root}/payrolls";
 
             public const string GetPayrolls = $"{_root}/list";
+
+            public const string HourlyReport = $"{_root}/hourly-report";
         }
 
         public class Invoices

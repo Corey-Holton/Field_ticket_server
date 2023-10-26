@@ -25,6 +25,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Invoices.List)]
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<InvoiceDto>), StatusCodes.Status200OK)]
+        [UtcTime]
         public async Task<IActionResult> GetAll(int index, int size, string sorting, string order, string searchString)
         {
             var invoices = await _invoiceService.GetAll(index, size, sorting, order, searchString);
@@ -39,6 +40,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.Invoices.GetInvoice)]
         [HttpGet]
         [ProducesResponseType(typeof(InvoiceDto), StatusCodes.Status200OK)]
+        [UtcTime]
         public async Task<IActionResult> GetInvoiceById(string invoiceId)
         {
             var invoice = await _invoiceService.GetById(invoiceId);

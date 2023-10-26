@@ -27,10 +27,9 @@ namespace CA.Ticketing.Business.Services.Scheduling
                                      .ToListAsync();
 
             return scheduling.Select(x => _mapper.Map<SchedulingDto>(x));
-
         }
 
-        public async Task<IEnumerable<SchedulingDtoExtended>> GetUserJobs()
+        public async Task<IEnumerable<SchedulingDtoExtended>> GetUserJobs(DateTime today)
         {
             var user = await _context.Users
                 .Include(x => x.Employee)
@@ -46,7 +45,7 @@ namespace CA.Ticketing.Business.Services.Scheduling
                                      .Include(s => s.CustomerLocation)
                                      .Include(s => s.Equipment)
                                      .Include(s => s.CustomerContact)
-                                     .Where(s => s.EquipmentId == user.Employee.AssignedRigId && s.EndTime >= DateTime.Today)
+                                     .Where(s => s.EquipmentId == user.Employee.AssignedRigId && s.EndTime >= today)
                                      .AsSplitQuery()
                                      .ToListAsync();
 

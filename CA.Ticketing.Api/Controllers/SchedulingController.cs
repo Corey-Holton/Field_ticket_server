@@ -36,9 +36,9 @@ namespace CA.Ticketing.Api.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<SchedulingDtoExtended>), StatusCodes.Status200OK)]
         [Authorize(Policy = Policies.CompanyUsers)]
-        public async Task<IActionResult> GetUserJobs()
+        public async Task<IActionResult> GetUserJobs(DateTime? today)
         {
-            var scheduling = await _schedulingService.GetUserJobs();
+            var scheduling = await _schedulingService.GetUserJobs(today ?? DateTime.Today);
             return Ok(scheduling);
         }
 

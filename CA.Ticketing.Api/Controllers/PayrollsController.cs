@@ -31,5 +31,20 @@ namespace CA.Ticketing.Api.Controllers
             var data = await _payrollsService.GetPayrollData(startDate, endDate);
             return Ok(data);
         }
+
+        /// <summary>
+        /// Get hourly report Data
+        /// </summary>
+        /// <returns>List of Employee hourly report data</returns>
+        /// <param name="startDate">Start Date</param>
+        /// <param name="endDate">End Date</param>
+        [Route(ApiRoutes.Payrolls.HourlyReport)]
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<EmployeePayrollDataDto>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetHourlyReport(DateTime startDate, DateTime endDate)
+        {
+            var data = await _payrollsService.GetHoursReport(startDate, endDate);
+            return Ok(data);
+        }
     }
 }
