@@ -28,5 +28,7 @@ namespace CA.Ticketing.Business.Services.Tickets.Dto
         public double Total { get; set; }
 
         public bool HasCustomerSignature { get; set; }
+
+        public bool HasEmployeeSignature { get; set; }
     }
 }

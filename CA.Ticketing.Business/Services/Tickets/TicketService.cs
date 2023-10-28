@@ -11,9 +11,11 @@ using CA.Ticketing.Common.Authentication;
 using CA.Ticketing.Common.Constants;
 using CA.Ticketing.Common.Enums;
 using CA.Ticketing.Common.Extensions;
+using CA.Ticketing.Common.Setup;
 using CA.Ticketing.Persistance.Context;
 using CA.Ticketing.Persistance.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using System.Data;
 using System.Linq.Expressions;
 
@@ -37,6 +39,8 @@ namespace CA.Ticketing.Business.Services.Tickets
 
         private readonly string _ticketTemplate = "/Views/Tickets/TicketTemplate.cshtml";
 
+        private readonly InitialData _initialData;
+
         public TicketService(
             CATicketingContext context, 
             IMapper mapper, 
@@ -46,7 +50,8 @@ namespace CA.Ticketing.Business.Services.Tickets
             IFileManagerService fileManagerService,
             IRemovalService removalService,
             MessagesComposer messagesComposer,
-            INotificationService notificationService) : base(context, mapper)
+            INotificationService notificationService,
+            IOptions<InitialData> initialData) : base(context, mapper)
         {
             _userContext = userContext;
             _viewRenderer = viewRenderer;
@@ -55,6 +60,7 @@ namespace CA.Ticketing.Business.Services.Tickets
             _removalService = removalService;
             _notificationService = notificationService;
             _messagesComposer = messagesComposer;
+            _initialData = initialData.Value;
         }
         
         public async Task<IEnumerable<TicketDto>> GetAll()
@@ -109,11 +115,6 @@ namespace CA.Ticketing.Business.Services.Tickets
 
         public async Task<string> Create(ManageTicketDto manageTicketDto)
         {
-            var createdByUserCount = await _context.FieldTickets
-                .IgnoreQueryFilters()
-                .Where(x => x.CreatedBy == _userContext.User!.Id)
-                .CountAsync();
-
             var ticketIdentifier = _userContext.User!.TicketIdentifier;
 
             if (string.IsNullOrEmpty(ticketIdentifier))
@@ -121,10 +122,31 @@ namespace CA.Ticketing.Business.Services.Tickets
                 ticketIdentifier = "CA";
             }
 
+            var initialDataStartId = _initialData.Tickets
+                .SingleOrDefault(x => x.Identifier.ToLower() == ticketIdentifier.ToLower())?.StartId ?? 0;
+
+            var lastTicketId = (await _context.FieldTickets
+                .Where(x => x.TicketId.ToLower().StartsWith(ticketIdentifier.ToLower()))
+                .Select(x => x.TicketId)
+                .ToListAsync())
+                .Select(x => 
+                {
+                    var ticketIdSplit = x.Split("-");
+                    if (ticketIdSplit.Length == 2 && int.TryParse(ticketIdSplit[1], out var ticketId))
+                    {
+                        return ticketId;
+                    }
+
+                    return 0;
+                })
+                .Where(x => x >= initialDataStartId)
+                .DefaultIfEmpty(initialDataStartId)
+                .Max();
+
             ValidateTicketServiceTypes(manageTicketDto);
 
             var ticket = _mapper.Map<FieldTicket>(manageTicketDto);
-            ticket.TicketId = $"{ticketIdentifier}-{createdByUserCount + 1}";
+            ticket.TicketId = $"{ticketIdentifier}-{lastTicketId + 1}";
             ticket.CreatedBy = _userContext.User!.Id;
 
             if (!string.IsNullOrEmpty(ticket.CustomerId))

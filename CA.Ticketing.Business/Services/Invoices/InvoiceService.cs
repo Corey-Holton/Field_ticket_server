@@ -8,9 +8,11 @@ using CA.Ticketing.Business.Services.Pdf;
 using CA.Ticketing.Business.Services.Pdf.Dto;
 using CA.Ticketing.Business.Services.Removal;
 using CA.Ticketing.Common.Constants;
+using CA.Ticketing.Common.Setup;
 using CA.Ticketing.Persistance.Context;
 using CA.Ticketing.Persistance.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace CA.Ticketing.Business.Services.Invoices
 {
@@ -30,6 +32,8 @@ namespace CA.Ticketing.Business.Services.Invoices
 
         private readonly string _invoiceTemplate = "/Views/Invoice/InvoiceTemplate.cshtml";
 
+        private readonly InitialData _initialData;
+
         public InvoiceService(
             CATicketingContext context,
             IMapper mapper, 
@@ -38,7 +42,8 @@ namespace CA.Ticketing.Business.Services.Invoices
             IFileManagerService fileManagerService,
             IRemovalService removalService,
             MessagesComposer messagesComposer,
-            INotificationService notificationService) : base(context, mapper)
+            INotificationService notificationService,
+            IOptions<InitialData> initialData) : base(context, mapper)
         {
             _pdfGeneratorService = pdfGeneratorService;
             _viewRenderer = viewRenderer;
@@ -46,6 +51,7 @@ namespace CA.Ticketing.Business.Services.Invoices
             _fileManagerService = fileManagerService;
             _notificationService = notificationService;
             _messagesComposer = messagesComposer;
+            _initialData = initialData.Value;
         }
 
         public async Task<IEnumerable<InvoiceDto>> GetAll()
@@ -78,7 +84,7 @@ namespace CA.Ticketing.Business.Services.Invoices
 
         public async Task<string> Create(CreateInvoiceDto entity)
         {
-            var currentInvoiceCount = await _context.Invoices.CountAsync();
+            var currentInvoiceCount = await _context.Invoices.CountAsync() + _initialData.Invoices.StartId;
             var customer = await _context.Customers
                 .SingleAsync(x => x.Id == entity.CustomerId);
 

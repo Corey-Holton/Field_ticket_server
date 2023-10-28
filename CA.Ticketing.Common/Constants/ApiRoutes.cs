@@ -157,6 +157,8 @@
 
             public const string Download = $"{_root}/download";
 
+            public const string DownloadMultiple = $"{_root}/download-multi";
+
             public const string Reset = $"{_root}/reset";
 
             public const string SendToCustomer = $"{_root}/send-to-customer";
