@@ -4,6 +4,7 @@ using CA.Ticketing.Business.Services.Tickets.Dto;
 using CA.Ticketing.Common.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.IO.Compression;
 
 namespace CA.Ticketing.Api.Controllers
 {
@@ -246,6 +247,34 @@ namespace CA.Ticketing.Api.Controllers
             var stream = new MemoryStream(ticketBytes);
 
             return File(stream, "application/pdf", $"Ticket_{ticketId}.pdf");
+        }
+
+        /// <summary>
+        /// Download Ticket
+        /// </summary>
+        /// <param name="ticketIds">Ticket Ids</param>
+        [Route(ApiRoutes.Tickets.DownloadMultiple)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> DownloadTickets([FromBody]string[] ticketIds)
+        {
+            using var compressedFileStream = new MemoryStream();
+            using (var zipArchive = new ZipArchive(compressedFileStream, ZipArchiveMode.Create, true))
+            {
+                foreach (var ticketId in ticketIds)
+                {
+                    var zipEntry = zipArchive.CreateEntry($"Ticket_{ticketId}.pdf");
+                    var ticketBytes = await _ticketService.DownloadTicket(ticketId);
+                    using var ticketStream = new MemoryStream(ticketBytes);
+                    using var zipEntryStream = zipEntry.Open();
+                    ticketStream.CopyTo(zipEntryStream);
+                }
+            }
+
+            var zipFileResult = compressedFileStream.ToArray();
+            var resultStream = new MemoryStream(zipFileResult);
+            
+            return File(resultStream, "application/zip", $"Tickets.zip");
         }
 
         /// <summary>

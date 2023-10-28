@@ -24,8 +24,6 @@
 
         public IEnumerable<PayrollDataDto> PayrollData { get; set; } = new List<PayrollDataDto>();
 
-        public bool HasEmployeeSignature { get; set; }
-
         public bool IsSentToCustomer { get; set; }
 
         public DateTime? SentToCustomerOn { get; set; }
