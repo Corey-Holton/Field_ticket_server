@@ -92,7 +92,7 @@ namespace CA.Ticketing.Business.Services.Invoices
 
             var invoice = new Invoice()
             {
-                InvoiceId = $"A-{currentInvoiceCount + 1}",
+                InvoiceId = $"A-{currentInvoiceCount + 1:D4}",
                 CustomerId = customer.Id,
                 InvoiceDate = DateTime.UtcNow,
                 DueDate = DateTime.UtcNow.AddDays(netTerm)

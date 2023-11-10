@@ -36,8 +36,6 @@ namespace CA.Ticketing.Persistance.Seed
                 await _context.Database.MigrateAsync();
             }
 
-            await UpdateTicketTotals();
-
             if (!isMainServer)
             {
                 return;
@@ -48,7 +46,6 @@ namespace CA.Ticketing.Persistance.Seed
             await InitiateCharges();
             await InitiateSettings();
             await InitiateBackgroundJobs();
-            await UpdateTimes();
         }
 
         private async Task CreateRoles()

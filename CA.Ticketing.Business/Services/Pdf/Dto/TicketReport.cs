@@ -42,7 +42,7 @@ namespace CA.Ticketing.Business.Services.Pdf.Dto
 
         public string County => _fieldTicket.Location?.County ?? string.Empty;
 
-        public string ExecutionDate => _fieldTicket.ExecutionDate.ToString("yyyy-MM-dd");
+        public string ExecutionDate => _fieldTicket.ExecutionDate.ToString("MM-dd-yyyy");
 
         public string StartTime => _fieldTicket.StartTime.HasValue ? _fieldTicket.StartTime.Value.ToString("hh:mm tt") : string.Empty;
 

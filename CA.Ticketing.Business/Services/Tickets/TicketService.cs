@@ -146,7 +146,7 @@ namespace CA.Ticketing.Business.Services.Tickets
             ValidateTicketServiceTypes(manageTicketDto);
 
             var ticket = _mapper.Map<FieldTicket>(manageTicketDto);
-            ticket.TicketId = $"{ticketIdentifier}-{lastTicketId + 1}";
+            ticket.TicketId = $"{ticketIdentifier}-{lastTicketId + 1:D4}";
             ticket.CreatedBy = _userContext.User!.Id;
 
             if (!string.IsNullOrEmpty(ticket.CustomerId))
