@@ -520,10 +520,12 @@ namespace CA.Ticketing.Business.Services.Tickets
             {
                 throw new Exception("Ticket has customer signature");
             }
+
             using var memoryStream = new MemoryStream();
             fileStream.CopyTo(memoryStream);
             var fileBytes = memoryStream.ToArray();
 
+            ticket.FileName = $"{ticket.TicketId}-{ticket.Id}.pdf";
             _fileManagerService.SaveFile(fileBytes, FilePaths.Tickets, ticket.FileName);
 
             ticket.CustomerSignedOn = DateTime.UtcNow;
