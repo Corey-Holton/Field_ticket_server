@@ -52,6 +52,7 @@ namespace CA.Ticketing.Business.Mappers
 
             CreateMap<ManageTicketDto, FieldTicket>()
                 .ForMember(x => x.Id, dest => dest.Ignore())
+                .ForMember(x => x.SendEmailTo, dest => dest.MapFrom(src => !string.IsNullOrEmpty(src.SendEmailTo) ? src.SendEmailTo : string.Empty))
                 .ForMember(x => x.CustomerId, dest => dest.MapFrom(src => !string.IsNullOrEmpty(src.CustomerId) ? src.CustomerId : null))
                 .ForMember(x => x.LocationId, dest => dest.MapFrom(src => !string.IsNullOrEmpty(src.CustomerLocationId) ? src.CustomerLocationId : null));
 

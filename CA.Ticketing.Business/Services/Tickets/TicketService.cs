@@ -243,7 +243,7 @@ namespace CA.Ticketing.Business.Services.Tickets
 
             var payrollDataDto = _mapper.Map<List<PayrollDataDto>>(ticket.PayrollData);
 
-            return payrollDataDto;
+            return payrollDataDto.OrderBy(x => x.JobTitle).ToList();
         }
 
         public async Task AddPayroll(PayrollDataDto payrollDataDto)
