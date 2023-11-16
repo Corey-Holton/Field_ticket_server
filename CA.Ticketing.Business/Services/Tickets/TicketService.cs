@@ -19,8 +19,10 @@ using System;
 using Microsoft.Extensions.Options;
 using System.Data;
 using System.Drawing;
-using System.Linq.Dynamic.Core;
+
 using System.Linq.Expressions;
+using CA.Ticketing.Common.Models;
+using System.Linq.Dynamic.Core;
 
 namespace CA.Ticketing.Business.Services.Tickets
 {
@@ -66,7 +68,7 @@ namespace CA.Ticketing.Business.Services.Tickets
             _initialData = initialData.Value;
         }
 
-        public async Task<(IEnumerable<TicketDto>, int)> GetAll(int index, int size, string sorting, string order, string searchString)
+        public async Task<DataCount<TicketDto>> GetAll(int index, int size, string sorting, string order, string searchString)
         {
             Expression<Func<FieldTicket, bool>> ticketsFilter = x => true;
 
@@ -114,7 +116,11 @@ namespace CA.Ticketing.Business.Services.Tickets
                 .ToListAsync();
 
             var lista = ticketList.Select(x => _mapper.Map<TicketDto>(x));
-            var returnObj = (lista, ticketList.Count);
+            var returnObj = new DataCount<TicketDto>
+            {
+                TotalCount = tickets.Count(),
+                ItemsList = lista.ToList()
+            };
             return returnObj;
         }
 

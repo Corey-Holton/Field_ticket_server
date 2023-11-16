@@ -14,6 +14,10 @@ using CA.Ticketing.Persistance.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
 using Microsoft.Extensions.Options;
+using CA.Ticketing.Common.Models;
+using static CA.Ticketing.Common.Constants.ApiRoutes;
+using CA.Ticketing.Business.Services.Tickets.Dto;
+using Microsoft.OpenApi.Writers;
 
 namespace CA.Ticketing.Business.Services.Invoices
 {
@@ -55,7 +59,7 @@ namespace CA.Ticketing.Business.Services.Invoices
             _initialData = initialData.Value;
         }
 
-        public async Task<(IEnumerable<InvoiceDto>,int)> GetAll(int index, int size, string sorting, string order, string searchString)
+        public async Task<DataCount<InvoiceDto>> GetAll(int index, int size, string sorting, string order, string searchString)
         {
 
             var invoices = _context.Invoices
@@ -74,6 +78,9 @@ namespace CA.Ticketing.Business.Services.Invoices
                 invoices = invoices.OrderBy(sorting + " " + order);
             }
 
+            var countList = await invoices
+                .ToListAsync();
+
             var invoicesList = await invoices
                 .Skip(index * size)
                 .Take(size)
@@ -81,7 +88,32 @@ namespace CA.Ticketing.Business.Services.Invoices
                 .ToListAsync();
 
             var lista = invoicesList.Select(x => _mapper.Map<InvoiceDto>(x));
-            var returnObj = (lista, invoicesList.Count);
+            var returnObj = new DataCount<InvoiceDto>
+            {
+                TotalCount = countList.Count,
+                ItemsList = lista.ToList()
+            };
+            return returnObj;
+        }
+
+        public async Task<IEnumerable<InvoiceDto>> GetByDueDate()
+        {
+            var invoicesList = await _context.Invoices
+                .Include(x => x.Customer)
+                .Include(x => x.Tickets)
+                .Include(x => x.InvoiceLateFees)
+                .Where(invoice => EF.Functions.DateDiffDay(invoice.DueDate, DateTime.Now) <= 31)
+                .Where(invoice => invoice.Paid != true)
+                .OrderBy(invoice => EF.Functions.DateDiffDay(invoice.DueDate, DateTime.Now))
+                .AsSplitQuery()
+                .ToListAsync();
+
+            if (invoicesList == null)
+            {
+                throw new KeyNotFoundException(nameof(Invoice));
+            }
+            
+            var returnObj = invoicesList.Select(x => _mapper.Map<InvoiceDto>(x));
             return returnObj;
         }
 
