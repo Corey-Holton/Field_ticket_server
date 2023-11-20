@@ -26,7 +26,7 @@ namespace CA.Ticketing.Api.Controllers
         /// <returns>List of invoices</returns>
         [Route(ApiRoutes.Invoices.List)]
         [HttpGet]
-        [ProducesResponseType(typeof(DataCount<InvoiceDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ListResult<InvoiceDto>), StatusCodes.Status200OK)]
         [UtcTime]
         public async Task<IActionResult> GetAll(int index, int size, string sorting, string order, string searchString)
         {

@@ -25,7 +25,7 @@ namespace CA.Ticketing.Api.Controllers
         /// <returns>List of tickets</returns>
         [Route(ApiRoutes.Tickets.List)]
         [HttpGet]
-        [ProducesResponseType(typeof(DataCount<TicketDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ListResult<TicketDto>), StatusCodes.Status200OK)]
         [Authorize]
         public async Task<IActionResult> GetAll(int index, int size, string sorting, string order, string searchString )
         {

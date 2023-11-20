@@ -6,12 +6,9 @@ using System.Threading.Tasks;
 
 namespace CA.Ticketing.Common.Models
 {
-    public class DataCount<T>
+    public class ListResult<T>
     {
         public int TotalCount { get; set; }
         public List<T> ItemsList { get; set; }
-
-
-
     }
 }

@@ -68,7 +68,7 @@ namespace CA.Ticketing.Business.Services.Tickets
             _initialData = initialData.Value;
         }
 
-        public async Task<DataCount<TicketDto>> GetAll(int index, int size, string sorting, string order, string searchString)
+        public async Task<ListResult<TicketDto>> GetAll(int index, int size, string sorting, string order, string searchString)
         {
             Expression<Func<FieldTicket, bool>> ticketsFilter = x => true;
 
@@ -116,12 +116,12 @@ namespace CA.Ticketing.Business.Services.Tickets
                 .ToListAsync();
 
             var lista = ticketList.Select(x => _mapper.Map<TicketDto>(x));
-            var returnObj = new DataCount<TicketDto>
+            var result = new ListResult<TicketDto>
             {
-                TotalCount = tickets.Count(),
+                TotalCount = await GetTicketIncludes().CountAsync(),
                 ItemsList = lista.ToList()
             };
-            return returnObj;
+            return result;
         }
 
         public async Task<IEnumerable<TicketDto>> GetByDates(DateTime startDate, DateTime endDate)

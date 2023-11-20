@@ -15,9 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
 using Microsoft.Extensions.Options;
 using CA.Ticketing.Common.Models;
-using static CA.Ticketing.Common.Constants.ApiRoutes;
-using CA.Ticketing.Business.Services.Tickets.Dto;
-using Microsoft.OpenApi.Writers;
+
 
 namespace CA.Ticketing.Business.Services.Invoices
 {
@@ -59,7 +57,7 @@ namespace CA.Ticketing.Business.Services.Invoices
             _initialData = initialData.Value;
         }
 
-        public async Task<DataCount<InvoiceDto>> GetAll(int index, int size, string sorting, string order, string searchString)
+        public async Task<ListResult<InvoiceDto>> GetAll(int index, int size, string sorting, string order, string searchString)
         {
 
             var invoices = _context.Invoices
@@ -68,18 +66,15 @@ namespace CA.Ticketing.Business.Services.Invoices
                .Include(x => x.InvoiceLateFees)
                .AsQueryable();
 
-            if (!String.IsNullOrEmpty(searchString))
+            if (!string.IsNullOrEmpty(searchString))
             {
                 invoices = invoices.Where(invoice => invoice.Customer.Name.Contains(searchString));
             }
 
-            if (!String.IsNullOrEmpty(sorting))
+            if (!string.IsNullOrEmpty(sorting))
             {
                 invoices = invoices.OrderBy(sorting + " " + order);
             }
-
-            var countList = await invoices
-                .ToListAsync();
 
             var invoicesList = await invoices
                 .Skip(index * size)
@@ -87,13 +82,13 @@ namespace CA.Ticketing.Business.Services.Invoices
                 .AsSplitQuery()
                 .ToListAsync();
 
-            var lista = invoicesList.Select(x => _mapper.Map<InvoiceDto>(x));
-            var returnObj = new DataCount<InvoiceDto>
+            var list = invoicesList.Select(x => _mapper.Map<InvoiceDto>(x));
+            var result = new ListResult<InvoiceDto>
             {
-                TotalCount = countList.Count,
-                ItemsList = lista.ToList()
+                TotalCount = await _context.Invoices.CountAsync(),
+                ItemsList = list.ToList()
             };
-            return returnObj;
+            return result;
         }
 
         public async Task<IEnumerable<InvoiceDto>> GetByDueDate()
@@ -107,14 +102,9 @@ namespace CA.Ticketing.Business.Services.Invoices
                 .OrderBy(invoice => EF.Functions.DateDiffDay(invoice.DueDate, DateTime.Now))
                 .AsSplitQuery()
                 .ToListAsync();
-
-            if (invoicesList == null)
-            {
-                throw new KeyNotFoundException(nameof(Invoice));
-            }
             
-            var returnObj = invoicesList.Select(x => _mapper.Map<InvoiceDto>(x));
-            return returnObj;
+            var result = invoicesList.Select(x => _mapper.Map<InvoiceDto>(x));
+            return result;
         }
 
         public async Task<InvoiceDto> GetById(string id)
@@ -125,11 +115,6 @@ namespace CA.Ticketing.Business.Services.Invoices
                 .Include(x => x.InvoiceLateFees)
                 .AsSplitQuery()
                 .SingleOrDefaultAsync(x => x.Id == id);
-
-            if (invoice == null)
-            {
-                throw new KeyNotFoundException(nameof(Invoice));
-            }
 
             return _mapper.Map<InvoiceDto>(invoice)!;
         }
