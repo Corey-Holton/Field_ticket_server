@@ -15,9 +15,14 @@ using CA.Ticketing.Common.Setup;
 using CA.Ticketing.Persistance.Context;
 using CA.Ticketing.Persistance.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
 using Microsoft.Extensions.Options;
 using System.Data;
+using System.Drawing;
+
 using System.Linq.Expressions;
+using CA.Ticketing.Common.Models;
+using System.Linq.Dynamic.Core;
 
 namespace CA.Ticketing.Business.Services.Tickets
 {
@@ -62,8 +67,8 @@ namespace CA.Ticketing.Business.Services.Tickets
             _messagesComposer = messagesComposer;
             _initialData = initialData.Value;
         }
-        
-        public async Task<IEnumerable<TicketDto>> GetAll()
+
+        public async Task<ListResult<TicketDto>> GetAll(int index, int size, string sorting, string order, string searchString)
         {
             Expression<Func<FieldTicket, bool>> ticketsFilter = x => true;
 
@@ -80,13 +85,43 @@ namespace CA.Ticketing.Business.Services.Tickets
                 ticketsFilter = x => x.CustomerId == customerId;
             }
 
-            var tickets = await GetTicketIncludes()
-                .Where(ticketsFilter)
-                .OrderByDescending(x => x.CreatedDate)
+ 
+            if (sorting == "isInvoiced")
+            {
+                sorting = "InvoiceId";
+            }
+
+            if (sorting == "hasCustomerSignature")
+            {
+                sorting = "CustomerSignedOn";
+            }
+
+            var tickets = GetTicketIncludes()
+                .Where(ticketsFilter);
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                tickets = tickets.Where(ticket => ticket.Customer!.Name.Contains(searchString));
+            }
+
+            if (!String.IsNullOrEmpty(sorting))
+            {
+                tickets = tickets.OrderBy(sorting + " " + order);
+            }
+
+            var ticketList = await tickets
+                .Skip(index * size)
+                .Take(size)
                 .AsSplitQuery()
                 .ToListAsync();
 
-            return tickets.Select(x => _mapper.Map<TicketDto>(x));
+            var lista = ticketList.Select(x => _mapper.Map<TicketDto>(x));
+            var result = new ListResult<TicketDto>
+            {
+                TotalCount = await GetTicketIncludes().CountAsync(),
+                ItemsList = lista.ToList()
+            };
+            return result;
         }
 
         public async Task<IEnumerable<TicketDto>> GetByDates(DateTime startDate, DateTime endDate)

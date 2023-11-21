@@ -1,9 +1,12 @@
 ﻿using CA.Ticketing.Api.Extensions;
 using CA.Ticketing.Business.Services.Invoices;
 using CA.Ticketing.Business.Services.Invoices.Dto;
+using CA.Ticketing.Business.Services.Tickets.Dto;
 using CA.Ticketing.Common.Constants;
+using CA.Ticketing.Common.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using static CA.Ticketing.Common.Constants.ApiRoutes;
 
 namespace CA.Ticketing.Api.Controllers
 {
@@ -23,12 +26,12 @@ namespace CA.Ticketing.Api.Controllers
         /// <returns>List of invoices</returns>
         [Route(ApiRoutes.Invoices.List)]
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<InvoiceDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ListResult<InvoiceDto>), StatusCodes.Status200OK)]
         [UtcTime]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(int index, int size, string sorting, string order, string searchString)
         {
-            var invoices = await _invoiceService.GetAll();
-            return Ok(invoices);
+            var returnObj = await _invoiceService.GetAll(index, size, sorting, order, searchString);
+            return Ok(returnObj); ;
         }
 
         /// <summary>
@@ -45,6 +48,19 @@ namespace CA.Ticketing.Api.Controllers
             return Ok(invoice);
         }
 
+        /// <summary>
+        /// Get Invoice by DueDate
+        /// </summary>
+        /// <returns>Invoice details</returns>
+        [Route(ApiRoutes.Invoices.DueList)]
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<InvoiceDto>), StatusCodes.Status200OK)]
+        [UtcTime]
+        public async Task<IActionResult> GetInvoiceByInfo()
+        {
+            var invoices = await _invoiceService.GetByDueDate();
+            return Ok(invoices);
+        }
         /// <summary>
         /// Create an invoice
         /// </summary>

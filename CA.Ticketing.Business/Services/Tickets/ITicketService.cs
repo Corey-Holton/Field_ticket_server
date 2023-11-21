@@ -1,10 +1,11 @@
 ﻿using CA.Ticketing.Business.Services.Tickets.Dto;
+using CA.Ticketing.Common.Models;
 
 namespace CA.Ticketing.Business.Services.Tickets
 {
     public interface ITicketService
     {
-        Task<IEnumerable<TicketDto>> GetAll();
+        Task<ListResult<TicketDto>> GetAll(int index, int size, string sorting, string order, string searchString);
 
         Task<IEnumerable<TicketDto>> GetByDates(DateTime startDate, DateTime endDate);
 

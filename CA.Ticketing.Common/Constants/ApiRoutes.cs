@@ -179,6 +179,8 @@
 
             public const string List = $"{_root}/list";
 
+            public const string DueList = $"{_root}/due-invoice";
+
             public const string GetInvoice = $"{_root}/{{invoiceId}}";
 
             public const string Create = $"{_root}/create";

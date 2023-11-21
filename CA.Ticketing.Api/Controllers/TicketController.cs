@@ -2,6 +2,7 @@
 using CA.Ticketing.Business.Services.Tickets;
 using CA.Ticketing.Business.Services.Tickets.Dto;
 using CA.Ticketing.Common.Constants;
+using CA.Ticketing.Common.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.IO.Compression;
@@ -24,12 +25,12 @@ namespace CA.Ticketing.Api.Controllers
         /// <returns>List of tickets</returns>
         [Route(ApiRoutes.Tickets.List)]
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<TicketDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ListResult<TicketDto>), StatusCodes.Status200OK)]
         [Authorize]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(int index, int size, string sorting, string order, string searchString )
         {
-            var tickets = await _ticketService.GetAll();
-            return Ok(tickets);
+            var returnObj = await _ticketService.GetAll(index, size, sorting, order, searchString);
+            return Ok(returnObj);
         }
 
         /// <summary>
