@@ -85,7 +85,9 @@ namespace CA.Ticketing.Business.Services.Tickets
                 ticketsFilter = x => x.CustomerId == customerId;
             }
 
- 
+            var totalCount = await _context.FieldTickets.Where(ticketsFilter).CountAsync();
+
+
             if (sorting == "isInvoiced")
             {
                 sorting = "InvoiceId";
@@ -94,6 +96,16 @@ namespace CA.Ticketing.Business.Services.Tickets
             if (sorting == "hasCustomerSignature")
             {
                 sorting = "CustomerSignedOn";
+            }
+
+            if (sorting == "customerName")
+            {
+                sorting = "Customer.Name";
+            }
+
+            if (sorting == "locationName")
+            {
+                sorting = "Location.Lease";
             }
 
             var tickets = GetTicketIncludes()
@@ -118,7 +130,7 @@ namespace CA.Ticketing.Business.Services.Tickets
             var lista = ticketList.Select(x => _mapper.Map<TicketDto>(x));
             var result = new ListResult<TicketDto>
             {
-                TotalCount = await GetTicketIncludes().CountAsync(),
+                TotalCount = totalCount,
                 ItemsList = lista.ToList()
             };
             return result;
@@ -483,7 +495,7 @@ namespace CA.Ticketing.Business.Services.Tickets
         {
             var fieldTicket = await GetTicket(ticketId);
 
-            if (fieldTicket.CustomerSignedOn.HasValue)
+            if (fieldTicket.HasCustomerSignature)
             {
                 throw new Exception("This document is already signed");
             }
@@ -512,7 +524,7 @@ namespace CA.Ticketing.Business.Services.Tickets
 
             if (!fieldTicket.SignedOn.HasValue)
             {
-                throw new Exception("Ticket is not yet signed");
+                throw new Exception("Ticket is not signed by the employee");
             }
 
             fieldTicket.CustomerSignedOn = DateTime.UtcNow;
@@ -540,7 +552,7 @@ namespace CA.Ticketing.Business.Services.Tickets
         {
             var fieldTicket = await GetTicket(ticketId);
 
-            if (fieldTicket.CustomerSignedOn.HasValue)
+            if (fieldTicket.HasCustomerSignature)
             {
                 return _fileManagerService.GetFileBytes(FilePaths.Tickets, fieldTicket.FileName);
             }
@@ -591,7 +603,7 @@ namespace CA.Ticketing.Business.Services.Tickets
                 throw new Exception("There is no email defined for this customer");
             }
 
-            if (fieldTicket.CustomerSignedOn.HasValue)
+            if (fieldTicket.HasCustomerSignature)
             {
                 throw new Exception("Can't send a ticket that has already been signed");
             }

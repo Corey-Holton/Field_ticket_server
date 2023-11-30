@@ -2,6 +2,7 @@
 using CA.Ticketing.Common.Enums;
 using CA.Ticketing.Common.Extensions;
 using CA.Ticketing.Persistance.Models;
+using System.Globalization;
 
 namespace CA.Ticketing.Business.Services.Pdf.Dto
 {
@@ -42,7 +43,7 @@ namespace CA.Ticketing.Business.Services.Pdf.Dto
 
         public string County => _fieldTicket.Location?.County ?? string.Empty;
 
-        public string ExecutionDate => _fieldTicket.ExecutionDate.ToString("MM-dd-yyyy");
+        public string ExecutionDate => _fieldTicket.ExecutionDate.ToString("dddd, MMMM dd yyyy", CultureInfo.GetCultureInfo("en-US"));
 
         public string StartTime => _fieldTicket.StartTime.HasValue ? _fieldTicket.StartTime.Value.ToString("hh:mm tt") : string.Empty;
 
@@ -60,13 +61,13 @@ namespace CA.Ticketing.Business.Services.Pdf.Dto
 
         public string CustomerSignature => _customerSignature ?? string.Empty;
 
-        public string CustomerSignedOn => _fieldTicket.CustomerSignedOn?.ToString("yyyy-MM-dd") ?? string.Empty;
+        public string CustomerSignedOn => _fieldTicket.CustomerSignedOn?.ToString("MM-dd-yyyy") ?? string.Empty;
 
         public string EmployeePrintedName => _fieldTicket.EmployeePrintedName;
 
         public string EmployeeSignature => _fieldTicket.EmployeeSignature;
 
-        public string EmployeeSignedOn => _fieldTicket.SignedOn?.ToString("yyyy-MM-dd") ?? string.Empty;
+        public string EmployeeSignedOn => _fieldTicket.SignedOn?.ToString("MM-dd-yyyy") ?? string.Empty;
 
         public string EmployeeNumber => _employeeNumber ?? string.Empty;
 

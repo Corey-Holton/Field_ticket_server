@@ -181,7 +181,7 @@ namespace CA.Ticketing.Business.Services.Invoices
                 throw new Exception("Customer email is not defined");
             }
 
-            if (!invoice.Tickets.Any(x => x.CustomerSignedOn.HasValue) || invoice.Tickets.Any(x => string.IsNullOrEmpty(x.FileName)))
+            if (invoice.Tickets.Any(x => !x.HasCustomerSignature) || invoice.Tickets.Any(x => string.IsNullOrEmpty(x.FileName)))
             {
                 throw new Exception("Some tickets are missing customer signature. Please verify.");
             }

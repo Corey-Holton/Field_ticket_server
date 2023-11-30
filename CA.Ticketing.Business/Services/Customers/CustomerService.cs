@@ -34,6 +34,7 @@ namespace CA.Ticketing.Business.Services.Customers
         public async Task<IEnumerable<CustomerDto>> GetAll()
         {
             var customers = await _context.Customers
+                .OrderBy(c => c.Name)
                 .ToListAsync();
 
             if (_userContext.User!.Role == Common.Enums.ApplicationRole.Customer)

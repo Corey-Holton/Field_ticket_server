@@ -12,7 +12,11 @@ namespace CA.Ticketing.Business.Mappers
             CreateMap<Customer, CustomerDto>();
 
             CreateMap<Customer, CustomerDetailsDto>()
-                .IncludeBase<Customer, CustomerDto>();
+                .IncludeBase<Customer, CustomerDto>()
+                .AfterMap((customer, customerDto) => 
+                {
+                    customerDto.Locations = customerDto.Locations.OrderBy(x => x.DisplayName).ToList();
+                });
 
             CreateMap<CustomerDetailsDto, Customer>()
                 .ForMember(x => x.Id, dest => dest.Ignore())
