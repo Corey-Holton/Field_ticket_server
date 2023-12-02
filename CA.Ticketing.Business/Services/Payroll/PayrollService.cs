@@ -43,7 +43,6 @@ namespace CA.Ticketing.Business.Services.Payroll
                             double hoursTotal = 0;
                             if (isRigWork)
                             {
-                                // For Rig work, adding Rig hours + Travel hours for all employees except tool pushers
                                 // Tool pushers are paid per job, not hours
                                 hoursTotal = !isToolPusher ? payrollEntry.RigHours : 0;
                             }
@@ -52,6 +51,11 @@ namespace CA.Ticketing.Business.Services.Payroll
                                 hoursTotal = ticket.IsServiceType(ServiceType.Roustabout)
                                     ? payrollEntry.RoustaboutHours
                                     : payrollEntry.YardHours;
+                            }
+
+                            if (!isToolPusher)
+                            {
+                                hoursTotal += payrollEntry.TravelHours;
                             }
 
                             if (hoursTotal > ticket.CompanyHours && !isToolPusher)
@@ -73,6 +77,9 @@ namespace CA.Ticketing.Business.Services.Payroll
                             return hoursToReduce - ticket.CompanyHours;
                         };
 
+                        var toolPusherSpec = ticket.TicketSpecifications
+                                    .FirstOrDefault(x => x.Charge == ChargeNames.ToolPusher);
+
                         return new
                         {
                             GroupingIdentifier = payrollEntry.EmployeeId?.ToString() ?? payrollEntry.Name.ToLower(),
@@ -89,8 +96,7 @@ namespace CA.Ticketing.Business.Services.Payroll
                             ticket.Mileage,
                             // Get tool pusher rate for any Rig work if the worker is Tool Pusher
                             ToolPusherRate = !isRigWork || !isToolPusher ? 0 :
-                                ticket.TicketSpecifications
-                                    .FirstOrDefault(x => x.Charge == ChargeNames.ToolPusher)?.Rate ?? 0
+                                (toolPusherSpec?.Rate * toolPusherSpec?.Quantity) ?? 0
                         };
                     }))
                 .GroupBy(x => x.GroupingIdentifier)
