@@ -47,6 +47,20 @@ namespace CA.Ticketing.Api.Controllers
         }
 
         /// <summary>
+        /// Get a list of Equipment assigned to employee
+        /// </summary>
+        /// <returns>List of Equipment assigned to current user</returns>
+        [Route(ApiRoutes.Equipment.ListAssigned)]
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<EquipmentDto>), StatusCodes.Status200OK)]
+        [Authorize(Policy = Policies.CompanyUsers)]
+        public async Task<IActionResult> GetByEmployeeAssigned()
+        {
+            var equipment = await _equipmentService.GetByEmployeeAssigned();
+            return Ok(equipment);
+        }
+
+        /// <summary>
         /// Get Equipment by id
         /// </summary>
         /// <param name="equipmentId">Equipment Id</param>
