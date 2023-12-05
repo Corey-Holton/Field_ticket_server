@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CA.Ticketing.Business.Services.Base;
 using CA.Ticketing.Business.Services.Equipments.Dto;
 using CA.Ticketing.Persistance.Models;
 
@@ -13,6 +14,8 @@ namespace CA.Ticketing.Business.Mappers
 
             CreateMap<Equipment, EquipmentDetailsDto>()
                 .IncludeBase<Equipment, EquipmentDto>();
+
+            CreateMap<Equipment, EntityDtoBase>();
 
             CreateMap<EquipmentDetailsDto, Equipment>()
                 .ForMember(x => x.Id, dest => dest.Ignore());

@@ -94,6 +94,8 @@
 
             public const string ListCategory = $"{_root}/list/{{equipmentCategory}}";
 
+            public const string ListAssigned = $"{_root}/list-assigned";
+
             public const string Get = $"{_root}/{{equipmentId}}";
 
             public const string Create = $"{_root}/create";
