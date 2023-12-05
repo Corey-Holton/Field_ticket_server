@@ -1,4 +1,5 @@
-﻿using CA.Ticketing.Business.Services.Equipments.Dto;
+﻿using CA.Ticketing.Business.Services.Base;
+using CA.Ticketing.Business.Services.Equipments.Dto;
 
 namespace CA.Ticketing.Business.Services.Equipments
 {
@@ -8,7 +9,7 @@ namespace CA.Ticketing.Business.Services.Equipments
 
         Task<IEnumerable<EquipmentDto>> GetAllByCategory(int equipmentCategory);
 
-        Task<EquipmentDto?> GetByEmployeeAssigned();
+        Task<EntityDtoBase?> GetByEmployeeAssigned();
         Task<EquipmentDetailsDto> GetById(string equipmentId);
 
         Task<string> Create(EquipmentDetailsDto entity);

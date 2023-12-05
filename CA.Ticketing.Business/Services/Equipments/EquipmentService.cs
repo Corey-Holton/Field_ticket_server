@@ -47,7 +47,7 @@ namespace CA.Ticketing.Business.Services.Equipments
                 .ToListAsync()).Select(x => _mapper.Map<EquipmentDto>(x));
         }
 
-        public async Task<EquipmentDto?> GetByEmployeeAssigned()
+        public async Task<EntityDtoBase?> GetByEmployeeAssigned()
         {
             var userId = _userContext.User!.Id;
 
@@ -60,7 +60,7 @@ namespace CA.Ticketing.Business.Services.Equipments
 
             var equipment = await _context.Equipment.FirstOrDefaultAsync(x => x.Id == employee!.AssignedRigId);
 
-            return _mapper.Map<EquipmentDetailsDto>(equipment);
+            return _mapper.Map<EntityDtoBase>(equipment);
         }
 
         public async Task<EquipmentDetailsDto> GetById(string? id)

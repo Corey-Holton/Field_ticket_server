@@ -1,4 +1,5 @@
 ﻿using CA.Ticketing.Api.Extensions;
+using CA.Ticketing.Business.Services.Base;
 using CA.Ticketing.Business.Services.Equipments;
 using CA.Ticketing.Business.Services.Equipments.Dto;
 using CA.Ticketing.Common.Constants;
@@ -47,17 +48,17 @@ namespace CA.Ticketing.Api.Controllers
         }
 
         /// <summary>
-        /// Get a list of Equipment assigned to employee
+        /// Get the first Equipment Id assigned to employee
         /// </summary>
-        /// <returns>List of Equipment assigned to current user</returns>
+        /// <returns>Equipment Id assigned to current user</returns>
         [Route(ApiRoutes.Equipment.ListAssigned)]
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<EquipmentDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<EntityDtoBase>), StatusCodes.Status200OK)]
         [Authorize(Policy = Policies.CompanyUsers)]
         public async Task<IActionResult> GetByEmployeeAssigned()
         {
-            var equipment = await _equipmentService.GetByEmployeeAssigned();
-            return Ok(equipment);
+            var equipmentId = await _equipmentService.GetByEmployeeAssigned();
+            return Ok(equipmentId);
         }
 
         /// <summary>
