@@ -41,6 +41,8 @@ namespace CA.Ticketing.Persistance.Context
 
         public DbSet<SyncData> SyncData { get; set; }
 
+        public DbSet<ServerSyncHistory> ServerSyncHistory { get; set; }
+
         public DbSet<BackgroundJob> BackgroundJobs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)

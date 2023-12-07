@@ -31,5 +31,7 @@
         public const string SyncData = nameof(SyncData);
 
         public const string BackgroundJobs = nameof(BackgroundJobs);
+
+        public const string ServerSyncHistory = nameof(ServerSyncHistory);
     }
 }
