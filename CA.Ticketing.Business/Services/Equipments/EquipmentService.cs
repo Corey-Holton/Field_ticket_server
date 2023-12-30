@@ -60,6 +60,11 @@ namespace CA.Ticketing.Business.Services.Equipments
 
             var equipment = await _context.Equipment.FirstOrDefaultAsync(x => x.Id == employee!.AssignedRigId);
 
+            if (equipment == null)
+            {
+                return null;
+            }
+
             return _mapper.Map<EntityDtoBase>(equipment);
         }
 

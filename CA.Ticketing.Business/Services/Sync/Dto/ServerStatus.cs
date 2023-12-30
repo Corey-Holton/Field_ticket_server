@@ -22,7 +22,7 @@ namespace CA.Ticketing.Business.Services.Sync.Dto
                     return true;
                 }
 
-                return (DateTime.UtcNow - LastSyncDate.Value).TotalDays > 7;
+                return (DateTime.UtcNow - LastSyncDate.Value).TotalDays > 30;
             }
             set
             {
