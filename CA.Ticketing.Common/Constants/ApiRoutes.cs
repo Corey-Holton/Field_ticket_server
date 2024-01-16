@@ -165,6 +165,18 @@
 
             public const string SendToCustomer = $"{_root}/send-to-customer";
         }
+        public class EmployeeNotes
+        {
+            public const string _root = $"{ApiRoutes._root}/notes";
+
+            public const string Get = $"{_root}/{{employeeId}}";
+
+            public const string Create = $"{_root}/create";
+
+            public const string Update = $"{_root}/update-details";
+
+            public const string Delete = $"{_root}/delete";
+        }
 
         public class Payrolls
         {
