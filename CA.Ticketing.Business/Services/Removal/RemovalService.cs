@@ -5,6 +5,7 @@ using CA.Ticketing.Persistance.Context;
 using CA.Ticketing.Persistance.Models;
 using CA.Ticketing.Persistance.Models.Abstracts;
 using Microsoft.EntityFrameworkCore;
+using static CA.Ticketing.Common.Constants.ApiRoutes;
 
 namespace CA.Ticketing.Business.Services.Removal
 {
@@ -55,6 +56,11 @@ namespace CA.Ticketing.Business.Services.Removal
             if (entity is FieldTicket ticket)
             {
                 RemoveTicket(ticket);
+                return;
+            }
+            if(entity is EmployeeNote note)
+            {
+                RemoveNote(note);
                 return;
             }
         }
@@ -169,6 +175,11 @@ namespace CA.Ticketing.Business.Services.Removal
             _fileManagerService.DeleteFile(FilePaths.Tickets, ticket.FileName);
 
             _context.Entry(ticket).State = EntityState.Deleted;
+        }
+
+        private void RemoveNote(EmployeeNote note)
+        {
+            _context.Entry(note).State = EntityState.Deleted;
         }
     }
 }

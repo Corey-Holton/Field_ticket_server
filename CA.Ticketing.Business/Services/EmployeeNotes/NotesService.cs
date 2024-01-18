@@ -1,42 +1,91 @@
 ﻿using AutoMapper;
 using CA.Ticketing.Business.Services.Base;
+using CA.Ticketing.Business.Services.Charges.Dto;
 using CA.Ticketing.Business.Services.EmployeeNotes.Dto;
-using CA.Ticketing.Common.Enums;
+using CA.Ticketing.Business.Services.Removal;
 using CA.Ticketing.Persistance.Context;
+using CA.Ticketing.Persistance.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace CA.Ticketing.Business.Services.EmployeeNotes
 {
     public class NotesService : EntityServiceBase, INotesService
     {
-        public NotesService(CATicketingContext context, IMapper mapper) : base(context, mapper)
+        private readonly IRemovalService _removalService;
+
+ 
+        public NotesService(
+            CATicketingContext context, 
+            IRemovalService removalService, 
+            IMapper mapper) : base(context, mapper)
         {
+            _removalService = removalService;
+      
         }
 
-        public Task<string> Create(EmployeeNoteDataDto entity)
+        public async Task<string> Create(EmployeeNoteDto entity)
         {
-            throw new NotImplementedException();
+            var employee = await _context.Employees
+                .SingleAsync(x => x.Id == entity.EmployeeId);
+
+            var note = new EmployeeNote()
+            {
+                EmployeeId = employee.Id,
+                TicketId = entity.TicketId,
+                NoteContent = entity.NoteContent,
+                CreatedBy = employee.DisplayName,
+                UpdatedBy = employee.DisplayName
+            };
+
+            _context.EmployeeNotes.Add(note);
+            await _context.SaveChangesAsync();
+            return note.Id;
         }
 
-        public Task Delete(string id)
+        public async Task Delete(string id)
         {
-            throw new NotImplementedException();
+            var note = await _context.EmployeeNotes.SingleAsync(x => x.Id == id);
+
+            _removalService.Remove(note);
+
+            await _context.SaveChangesAsync();
         }
 
-        public async Task<EmployeeNoteDataDto> GetById(string EmployeeId)
+        public async Task<IEnumerable<EmployeeNoteDto>> GetAll()
         {
-            var note =  await _context.EmployeeNotes.FirstOrDefaultAsync(x => x.EmployeeId == EmployeeId);
-            return _mapper.Map<EmployeeNoteDataDto>(note); 
+            var notes = await _context.EmployeeNotes
+                .ToListAsync();
+            return notes.Select(x => _mapper.Map<EmployeeNoteDto>(x));
         }
 
-        public Task Update(EmployeeNoteDataDto entity)
+        public async Task<EmployeeNoteDto> GetByEmployeeId(string id)
         {
-            throw new NotImplementedException();
+            var note = await _context.EmployeeNotes
+                .SingleOrDefaultAsync(x => x.EmployeeId == id);
+
+            return _mapper.Map<EmployeeNoteDto>(note);
+
+        }
+
+        public async Task Update(EmployeeNoteDto entity)
+        {
+            var note = await GetNote(entity.Id);
+            _mapper.Map(entity, note);
+            await _context.SaveChangesAsync();
+        }
+
+        private async Task<EmployeeNote> GetNote(string? Id)
+        {
+            var note = await _context.EmployeeNotes
+                .SingleOrDefaultAsync(x => x.Id == Id);
+
+            if (note == null)
+            {
+                throw new KeyNotFoundException(nameof(EmployeeNote));
+            }
+
+            return note!;
         }
     }
 }

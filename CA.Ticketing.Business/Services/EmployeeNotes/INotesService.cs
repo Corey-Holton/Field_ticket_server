@@ -9,9 +9,10 @@ namespace CA.Ticketing.Business.Services.EmployeeNotes
 {
     public interface INotesService
     {
-        Task<EmployeeNoteDataDto> GetById(string id);
-        Task<string> Create(EmployeeNoteDataDto entity);
-        Task Update(EmployeeNoteDataDto entity);
+        Task<IEnumerable<EmployeeNoteDto>> GetAll();
+        Task<EmployeeNoteDto> GetByEmployeeId(string id);
+        Task<string> Create(EmployeeNoteDto entity);
+        Task Update(EmployeeNoteDto entity);
         Task Delete(string id);
     }
 }

@@ -16,19 +16,20 @@ namespace CA.Ticketing.Api.Controllers
         {
             _notesService = notesService;
         }
+
         [Route(ApiRoutes.EmployeeNotes.Get)]
         [HttpGet]
-        [ProducesResponseType(typeof(EmployeeNoteDataDto), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetById(string customerId)
+        [ProducesResponseType(typeof(EmployeeNoteDto), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetById(string employeeId)
         {
-            var note = await _notesService.GetById(customerId);
+            var note = await _notesService.GetByEmployeeId(employeeId);
             return Ok(note);
         }
 
         [Route(ApiRoutes.EmployeeNotes.Create)]
         [HttpPost]
         [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
-        public async Task<IActionResult> Create(EmployeeNoteDataDto note)
+        public async Task<IActionResult> Create(EmployeeNoteDto note)
         {
             var noteId = await _notesService.Create(note);
             return Ok(noteId);
@@ -38,7 +39,7 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.EmployeeNotes.Update)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> Update(EmployeeNoteDataDto note)
+        public async Task<IActionResult> Update(EmployeeNoteDto note)
         {
             await _notesService.Update(note);
             return Ok();
