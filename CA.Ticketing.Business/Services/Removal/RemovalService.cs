@@ -5,7 +5,6 @@ using CA.Ticketing.Persistance.Context;
 using CA.Ticketing.Persistance.Models;
 using CA.Ticketing.Persistance.Models.Abstracts;
 using Microsoft.EntityFrameworkCore;
-using static CA.Ticketing.Common.Constants.ApiRoutes;
 
 namespace CA.Ticketing.Business.Services.Removal
 {

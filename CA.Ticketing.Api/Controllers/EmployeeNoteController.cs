@@ -17,13 +17,22 @@ namespace CA.Ticketing.Api.Controllers
             _notesService = notesService;
         }
 
-        [Route(ApiRoutes.EmployeeNotes.Get)]
+        [Route(ApiRoutes.EmployeeNotes.GetNoteByEmployeeInTicket)]
         [HttpGet]
         [ProducesResponseType(typeof(EmployeeNoteDto), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetById(string employeeId)
+        public async Task<IActionResult> GetByEmployeeIdInTicket(string ticketid, string employeeId)
         {
-            var note = await _notesService.GetByEmployeeId(employeeId);
+            var note = await _notesService.GetByEmployeeIdInTicket(ticketid, employeeId);
             return Ok(note);
+        }
+
+        [Route(ApiRoutes.EmployeeNotes.GetAllByEmployeeId)]
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<EmployeeNoteDto>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAllByEmployeeId(string employeeId)
+        {
+            var notes = await _notesService.GetAllByEmployeeId(employeeId);
+            return Ok(notes);
         }
 
         [Route(ApiRoutes.EmployeeNotes.Create)]
@@ -49,9 +58,9 @@ namespace CA.Ticketing.Api.Controllers
         [Route(ApiRoutes.EmployeeNotes.Delete)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> Delete(string noteId)
+        public async Task<IActionResult> Delete(string ticketId, string employeeId)
         {
-            await _notesService.Delete(noteId);
+            await _notesService.Delete(ticketId, employeeId);
             return Ok();
         }
     }

@@ -1,4 +1,5 @@
 ﻿using CA.Ticketing.Business.Services.EmployeeNotes.Dto;
+using CA.Ticketing.Business.Services.Tickets.Dto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,9 +11,10 @@ namespace CA.Ticketing.Business.Services.EmployeeNotes
     public interface INotesService
     {
         Task<IEnumerable<EmployeeNoteDto>> GetAll();
-        Task<EmployeeNoteDto> GetByEmployeeId(string id);
+        Task<EmployeeNoteDto> GetByEmployeeIdInTicket(string ticketId, string employeeId);
+        Task<IEnumerable<EmployeeNoteDto>> GetAllByEmployeeId(string id);
         Task<string> Create(EmployeeNoteDto entity);
         Task Update(EmployeeNoteDto entity);
-        Task Delete(string id);
+        Task Delete(string ticketId, string employeeId);
     }
 }
