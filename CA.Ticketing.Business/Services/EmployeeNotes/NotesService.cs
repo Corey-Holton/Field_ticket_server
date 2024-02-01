@@ -32,13 +32,21 @@ namespace CA.Ticketing.Business.Services.EmployeeNotes
             var employee = await _context.Employees
                 .SingleAsync(x => x.Id == entity.EmployeeId);
 
+            var noteExist = await _context.EmployeeNotes
+              .SingleOrDefaultAsync(x => x.EmployeeId == entity.EmployeeId && x.TicketId == entity.TicketId);
+
+            if(noteExist != null)
+            {
+                throw new Exception("Note Already Exist");
+            }
+
             var note = new EmployeeNote()
             {
                 EmployeeId = employee.Id,
                 TicketId = entity.TicketId,
                 NoteContent = entity.NoteContent,
-                CreatedBy = employee.DisplayName,
-                UpdatedBy = employee.DisplayName
+                CreatedBy = employee.Id,
+                UpdatedBy = employee.Id
             };
 
             _context.EmployeeNotes.Add(note);
@@ -80,14 +88,7 @@ namespace CA.Ticketing.Business.Services.EmployeeNotes
 
         public async Task Update(EmployeeNoteDto entity)
         {
-            var note = await GetNote(entity.TicketId,entity.EmployeeId);
-
-            if(note  == null)
-            {
-                await Create(entity);
-                return;
-            }
-
+            var note = await GetNote(entity.TicketId, entity.EmployeeId);
             _mapper.Map(entity, note);
             await _context.SaveChangesAsync();
         }
@@ -96,8 +97,12 @@ namespace CA.Ticketing.Business.Services.EmployeeNotes
         private async Task<EmployeeNote> GetNote(string? ticketId, string? employeeId)
         {
             var note = await _context.EmployeeNotes
-                .Where(x => x.TicketId == ticketId)
-                .SingleOrDefaultAsync(x => x.EmployeeId == employeeId);
+                .SingleOrDefaultAsync(x => x.EmployeeId == employeeId && x.TicketId == ticketId);
+
+            if (note == null)
+            {
+                throw new Exception("Note Does Not Exist");
+            }
 
             return note!;
         }
