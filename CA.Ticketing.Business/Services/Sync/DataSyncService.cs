@@ -212,6 +212,23 @@ namespace CA.Ticketing.Business.Services.Sync
 
             _serverStatus.LastSyncDate = DateTime.UtcNow;
 
+            var syncHistory = await context.ServerSyncHistory.FirstOrDefaultAsync(x =>  x.ServerName == syncData.Id);
+
+            if(syncHistory == null)
+            {
+                syncHistory = new ServerSyncHistory
+                {
+                    ServerName = syncData.Id,
+                    LastSyncDate = DateTime.UtcNow,
+                };
+
+                context.ServerSyncHistory.Add(syncHistory);
+                await context.SaveChangesAsync();
+                return;
+            }
+
+            syncHistory.LastSyncDate = DateTime.UtcNow;
+
             await context.SaveChangesAsync();
         }
 

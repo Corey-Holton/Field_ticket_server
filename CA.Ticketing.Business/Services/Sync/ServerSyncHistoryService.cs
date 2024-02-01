@@ -28,15 +28,14 @@ namespace CA.Ticketing.Business.Services.Sync
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            await SyncOldestAsync();
-
-            using PeriodicTimer timer = new(TimeSpan.FromSeconds(1));
+            
+            using PeriodicTimer timer = new(TimeSpan.FromHours(1));
 
             try
             {
                 while (await timer.WaitForNextTickAsync(stoppingToken))
                 {
-                    await SyncOldestAsync();
+                    await SyncDataCleanup();
                 }
             }
             catch (OperationCanceledException)
@@ -44,7 +43,7 @@ namespace CA.Ticketing.Business.Services.Sync
                 _logger.LogInformation("Stopped");
             }
         }
-        public async Task SyncOldestAsync()
+        public async Task SyncDataCleanup()
         {
             using var scope = _serviceProvider.CreateScope();
 
@@ -56,16 +55,18 @@ namespace CA.Ticketing.Business.Services.Sync
                 .OrderBy(x => x.LastSyncDate)
                 .FirstAsync();
 
-            var syncProcessor = services.GetRequiredService<ISyncProcessor>();
+            if(oldestModified.LastSyncDate <= DateTime.UtcNow.AddDays(-1)) {
+                
+                var syncProcessor = services.GetRequiredService<ISyncProcessor>();
 
-            foreach (var entityType in TypeExtensions.SyncEntities)
-            {
-                var methodInfo = typeof(SyncProcessor).GetMethod(nameof(SyncProcessor.DeleteMarkedDbEntities))!
-                .MakeGenericMethod(entityType);
+                foreach (var entityType in TypeExtensions.SyncEntities)
+                {
+                    var methodInfo = typeof(SyncProcessor).GetMethod(nameof(SyncProcessor.DeleteMarkedDbEntities))!
+                    .MakeGenericMethod(entityType);
 
-                await (Task)methodInfo.Invoke(syncProcessor, new object[] { oldestModified })!;
+                    await (Task)methodInfo.Invoke(syncProcessor, new object[] { oldestModified.LastSyncDate })!;
+                }
             }
-
         }
 
     }
