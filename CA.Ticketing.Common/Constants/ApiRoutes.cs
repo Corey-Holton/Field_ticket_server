@@ -177,6 +177,8 @@
 
             public const string Update = $"{_root}/update-details";
 
+            public const string UpdateById = $"{_root}/update-id";
+
             public const string Delete = $"{_root}/delete";
 
         }

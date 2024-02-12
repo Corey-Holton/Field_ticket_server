@@ -1,5 +1,6 @@
 ﻿using CA.Ticketing.Business.Services.EmployeeNotes.Dto;
 using CA.Ticketing.Business.Services.Tickets.Dto;
+using CA.Ticketing.Persistance.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,9 +13,10 @@ namespace CA.Ticketing.Business.Services.EmployeeNotes
     {
         Task<IEnumerable<EmployeeNoteDto>> GetAll();
         Task<EmployeeNoteDto> GetByEmployeeIdInTicket(string ticketId, string employeeId);
-        Task<IEnumerable<EmployeeNoteDto>> GetAllByEmployeeId(string id);
+        Task<IEnumerable<EmployeeNoteDto>> GetAllByEmployeeId(string employeeId);
         Task<string> Create(EmployeeNoteDto entity);
         Task Update(EmployeeNoteDto entity);
-        Task Delete(string ticketId, string employeeId);
+        Task Delete(string noteId);
+        Task UpdateById(EmployeeNoteDto entity);
     }
 }

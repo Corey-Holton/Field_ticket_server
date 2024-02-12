@@ -9,6 +9,7 @@ namespace CA.Ticketing.Business.Services.EmployeeNotes.Dto
 {
     public class EmployeeNoteDto : EntityDtoBase
     {
+        public string? NoteId { get; set; }
         public string EmployeeId {  get; set; }
         public string TicketId { get; set; }
         public string NoteContent { get; set; }

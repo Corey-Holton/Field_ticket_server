@@ -8,13 +8,13 @@ namespace CA.Ticketing.Business.Mappers
     {
         public NoteMapper()
         {
-            CreateMap<EmployeeNote, EmployeeNoteDto>();
+            CreateMap<EmployeeNote, EmployeeNoteDto>()
+               .ForMember(x => x.TicketId, dest => dest.MapFrom(src => src.FieldTicket.TicketId));
 
             CreateMap<EmployeeNoteDto, EmployeeNote>()
-                .ForMember(x => x.Id, dest => dest.Ignore());
-
-            CreateMap<EmployeeNote, EmployeeNote>()
-                .ForMember(x => x.Id, dest => dest.Ignore());
+             .ForMember(x => x.Id, dest => dest.Ignore());
+            
+            CreateMap<EmployeeNote, EmployeeNote>();
         }
     }
 }

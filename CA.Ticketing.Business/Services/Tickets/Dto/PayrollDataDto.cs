@@ -1,4 +1,5 @@
 ﻿using CA.Ticketing.Business.Services.Base;
+using CA.Ticketing.Business.Services.EmployeeNotes.Dto;
 using CA.Ticketing.Business.Services.Employees.Dto;
 using CA.Ticketing.Common.Enums;
 using CA.Ticketing.Common.Extensions;
@@ -30,5 +31,7 @@ namespace CA.Ticketing.Business.Services.Tickets.Dto
         public double YardHours { get; set; }
 
         public double RoustaboutHours { get; set; }
+
+        public EmployeeNoteDto? EmployeeNote { get; set; }
     }
 }

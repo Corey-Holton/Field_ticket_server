@@ -32,14 +32,17 @@ namespace CA.Ticketing.Business.Services.EmployeeNotes
             var employee = await _context.Employees
                 .SingleAsync(x => x.Id == entity.EmployeeId);
 
-            var noteExist = await _context.EmployeeNotes
+            if(entity.TicketId != null)
+            {
+                var noteExist = await _context.EmployeeNotes
               .SingleOrDefaultAsync(x => x.EmployeeId == entity.EmployeeId && x.TicketId == entity.TicketId);
 
-            if(noteExist != null)
-            {
-                throw new Exception("Note Already Exist");
+                if (noteExist != null)
+                {
+                    throw new Exception("Note Already Exist");
+                }
             }
-
+            
             var note = new EmployeeNote()
             {
                 EmployeeId = employee.Id,
@@ -54,9 +57,15 @@ namespace CA.Ticketing.Business.Services.EmployeeNotes
             return note.Id;
         }
 
-        public async Task Delete(string ticketId, string employeeId)
+        public async Task Delete(string noteId)
         {
-            var note = await GetNote(ticketId, employeeId);
+            var note = await _context.EmployeeNotes
+                .SingleOrDefaultAsync(x => x.Id == noteId);
+
+            if (note == null)
+            {
+                throw new Exception("Note Does Not Exist");
+            }
 
             _removalService.Remove(note);
 
@@ -80,6 +89,7 @@ namespace CA.Ticketing.Business.Services.EmployeeNotes
         public async Task<IEnumerable<EmployeeNoteDto>> GetAllByEmployeeId(string id)
         {
             var notes = await _context.EmployeeNotes
+                .Include(x => x.FieldTicket) 
                 .Where(x => x.EmployeeId == id)
                 .ToListAsync();
 
@@ -93,10 +103,26 @@ namespace CA.Ticketing.Business.Services.EmployeeNotes
             await _context.SaveChangesAsync();
         }
 
+        public async Task UpdateById(EmployeeNoteDto entity)
+        {
+            var note = await _context.EmployeeNotes
+                .SingleOrDefaultAsync(x => x.Id == entity.NoteId);
+
+            if (note == null)
+            {
+                throw new Exception("Note Does Not Exist");
+            }
+            entity.NoteId = null;
+            _mapper.Map(entity, note);
+            await _context.SaveChangesAsync();
+        }
+
 
         private async Task<EmployeeNote> GetNote(string? ticketId, string? employeeId)
         {
+            
             var note = await _context.EmployeeNotes
+                .Include(x => x.FieldTicket)
                 .SingleOrDefaultAsync(x => x.EmployeeId == employeeId && x.TicketId == ticketId);
 
             if (note == null)

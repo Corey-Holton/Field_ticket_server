@@ -109,6 +109,9 @@ namespace CA.Ticketing.Persistance.Models
         [JsonIgnore]
         public virtual ICollection<PayrollData> PayrollData { get; set; } = new List<PayrollData>();
 
+        [JsonIgnore]
+        public virtual ICollection<EmployeeNote> EmployeeNote { get; set; } = new List<EmployeeNote>();
+
         [NotMapped]
         public bool IsInvoiced => InvoiceId != null;
 

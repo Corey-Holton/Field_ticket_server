@@ -1,11 +1,7 @@
 ﻿using CA.Ticketing.Common.Constants;
 using CA.Ticketing.Persistance.Models.Abstracts;
-using System;
-using System.Collections.Generic;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CA.Ticketing.Persistance.Models
 {
@@ -16,8 +12,14 @@ namespace CA.Ticketing.Persistance.Models
         [ForeignKey(nameof(Employee))]
         public string EmployeeId { get; set; }
 
+        [JsonIgnore]
+        public virtual Employee? Employee { get; set; }
+
         [ForeignKey(nameof(FieldTicket))]
         public string? TicketId { get; set; }
+        
+        [JsonIgnore]
+        public virtual FieldTicket? FieldTicket { get; set; }
 
         public string NoteContent { get; set; }
 

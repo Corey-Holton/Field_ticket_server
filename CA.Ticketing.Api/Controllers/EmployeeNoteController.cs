@@ -54,13 +54,22 @@ namespace CA.Ticketing.Api.Controllers
             return Ok();
         }
 
+        [Route(ApiRoutes.EmployeeNotes.UpdateById)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> UpdateById(EmployeeNoteDto note)
+        {
+            await _notesService.UpdateById(note);
+            return Ok();
+        }
+
 
         [Route(ApiRoutes.EmployeeNotes.Delete)]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> Delete(string ticketId, string employeeId)
+        public async Task<IActionResult> Delete(string noteId)
         {
-            await _notesService.Delete(ticketId, employeeId);
+            await _notesService.Delete(noteId);
             return Ok();
         }
     }
