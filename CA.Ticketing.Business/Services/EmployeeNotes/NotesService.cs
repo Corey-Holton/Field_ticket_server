@@ -71,21 +71,6 @@ namespace CA.Ticketing.Business.Services.EmployeeNotes
 
             await _context.SaveChangesAsync();
         }
-
-        public async Task<IEnumerable<EmployeeNoteDto>> GetAll()
-        {
-            var notes = await _context.EmployeeNotes
-                .ToListAsync();
-            return notes.Select(x => _mapper.Map<EmployeeNoteDto>(x));
-        }
-
-        public async Task<EmployeeNoteDto> GetByEmployeeIdInTicket(string ticketId, string employeeId)
-        {
-            var note = await GetNote(ticketId, employeeId);
-
-            return _mapper.Map<EmployeeNoteDto>(note);
-        }
-
         public async Task<IEnumerable<EmployeeNoteDto>> GetAllByEmployeeId(string id)
         {
             var notes = await _context.EmployeeNotes
@@ -98,21 +83,14 @@ namespace CA.Ticketing.Business.Services.EmployeeNotes
 
         public async Task Update(EmployeeNoteDto entity)
         {
-            var note = await GetNote(entity.TicketId, entity.EmployeeId);
-            _mapper.Map(entity, note);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task UpdateById(EmployeeNoteDto entity)
-        {
             var note = await _context.EmployeeNotes
-                .SingleOrDefaultAsync(x => x.Id == entity.NoteId);
+               .SingleOrDefaultAsync(x => x.Id == entity.Id);
 
             if (note == null)
             {
                 throw new Exception("Note Does Not Exist");
             }
-            entity.NoteId = null;
+            entity.Id = null;
             _mapper.Map(entity, note);
             await _context.SaveChangesAsync();
         }
@@ -120,7 +98,6 @@ namespace CA.Ticketing.Business.Services.EmployeeNotes
 
         private async Task<EmployeeNote> GetNote(string? ticketId, string? employeeId)
         {
-            
             var note = await _context.EmployeeNotes
                 .Include(x => x.FieldTicket)
                 .SingleOrDefaultAsync(x => x.EmployeeId == employeeId && x.TicketId == ticketId);

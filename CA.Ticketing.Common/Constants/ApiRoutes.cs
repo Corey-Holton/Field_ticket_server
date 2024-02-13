@@ -169,15 +169,11 @@
         {
             public const string _root = $"{ApiRoutes._root}/notes";
 
-            public const string GetNoteByEmployeeInTicket = $"{_root}/employee-ticket";
-
             public const string GetAllByEmployeeId = $"{_root}/employee-list";
 
             public const string Create = $"{_root}/create";
 
             public const string Update = $"{_root}/update-details";
-
-            public const string UpdateById = $"{_root}/update-id";
 
             public const string Delete = $"{_root}/delete";
 

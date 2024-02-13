@@ -160,7 +160,7 @@ namespace CA.Ticketing.Business.Services.Tickets
             ticketDetailsDto.TicketSpecificationsRight = rightSide.Select(x => _mapper.Map<TicketSpecificationDto>((isAdmin, x)));
             ticketDetailsDto.PayrollData.ToList().ForEach(x =>
             {
-                x.EmployeeNote = _mapper.Map<EmployeeNoteDto>(ticket.EmployeeNote.SingleOrDefault(n => n.EmployeeId == x.EmployeeId)); 
+                x.EmployeeNote = _mapper.Map<EmployeeNoteDto>(ticket.EmployeeNotes.SingleOrDefault(n => n.EmployeeId == x.EmployeeId)); 
             });
             return ticketDetailsDto;
         }
@@ -297,7 +297,7 @@ namespace CA.Ticketing.Business.Services.Tickets
 
             ticket.PayrollData.ToList().ForEach(x =>
             {
-                x.EmployeeNote = ticket.EmployeeNote.SingleOrDefault(n => n.EmployeeId == x.EmployeeId);
+                x.EmployeeNote = ticket.EmployeeNotes.SingleOrDefault(n => n.EmployeeId == x.EmployeeId);
             });
 
             var payrollDataDto = _mapper.Map<List<PayrollDataDto>>(ticket.PayrollData);
@@ -868,7 +868,7 @@ namespace CA.Ticketing.Business.Services.Tickets
             var baseIncludes = _context.FieldTickets
                 .Include(x => x.Customer)
                 .Include(x => x.Equipment)
-                .Include(x => x.EmployeeNote)
+                .Include(x => x.EmployeeNotes)
                 .Include(x => x.Invoice)
                 .Include(x => x.Location);
 

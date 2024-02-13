@@ -17,15 +17,6 @@ namespace CA.Ticketing.Api.Controllers
             _notesService = notesService;
         }
 
-        [Route(ApiRoutes.EmployeeNotes.GetNoteByEmployeeInTicket)]
-        [HttpGet]
-        [ProducesResponseType(typeof(EmployeeNoteDto), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetByEmployeeIdInTicket(string ticketid, string employeeId)
-        {
-            var note = await _notesService.GetByEmployeeIdInTicket(ticketid, employeeId);
-            return Ok(note);
-        }
-
         [Route(ApiRoutes.EmployeeNotes.GetAllByEmployeeId)]
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<EmployeeNoteDto>), StatusCodes.Status200OK)]
@@ -51,15 +42,6 @@ namespace CA.Ticketing.Api.Controllers
         public async Task<IActionResult> Update(EmployeeNoteDto note)
         {
             await _notesService.Update(note);
-            return Ok();
-        }
-
-        [Route(ApiRoutes.EmployeeNotes.UpdateById)]
-        [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> UpdateById(EmployeeNoteDto note)
-        {
-            await _notesService.UpdateById(note);
             return Ok();
         }
 
