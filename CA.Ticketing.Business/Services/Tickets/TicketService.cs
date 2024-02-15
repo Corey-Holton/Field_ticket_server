@@ -275,6 +275,7 @@ namespace CA.Ticketing.Business.Services.Tickets
             var ticket = await _context.FieldTickets
                 .Include(x => x.TicketSpecifications)
                 .Include(x => x.PayrollData)
+                .Include(x => x.EmployeeNotes)
                 .AsSplitQuery()
                 .SingleAsync(x => x.Id == id);
 
@@ -397,11 +398,19 @@ namespace CA.Ticketing.Business.Services.Tickets
             var ticket = await _context.FieldTickets
                 .Include(x => x.PayrollData)
                 .Include(x => x.TicketSpecifications)
+                .Include(x => x.EmployeeNotes)
                 .SingleAsync(x => x.Id == payrollData.FieldTicketId);
 
             UpdateLaborQuantity(ticket);
 
             UpdateTicketTotal(ticket);
+
+            var note = ticket.EmployeeNotes.SingleOrDefault(n => n.EmployeeId == payrollData.EmployeeId);
+
+            if (note != null)
+            {
+                _removalService.Remove(note);
+            }
 
             await _context.SaveChangesAsync();
         }

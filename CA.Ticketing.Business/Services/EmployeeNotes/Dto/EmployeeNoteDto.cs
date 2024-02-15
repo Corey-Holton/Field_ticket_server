@@ -12,6 +12,5 @@ namespace CA.Ticketing.Business.Services.EmployeeNotes.Dto
         public string EmployeeId {  get; set; }
         public string? TicketId { get; set; }
         public string NoteContent { get; set; }
-
     }
 }

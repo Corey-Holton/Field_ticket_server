@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using CA.Ticketing.Business.Authentication;
 using CA.Ticketing.Business.Services.Base;
 using CA.Ticketing.Business.Services.Charges.Dto;
 using CA.Ticketing.Business.Services.EmployeeNotes.Dto;
 using CA.Ticketing.Business.Services.Removal;
 using CA.Ticketing.Business.Services.Tickets.Dto;
+using CA.Ticketing.Common.Authentication;
 using CA.Ticketing.Persistance.Context;
 using CA.Ticketing.Persistance.Migrations;
 using CA.Ticketing.Persistance.Models;
@@ -17,12 +19,15 @@ namespace CA.Ticketing.Business.Services.EmployeeNotes
     {
         private readonly IRemovalService _removalService;
 
- 
+        private readonly IUserContext _userContext;
+
         public NotesService(
             CATicketingContext context, 
-            IRemovalService removalService, 
+            IRemovalService removalService,
+            IUserContext userContext,
             IMapper mapper) : base(context, mapper)
         {
+            _userContext = userContext;
             _removalService = removalService;
       
         }
@@ -32,7 +37,7 @@ namespace CA.Ticketing.Business.Services.EmployeeNotes
             var employee = await _context.Employees
                 .SingleAsync(x => x.Id == entity.EmployeeId);
 
-            if(entity.TicketId != null)
+            if(string.IsNullOrEmpty(entity.TicketId))
             {
                 var noteExist = await _context.EmployeeNotes
               .SingleOrDefaultAsync(x => x.EmployeeId == entity.EmployeeId && x.TicketId == entity.TicketId);
@@ -42,14 +47,14 @@ namespace CA.Ticketing.Business.Services.EmployeeNotes
                     throw new Exception("Note Already Exist");
                 }
             }
-            
+
             var note = new EmployeeNote()
             {
                 EmployeeId = employee.Id,
                 TicketId = entity.TicketId,
                 NoteContent = entity.NoteContent,
-                CreatedBy = employee.Id,
-                UpdatedBy = employee.Id
+                CreatedBy = _userContext.User!.Id,
+                UpdatedBy = _userContext.User!.Id
             };
 
             _context.EmployeeNotes.Add(note);
@@ -90,24 +95,12 @@ namespace CA.Ticketing.Business.Services.EmployeeNotes
             {
                 throw new Exception("Note Does Not Exist");
             }
-            entity.Id = null;
+           
             _mapper.Map(entity, note);
+
+            note.UpdatedBy = _userContext.User!.Id;
+
             await _context.SaveChangesAsync();
-        }
-
-
-        private async Task<EmployeeNote> GetNote(string? ticketId, string? employeeId)
-        {
-            var note = await _context.EmployeeNotes
-                .Include(x => x.FieldTicket)
-                .SingleOrDefaultAsync(x => x.EmployeeId == employeeId && x.TicketId == ticketId);
-
-            if (note == null)
-            {
-                throw new Exception("Note Does Not Exist");
-            }
-
-            return note!;
         }
     }
 }
