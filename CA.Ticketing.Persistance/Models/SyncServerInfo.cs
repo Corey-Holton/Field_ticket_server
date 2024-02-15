@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace CA.Ticketing.Persistance.Models
 {
     [Table(TableNames.ServerSyncHistory)]
-    public class ServerSyncHistory
+    public class SyncServerInfo
     {
         [Key]
         public string Id { get; set; } = Guid.NewGuid().ToString();

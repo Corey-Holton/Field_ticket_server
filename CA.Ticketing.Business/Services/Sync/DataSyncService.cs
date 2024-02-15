@@ -7,6 +7,7 @@ using CA.Ticketing.Persistance.Context;
 using CA.Ticketing.Persistance.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -40,6 +41,7 @@ namespace CA.Ticketing.Business.Services.Sync
 
         private readonly ServerStatus _serverStatus = new();
 
+        private readonly string _serverClientId;
         public DataSyncService(IServiceProvider serviceProvider,
             IOptions<ServerConfiguration> serverConfigurationOptions,
             ILogger<DataSyncService> logger)
@@ -63,7 +65,7 @@ namespace CA.Ticketing.Business.Services.Sync
                 BaseAddress = new Uri(serverConfigurationOptions.Value.MainServerUrl)
             };
             _httpClient.DefaultRequestHeaders.Add("ClientId", serverConfigurationOptions.Value.ClientId);
-
+            _serverClientId = serverConfigurationOptions.Value.ClientId;
             _logger = logger;
 
             SetTask(true);
@@ -206,28 +208,15 @@ namespace CA.Ticketing.Business.Services.Sync
                 await GetEntities(entityType, syncDataChanges, syncProcessor);
             }
 
+            using var response = await _httpClient.GetAsync($"api/sync/history/id={_serverClientId}?dateTimeLastModified={DateTime.UtcNow}");
+
+            response.EnsureSuccessStatusCode();
+
             syncData.Changes = JsonConvert.SerializeObject(syncDataChanges.Select(x => x.Value));
             syncData.LastSyncDate = DateTime.UtcNow;
             context.Entry(syncData).State = EntityState.Modified;
 
             _serverStatus.LastSyncDate = DateTime.UtcNow;
-
-            var syncHistory = await context.ServerSyncHistory.FirstOrDefaultAsync(x =>  x.ServerName == syncData.Id);
-
-            if(syncHistory == null)
-            {
-                syncHistory = new ServerSyncHistory
-                {
-                    ServerName = syncData.Id,
-                    LastSyncDate = DateTime.UtcNow,
-                };
-
-                context.ServerSyncHistory.Add(syncHistory);
-                await context.SaveChangesAsync();
-                return;
-            }
-
-            syncHistory.LastSyncDate = DateTime.UtcNow;
 
             await context.SaveChangesAsync();
         }
