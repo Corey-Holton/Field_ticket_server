@@ -23,6 +23,8 @@ using System.Drawing;
 using System.Linq.Expressions;
 using CA.Ticketing.Common.Models;
 using System.Linq.Dynamic.Core;
+using static CA.Ticketing.Common.Constants.ApiRoutes;
+using CA.Ticketing.Business.Services.EmployeeNotes.Dto;
 
 namespace CA.Ticketing.Business.Services.Tickets
 {
@@ -156,7 +158,10 @@ namespace CA.Ticketing.Business.Services.Tickets
             var isAdmin = _userContext.User!.Role == ApplicationRole.Admin;
             ticketDetailsDto.TicketSpecificationsLeft = leftSide.Select(x => _mapper.Map<TicketSpecificationDto>((isAdmin, x)));
             ticketDetailsDto.TicketSpecificationsRight = rightSide.Select(x => _mapper.Map<TicketSpecificationDto>((isAdmin, x)));
-
+            ticketDetailsDto.PayrollData.ToList().ForEach(x =>
+            {
+                x.EmployeeNote = _mapper.Map<EmployeeNoteDto>(ticket.EmployeeNotes.SingleOrDefault(n => n.EmployeeId == x.EmployeeId)); 
+            });
             return ticketDetailsDto;
         }
 
@@ -270,6 +275,7 @@ namespace CA.Ticketing.Business.Services.Tickets
             var ticket = await _context.FieldTickets
                 .Include(x => x.TicketSpecifications)
                 .Include(x => x.PayrollData)
+                .Include(x => x.EmployeeNotes)
                 .AsSplitQuery()
                 .SingleAsync(x => x.Id == id);
 
@@ -282,11 +288,18 @@ namespace CA.Ticketing.Business.Services.Tickets
         public async Task<List<PayrollDataDto>> GetPayrollData(string ticketId)
         {
             var ticket = await _context.FieldTickets.Include(x => x.PayrollData).ThenInclude(p => p.Employee).SingleOrDefaultAsync(x => x.Id == ticketId);
-
+            
             if (ticket == null)
             {
                 throw new KeyNotFoundException(nameof(FieldTicket));
             }
+
+            var notes = await _context.EmployeeNotes.ToListAsync();
+
+            ticket.PayrollData.ToList().ForEach(x =>
+            {
+                x.EmployeeNote = ticket.EmployeeNotes.SingleOrDefault(n => n.EmployeeId == x.EmployeeId);
+            });
 
             var payrollDataDto = _mapper.Map<List<PayrollDataDto>>(ticket.PayrollData);
 
@@ -385,11 +398,19 @@ namespace CA.Ticketing.Business.Services.Tickets
             var ticket = await _context.FieldTickets
                 .Include(x => x.PayrollData)
                 .Include(x => x.TicketSpecifications)
+                .Include(x => x.EmployeeNotes)
                 .SingleAsync(x => x.Id == payrollData.FieldTicketId);
 
             UpdateLaborQuantity(ticket);
 
             UpdateTicketTotal(ticket);
+
+            var note = ticket.EmployeeNotes.SingleOrDefault(n => n.EmployeeId == payrollData.EmployeeId);
+
+            if (note != null)
+            {
+                _removalService.Remove(note);
+            }
 
             await _context.SaveChangesAsync();
         }
@@ -856,6 +877,7 @@ namespace CA.Ticketing.Business.Services.Tickets
             var baseIncludes = _context.FieldTickets
                 .Include(x => x.Customer)
                 .Include(x => x.Equipment)
+                .Include(x => x.EmployeeNotes)
                 .Include(x => x.Invoice)
                 .Include(x => x.Location);
 

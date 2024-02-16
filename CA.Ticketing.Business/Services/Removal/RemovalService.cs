@@ -57,6 +57,11 @@ namespace CA.Ticketing.Business.Services.Removal
                 RemoveTicket(ticket);
                 return;
             }
+            if(entity is EmployeeNote note)
+            {
+                RemoveNote(note);
+                return;
+            }
         }
 
         private void RemoveCustomer(Customer customer)
@@ -165,10 +170,16 @@ namespace CA.Ticketing.Business.Services.Removal
 
             ticket.PayrollData.DeleteRelated(_context);
             ticket.TicketSpecifications.DeleteRelated(_context);
+            ticket.EmployeeNotes.DeleteRelated(_context);
 
             _fileManagerService.DeleteFile(FilePaths.Tickets, ticket.FileName);
 
             _context.Entry(ticket).State = EntityState.Deleted;
+        }
+
+        private void RemoveNote(EmployeeNote note)
+        {
+            _context.Entry(note).State = EntityState.Deleted;
         }
     }
 }

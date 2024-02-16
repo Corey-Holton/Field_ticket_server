@@ -24,7 +24,8 @@ namespace CA.Ticketing.Business.Extensions
             typeof(TicketSpecification),
             typeof(ApplicationUser),
             typeof(IdentityRole),
-            typeof(IdentityUserRole<string>)
+            typeof(IdentityUserRole<string>),
+            typeof(EmployeeNote)
         };
 
         public static Type GetTypeFromString(string entityType) => entityType.ToLower() switch
@@ -41,6 +42,7 @@ namespace CA.Ticketing.Business.Extensions
             "invoicelatefee" => typeof(InvoiceLateFee),
             "fieldticket" => typeof(FieldTicket),
             "payrolldata" => typeof(PayrollData),
+            "employeenote" => typeof(EmployeeNote),
             "scheduling" => typeof(Scheduling),
             "setting" => typeof(Setting),
             "ticketspecification" => typeof(TicketSpecification),

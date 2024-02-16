@@ -19,6 +19,7 @@ namespace CA.Ticketing.Business.Bootstrap
                 mapperConfiguration.AddProfile(new TicketsMapper());
                 mapperConfiguration.AddProfile(new InvoiceMapper());
                 mapperConfiguration.AddProfile(new SettingsMapper());
+                mapperConfiguration.AddProfile(new NoteMapper());
             })
             .CreateMapper());
         }
