@@ -13,5 +13,7 @@ namespace CA.Ticketing.Persistance.Models
         public DateTime? LastSyncDate { get; set; }
 
         public string Changes { get; set; }
+
+        public string ServerId { get; set; } = Guid.NewGuid().ToString();
     }
 }

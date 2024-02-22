@@ -43,8 +43,6 @@ namespace CA.Ticketing.Business.Services.Sync
         private Task<bool> _syncTaskCompleted;
 
         private readonly ServerStatus _serverStatus = new();
-
-        private readonly string _serverClientId;
         public DataSyncService(IServiceProvider serviceProvider,
             IOptions<ServerConfiguration> serverConfigurationOptions,
             ILogger<DataSyncService> logger)
@@ -68,7 +66,6 @@ namespace CA.Ticketing.Business.Services.Sync
                 BaseAddress = new Uri(serverConfigurationOptions.Value.MainServerUrl)
             };
             _httpClient.DefaultRequestHeaders.Add("ClientId", serverConfigurationOptions.Value.ClientId);
-            _serverClientId = serverConfigurationOptions.Value.ClientId;
             _logger = logger;
 
             SetTask(true);
@@ -82,8 +79,9 @@ namespace CA.Ticketing.Business.Services.Sync
                 await CheckServerHealth();
                 _ = Task.Run(() => SyncProcess(null, null));
             }
-            catch
+            catch(Exception exc)
             {
+                _logger.LogError(exc, $"Error: {exc?.InnerException?.Message}");
                 _serverStatus.IsOnline = false;
             }
             finally
@@ -151,6 +149,11 @@ namespace CA.Ticketing.Business.Services.Sync
                 await context.SaveChangesAsync();
             }
 
+            if(syncData.ServerId == null || syncData.ServerId == "") { 
+                syncData.ServerId = Guid.NewGuid().ToString();
+                await context.SaveChangesAsync();
+            }
+
             _serverStatus.LastSyncDate = syncData.LastSyncDate;
         }
 
@@ -205,15 +208,15 @@ namespace CA.Ticketing.Business.Services.Sync
                 {
                     syncDataChanges.Add(entityType, new SyncDataTypeInfo(entityType));
                 }
-
                 await SendEntities(entityType, syncDataChanges, syncProcessor);
 
                 await GetEntities(entityType, syncDataChanges, syncProcessor);
+           
             }
 
             SyncInfo info = new SyncInfo
             {
-                ServerName = _serverClientId,
+                ServerName = syncData.ServerId,
                 LastSyncDate = DateTime.UtcNow.ToString("yyyyMMddHHmmssfffffff")
             };
 

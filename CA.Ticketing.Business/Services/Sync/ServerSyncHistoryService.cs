@@ -69,10 +69,12 @@ namespace CA.Ticketing.Business.Services.Sync
                     }
                     catch (DbUpdateException exc)
                     {
-                        _logger.LogError(exc, $" db update error: {exc?.InnerException?.Message}");
-                        break;
+                        _logger.LogError(exc, $"Db update error: {exc?.InnerException?.Message}");
                     }
-                    
+                    catch (Exception exc)
+                    {
+                        _logger.LogError(exc, $"Error: {exc?.InnerException?.Message}");
+                    }
                 }
             }
         }
