@@ -84,12 +84,12 @@ namespace CA.Ticketing.Api.Controllers
         [HttpPost]
         [Route(ApiRoutes.Sync.History)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> UpdateSyncHistory(string id, string dateTimeLastModified)
+        public async Task<IActionResult> UpdateSyncHistory( [FromBody] SyncInfo syncInfo)
         {
+            var lastModifiedDate = DateTime.ParseExact(syncInfo.LastSyncDate, "yyyyMMddHHmmssfffffff", null);
+            await _syncInfoService.UpdateSync(syncInfo.ServerName, lastModifiedDate);
 
-            await _syncInfoService.UpdateSync(id, dateTimeLastModified);
             return Ok();
-
         }
     }
 }

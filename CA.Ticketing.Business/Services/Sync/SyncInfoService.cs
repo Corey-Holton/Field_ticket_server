@@ -18,20 +18,20 @@ namespace CA.Ticketing.Business.Services.Sync
         {
         }
 
-        public async Task<SyncServerInfo> UpdateSync(string syncId, string dateTime)
+        public async Task<SyncServerInfo> UpdateSync(string serverName, DateTime dateTime)
         {
-            var server = await _context.ServerSyncHistory.SingleOrDefaultAsync(x => x.Id == syncId);
+            var server = await _context.ServerSyncHistory.SingleOrDefaultAsync(x => x.ServerName == serverName);
             if (server == null) {
                 server = new SyncServerInfo()
                 {
-                    ServerName = syncId,
-                    LastSyncDate = DateTime.ParseExact(dateTime, "yyyyMMddHHmmssfffffff", null)
+                    ServerName = serverName,
+                    LastSyncDate = dateTime,
                 };
                 _context.ServerSyncHistory.Add(server);
                 await _context.SaveChangesAsync();
                 return (server);
             }
-            server.LastSyncDate = DateTime.ParseExact(dateTime, "yyyyMMddHHmmssfffffff", null);
+            server.LastSyncDate = dateTime;
             await _context.SaveChangesAsync();
             return (server);
         }

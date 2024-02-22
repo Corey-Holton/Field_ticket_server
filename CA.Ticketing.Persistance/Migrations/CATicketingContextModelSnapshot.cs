@@ -145,7 +145,7 @@ namespace CA.Ticketing.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("BackgroundJobs");
+                    b.ToTable("BackgroundJobs", (string)null);
                 });
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.Charge", b =>
@@ -192,7 +192,7 @@ namespace CA.Ticketing.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Charges");
+                    b.ToTable("Charges", (string)null);
                 });
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.Customer", b =>
@@ -238,7 +238,7 @@ namespace CA.Ticketing.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Customers");
+                    b.ToTable("Customers", (string)null);
                 });
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.CustomerContact", b =>
@@ -289,7 +289,7 @@ namespace CA.Ticketing.Persistance.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("CustomerContacts");
+                    b.ToTable("CustomerContacts", (string)null);
                 });
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.CustomerLocation", b =>
@@ -339,7 +339,7 @@ namespace CA.Ticketing.Persistance.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("CustomerLocations");
+                    b.ToTable("CustomerLocations", (string)null);
                 });
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.Employee", b =>
@@ -418,7 +418,7 @@ namespace CA.Ticketing.Persistance.Migrations
 
                     b.HasIndex("AssignedRigId");
 
-                    b.ToTable("Employees");
+                    b.ToTable("Employees", (string)null);
                 });
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.Equipment", b =>
@@ -468,7 +468,7 @@ namespace CA.Ticketing.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Equipment");
+                    b.ToTable("Equipment", (string)null);
                 });
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.EquipmentCharge", b =>
@@ -502,7 +502,7 @@ namespace CA.Ticketing.Persistance.Migrations
 
                     b.HasIndex("EquipmentId");
 
-                    b.ToTable("EquipmentCharges");
+                    b.ToTable("EquipmentCharges", (string)null);
                 });
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.EquipmentFile", b =>
@@ -543,7 +543,7 @@ namespace CA.Ticketing.Persistance.Migrations
 
                     b.HasIndex("EquipmentId");
 
-                    b.ToTable("EquipmentFiles");
+                    b.ToTable("EquipmentFiles", (string)null);
                 });
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.FieldTicket", b =>
@@ -659,7 +659,7 @@ namespace CA.Ticketing.Persistance.Migrations
 
                     b.HasIndex("LocationId");
 
-                    b.ToTable("FieldTickets");
+                    b.ToTable("FieldTickets", (string)null);
                 });
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.Invoice", b =>
@@ -700,7 +700,7 @@ namespace CA.Ticketing.Persistance.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("Invoices");
+                    b.ToTable("Invoices", (string)null);
                 });
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.InvoiceLateFee", b =>
@@ -728,7 +728,7 @@ namespace CA.Ticketing.Persistance.Migrations
 
                     b.HasIndex("InvoiceId");
 
-                    b.ToTable("InvoiceLateFees");
+                    b.ToTable("InvoiceLateFees", (string)null);
                 });
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.PayrollData", b =>
@@ -774,7 +774,7 @@ namespace CA.Ticketing.Persistance.Migrations
 
                     b.HasIndex("FieldTicketId");
 
-                    b.ToTable("PayrollData");
+                    b.ToTable("PayrollData", (string)null);
                 });
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.Scheduling", b =>
@@ -825,7 +825,7 @@ namespace CA.Ticketing.Persistance.Migrations
 
                     b.HasIndex("EquipmentId");
 
-                    b.ToTable("Scheduling");
+                    b.ToTable("Scheduling", (string)null);
                 });
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.ServerSyncHistory", b =>
@@ -842,7 +842,7 @@ namespace CA.Ticketing.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ServerSyncHistory");
+                    b.ToTable("ServerSyncHistory", (string)null);
                 });
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.Setting", b =>
@@ -870,7 +870,7 @@ namespace CA.Ticketing.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Settings");
+                    b.ToTable("Settings", (string)null);
                 });
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.SyncData", b =>
@@ -887,7 +887,7 @@ namespace CA.Ticketing.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SyncData");
+                    b.ToTable("SyncData", (string)null);
                 });
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.TicketSpecification", b =>
@@ -931,7 +931,7 @@ namespace CA.Ticketing.Persistance.Migrations
 
                     b.HasIndex("FieldTicketId");
 
-                    b.ToTable("TicketSpecification");
+                    b.ToTable("TicketSpecification", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

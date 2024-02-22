@@ -12,6 +12,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Text;
 using System.Timers;
 
@@ -208,7 +211,15 @@ namespace CA.Ticketing.Business.Services.Sync
                 await GetEntities(entityType, syncDataChanges, syncProcessor);
             }
 
-            using var response = await _httpClient.GetAsync($"api/sync/history/id={_serverClientId}?dateTimeLastModified={DateTime.UtcNow}");
+            SyncInfo info = new SyncInfo
+            {
+                ServerName = _serverClientId,
+                LastSyncDate = DateTime.UtcNow.ToString("yyyyMMddHHmmssfffffff")
+            };
+
+            using StringContent requestBody = new(JsonConvert.SerializeObject(info), Encoding.UTF8, "application/json");
+
+            using var response = await _httpClient.PostAsync($"api/sync/history", requestBody);
 
             response.EnsureSuccessStatusCode();
 

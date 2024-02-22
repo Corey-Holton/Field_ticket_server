@@ -29,7 +29,7 @@ namespace CA.Ticketing.Business.Services.Sync
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             
-            using PeriodicTimer timer = new(TimeSpan.FromHours(1));
+            using PeriodicTimer timer = new(TimeSpan.FromMinutes(0.2));
 
             try
             {
@@ -59,12 +59,20 @@ namespace CA.Ticketing.Business.Services.Sync
                 
                 var syncProcessor = services.GetRequiredService<ISyncProcessor>();
 
-                foreach (var entityType in TypeExtensions.SyncEntities)
+                foreach (var entityType in TypeExtensions.SyncHistory)
                 {
                     var methodInfo = typeof(SyncProcessor).GetMethod(nameof(SyncProcessor.DeleteMarkedDbEntities))!
                     .MakeGenericMethod(entityType);
-
-                    await (Task)methodInfo.Invoke(syncProcessor, new object[] { oldestModified.LastSyncDate })!;
+                    try
+                    {
+                        await (Task)methodInfo.Invoke(syncProcessor, new object[] { oldestModified.LastSyncDate })!;
+                    }
+                    catch (DbUpdateException exc)
+                    {
+                        _logger.LogError(exc, $" db update error: {exc?.InnerException?.Message}");
+                        break;
+                    }
+                    
                 }
             }
         }
