@@ -9,6 +9,6 @@ namespace CA.Ticketing.Business.Services.Sync
 {
     public interface ISyncInfoService
     {
-        Task<SyncServerInfo> UpdateSync(string syncId, DateTime dateTime);
+        Task UpdateSync(string syncId, DateTime dateTime);
     }
 }

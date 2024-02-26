@@ -18,7 +18,7 @@ namespace CA.Ticketing.Business.Services.Sync
         {
         }
 
-        public async Task<SyncServerInfo> UpdateSync(string serverName, DateTime dateTime)
+        public async Task UpdateSync(string serverName, DateTime dateTime)
         {
             var server = await _context.ServerSyncHistory.SingleOrDefaultAsync(x => x.ServerName == serverName);
             if (server == null) {
@@ -29,11 +29,9 @@ namespace CA.Ticketing.Business.Services.Sync
                 };
                 _context.ServerSyncHistory.Add(server);
                 await _context.SaveChangesAsync();
-                return (server);
             }
             server.LastSyncDate = dateTime;
             await _context.SaveChangesAsync();
-            return (server);
         }
     }
 }

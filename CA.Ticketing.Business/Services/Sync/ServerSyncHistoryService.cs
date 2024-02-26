@@ -27,10 +27,8 @@ namespace CA.Ticketing.Business.Services.Sync
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-        {
-            
-            using PeriodicTimer timer = new(TimeSpan.FromMinutes(0.2));
-
+        {    
+            using PeriodicTimer timer = new(TimeSpan.FromMinutes(5));
             try
             {
                 while (await timer.WaitForNextTickAsync(stoppingToken))
@@ -54,27 +52,25 @@ namespace CA.Ticketing.Business.Services.Sync
             var oldestModified = await context.ServerSyncHistory
                 .OrderBy(x => x.LastSyncDate)
                 .FirstAsync();
+            
+            var syncProcessor = services.GetRequiredService<ISyncProcessor>();
 
-            if(oldestModified.LastSyncDate <= DateTime.UtcNow.AddDays(-1)) {
-                
-                var syncProcessor = services.GetRequiredService<ISyncProcessor>();
-
-                foreach (var entityType in TypeExtensions.SyncHistory)
-                {
-                    var methodInfo = typeof(SyncProcessor).GetMethod(nameof(SyncProcessor.DeleteMarkedDbEntities))!
+            foreach (var entityType in TypeExtensions.SyncHistory)
+            {
+                var methodInfo = typeof(SyncProcessor).GetMethod(nameof(SyncProcessor.DeleteMarkedDbEntities))!
                     .MakeGenericMethod(entityType);
-                    try
-                    {
-                        await (Task)methodInfo.Invoke(syncProcessor, new object[] { oldestModified.LastSyncDate })!;
-                    }
-                    catch (DbUpdateException exc)
-                    {
-                        _logger.LogError(exc, $"Db update error: {exc?.InnerException?.Message}");
-                    }
-                    catch (Exception exc)
-                    {
-                        _logger.LogError(exc, $"Error: {exc?.InnerException?.Message}");
-                    }
+                try
+                {
+                    
+                    await (Task)methodInfo.Invoke(syncProcessor, new object[] { oldestModified.LastSyncDate.Value.AddDays(-1) })!;
+                }
+                catch (DbUpdateException exc)
+                {
+                    _logger.LogError(exc, $"Db update error: {exc?.InnerException?.Message}");
+                }
+                catch (Exception exc)
+                {
+                    _logger.LogError(exc, $"Error: {exc?.InnerException?.Message}");
                 }
             }
         }

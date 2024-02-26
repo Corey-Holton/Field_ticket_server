@@ -146,14 +146,13 @@ namespace CA.Ticketing.Business.Services.Sync
                 syncData = new SyncData { Changes = JsonConvert.SerializeObject(syncDataTypeInfoList) };
 
                 context.SyncData.Add(syncData);
+
+                if (string.IsNullOrEmpty(syncData.ServerId))
+                {
+                    syncData.ServerId = Guid.NewGuid().ToString();
+                }
                 await context.SaveChangesAsync();
             }
-
-            if(syncData.ServerId == null || syncData.ServerId == "") { 
-                syncData.ServerId = Guid.NewGuid().ToString();
-                await context.SaveChangesAsync();
-            }
-
             _serverStatus.LastSyncDate = syncData.LastSyncDate;
         }
 

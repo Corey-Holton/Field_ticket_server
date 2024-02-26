@@ -1,4 +1,5 @@
 ﻿using CA.Ticketing.Common.Constants;
+using CA.Ticketing.Persistance.Models.Abstracts;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -10,10 +11,8 @@ using System.Threading.Tasks;
 namespace CA.Ticketing.Persistance.Models
 {
     [Table(TableNames.ServerSyncHistory)]
-    public class SyncServerInfo
+    public class SyncServerInfo : IdentityModel
     {
-        [Key]
-        public string Id { get; set; } = Guid.NewGuid().ToString();
         public string ServerName { get; set; }
         public DateTime? LastSyncDate { get; set; }
 
