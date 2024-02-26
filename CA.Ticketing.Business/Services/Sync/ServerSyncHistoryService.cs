@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace CA.Ticketing.Business.Services.Sync
 {
-    public class ServerSyncHistoryService : BackgroundService, IServerSyncHistoryService
+    public class ServerSyncHistoryService : BackgroundService
     {
         private readonly ILogger<ServerSyncHistoryService> _logger;
 

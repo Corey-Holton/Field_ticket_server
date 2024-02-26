@@ -14,6 +14,6 @@ namespace CA.Ticketing.Persistance.Models
 
         public string Changes { get; set; }
 
-        public string ServerId { get; set; } = Guid.NewGuid().ToString();
+        public string ServerId { get; set; }
     }
 }
