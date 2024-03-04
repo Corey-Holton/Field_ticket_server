@@ -42,24 +42,29 @@ namespace CA.Ticketing.Business.Services.Sync
 
             var syncProcessor = services.GetRequiredService<ISyncProcessor>();
 
-            foreach (var entityType in TypeExtensions.SyncHistory)
-            {
-                var methodInfo = typeof(SyncProcessor).GetMethod(nameof(SyncProcessor.DeleteMarkedDbEntities))!
-                    .MakeGenericMethod(entityType);
-                try
-                {
+            var currentSync = await context.SyncData.FirstOrDefaultAsync();
 
-                    await (Task)methodInfo.Invoke(syncProcessor, new object[] { DateTime.UtcNow.AddDays(-1) })!;
-                }
-                catch (DbUpdateException exc)
+            if (currentSync != null && currentSync.LastSyncDate > DateTime.UtcNow.AddDays(-1)) {
+                foreach (var entityType in TypeExtensions.SyncHistory)
                 {
-                    _logger.LogError(exc, $"Db update error: {exc?.InnerException?.Message}");
-                }
-                catch (Exception exc)
-                {
-                    _logger.LogError(exc, $"Error: {exc?.InnerException?.Message}");
+                    var methodInfo = typeof(SyncProcessor).GetMethod(nameof(SyncProcessor.DeleteMarkedDbEntities))!
+                        .MakeGenericMethod(entityType);
+                    try
+                    {
+
+                        await (Task)methodInfo.Invoke(syncProcessor, new object[] { DateTime.UtcNow.AddDays(-1) })!;
+                    }
+                    catch (DbUpdateException exc)
+                    {
+                        _logger.LogError(exc, $"Db update error: {exc?.InnerException?.Message}");
+                    }
+                    catch (Exception exc)
+                    {
+                        _logger.LogError(exc, $"Error: {exc?.InnerException?.Message}");
+                    }
                 }
             }
+            
         }
     }
 }
