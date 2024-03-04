@@ -143,16 +143,18 @@ namespace CA.Ticketing.Business.Services.Sync
                 var syncDataTypeInfoList = TypeExtensions.SyncEntities
                     .Select(x => new SyncDataTypeInfo(x))
                     .ToList();
-                syncData = new SyncData { Changes = JsonConvert.SerializeObject(syncDataTypeInfoList) };
+                syncData = new SyncData { Changes = JsonConvert.SerializeObject(syncDataTypeInfoList), ServerId = Guid.NewGuid().ToString()};
 
                 context.SyncData.Add(syncData);
 
-                if (string.IsNullOrEmpty(syncData.ServerId))
-                {
-                    syncData.ServerId = Guid.NewGuid().ToString();
-                }
                 await context.SaveChangesAsync();
             }
+
+            if (string.IsNullOrEmpty(syncData.ServerId))
+            {
+                syncData.ServerId = Guid.NewGuid().ToString();
+            }
+
             _serverStatus.LastSyncDate = syncData.LastSyncDate;
         }
 
@@ -213,17 +215,24 @@ namespace CA.Ticketing.Business.Services.Sync
            
             }
 
-            SyncInfo info = new SyncInfo
+            try
             {
-                ServerName = syncData.ServerId,
-                LastSyncDate = DateTime.UtcNow.ToString("yyyyMMddHHmmssfffffff")
-            };
+                SyncInfo info = new SyncInfo
+                {
+                    ServerName = syncData.ServerId,
+                    LastSyncDate = DateTime.UtcNow.ToString("yyyyMMddHHmmssfffffff")
+                };
 
-            using StringContent requestBody = new(JsonConvert.SerializeObject(info), Encoding.UTF8, "application/json");
+                using StringContent requestBody = new(JsonConvert.SerializeObject(info), Encoding.UTF8, "application/json");
 
-            using var response = await _httpClient.PostAsync($"api/sync/history", requestBody);
+                using var response = await _httpClient.PostAsync($"api/sync/history", requestBody);
 
-            response.EnsureSuccessStatusCode();
+                response.EnsureSuccessStatusCode();
+            }catch(Exception exc)
+            {
+                _logger.LogError(exc, $"Error: {exc?.InnerException?.Message}");
+            }
+            
 
             syncData.Changes = JsonConvert.SerializeObject(syncDataChanges.Select(x => x.Value));
             syncData.LastSyncDate = DateTime.UtcNow;

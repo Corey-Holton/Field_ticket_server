@@ -8,19 +8,17 @@ using Microsoft.Extensions.Logging;
 
 namespace CA.Ticketing.Business.Services.Sync
 {
-    public class ServerSyncHistoryService : BackgroundService
+    public class SyncChildDeletionService : BackgroundService
     {
-        private readonly ILogger<ServerSyncHistoryService> _logger;
-
+        private readonly ILogger<SyncChildDeletionService> _logger;
         private readonly IServiceProvider _serviceProvider;
-        public ServerSyncHistoryService(IServiceProvider serviceProvider, ILogger<ServerSyncHistoryService> logger)
+        public SyncChildDeletionService(IServiceProvider serviceProvider, ILogger<SyncChildDeletionService> logger)
         {
             _serviceProvider = serviceProvider;
             _logger = logger;
         }
-
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-        {    
+        {
             using PeriodicTimer timer = new(TimeSpan.FromDays(1));
             try
             {
@@ -42,10 +40,6 @@ namespace CA.Ticketing.Business.Services.Sync
 
             var context = services.GetRequiredService<CATicketingContext>();
 
-            var oldestModified = await context.ServerSyncHistory
-                .OrderBy(x => x.LastSyncDate)
-                .FirstOrDefaultAsync();
-            
             var syncProcessor = services.GetRequiredService<ISyncProcessor>();
 
             foreach (var entityType in TypeExtensions.SyncHistory)
@@ -54,8 +48,8 @@ namespace CA.Ticketing.Business.Services.Sync
                     .MakeGenericMethod(entityType);
                 try
                 {
-                    
-                    await (Task)methodInfo.Invoke(syncProcessor, new object[] { oldestModified.LastSyncDate.Value.AddDays(-1) })!;
+
+                    await (Task)methodInfo.Invoke(syncProcessor, new object[] { DateTime.UtcNow.AddDays(-1) })!;
                 }
                 catch (DbUpdateException exc)
                 {
@@ -67,6 +61,5 @@ namespace CA.Ticketing.Business.Services.Sync
                 }
             }
         }
-
     }
 }

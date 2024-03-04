@@ -28,7 +28,6 @@ namespace CA.Ticketing.Business.Services.Sync
                     LastSyncDate = dateTime,
                 };
                 _context.ServerSyncHistory.Add(server);
-                await _context.SaveChangesAsync();
             }
             server.LastSyncDate = dateTime;
             await _context.SaveChangesAsync();

@@ -18,6 +18,7 @@ namespace CA.Ticketing.Business.Bootstrap
             {
                 services.AddSingleton<IDataSyncService, DataSyncService>();
                 services.AddHostedService(serviceCollection => serviceCollection.GetRequiredService<IDataSyncService>());
+                services.AddHostedService(serviceCollection => serviceCollection.GetRequiredService<SyncChildDeletionService>());
                 return;
             }
 
