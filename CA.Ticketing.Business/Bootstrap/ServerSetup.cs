@@ -18,11 +18,14 @@ namespace CA.Ticketing.Business.Bootstrap
             {
                 services.AddSingleton<IDataSyncService, DataSyncService>();
                 services.AddHostedService(serviceCollection => serviceCollection.GetRequiredService<IDataSyncService>());
+                services.AddSingleton<SyncChildDeletionService>();
+                services.AddHostedService(serviceCollection => serviceCollection.GetRequiredService<SyncChildDeletionService>());
                 return;
             }
 
             services.AddSingleton<InvoiceLateFeeService>();
-            services.AddHostedService(serviceCollection => serviceCollection.GetRequiredService<InvoiceLateFeeService>());
+            services.AddHostedService(serviceCollection => serviceCollection.GetRequiredService<InvoiceLateFeeService>());;
+            services.AddHostedService(serviceCollection => serviceCollection.GetRequiredService<ServerSyncHistoryService>());
         }
 
         public static async Task<IApplicationBuilder> InitiateDatabase(this IApplicationBuilder app, IConfiguration configuration)

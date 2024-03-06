@@ -3,6 +3,7 @@ using CA.Ticketing.Business.Services.Sync;
 using CA.Ticketing.Business.Services.Sync.Dto;
 using CA.Ticketing.Common.Constants;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace CA.Ticketing.Api.Controllers
 {
@@ -13,13 +14,16 @@ namespace CA.Ticketing.Api.Controllers
 
         private readonly IDataSyncService _dataSyncService;
 
-        public SyncController(ISyncProcessor syncProcessor, IDataSyncService? dataSyncService = null)
+        private readonly ISyncInfoService _syncInfoService;
+
+        public SyncController(ISyncProcessor syncProcessor, ISyncInfoService syncInfoService, IDataSyncService? dataSyncService = null)
         {
             _syncProcessor = syncProcessor;
             if (dataSyncService != null )
             {
                 _dataSyncService = dataSyncService;
             }
+            _syncInfoService = syncInfoService;
         }
 
         [HttpGet]
@@ -73,6 +77,17 @@ namespace CA.Ticketing.Api.Controllers
                 .MakeGenericMethod(typeRequested);
 
             await (Task<DateTime?>)methodInfo.Invoke(_syncProcessor, new object[] { entities, false })!;
+
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route(ApiRoutes.Sync.History)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> UpdateSyncHistory( [FromBody] SyncInfo syncInfo)
+        {
+            var lastModifiedDate = DateTime.ParseExact(syncInfo.LastSyncDate, "yyyyMMddHHmmssfffffff", null);
+            await _syncInfoService.UpdateSync(syncInfo.ServerName, lastModifiedDate);
 
             return Ok();
         }

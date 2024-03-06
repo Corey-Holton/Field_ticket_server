@@ -276,6 +276,8 @@
             public const string Run = $"{_root}/run";
 
             public const string Health = $"{_root}/health";
+
+            public const string History = $"{_root}/history";
         }
     }
 }

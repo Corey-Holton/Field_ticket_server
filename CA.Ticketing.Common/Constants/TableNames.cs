@@ -33,5 +33,7 @@
         public const string BackgroundJobs = nameof(BackgroundJobs);
 
         public const string EmployeeNotes = nameof(EmployeeNotes);
+
+        public const string ServerSyncHistory = nameof(ServerSyncHistory);
     }
 }

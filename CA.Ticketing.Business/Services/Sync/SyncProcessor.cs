@@ -278,6 +278,26 @@ namespace CA.Ticketing.Business.Services.Sync
             return entities.Select(x => x.LastModifiedDate).Max();
         }
 
+
+        public async Task DeleteMarkedDbEntities<T>(DateTime lastSyncDate) where T : IdentityModel {
+
+            var dbSet = _context.Set<T>();
+
+            var markedEntitys = await dbSet
+                .IgnoreQueryFilters()
+                .Where(x=> x.DeletedDate <= lastSyncDate)
+                .ToListAsync();
+
+            dbSet.RemoveRange(markedEntitys);
+
+            _context.SaveChanges();
+
+            _context.ChangeTracker.Clear();
+        }
+
+
+
+
         private static T CastToType<T>(object input) => JsonConvert.DeserializeObject<T>(input.ToString()!)!;
     }
 }

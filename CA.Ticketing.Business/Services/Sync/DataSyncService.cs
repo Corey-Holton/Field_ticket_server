@@ -7,10 +7,14 @@ using CA.Ticketing.Persistance.Context;
 using CA.Ticketing.Persistance.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Text;
 using System.Timers;
 
@@ -39,7 +43,6 @@ namespace CA.Ticketing.Business.Services.Sync
         private Task<bool> _syncTaskCompleted;
 
         private readonly ServerStatus _serverStatus = new();
-
         public DataSyncService(IServiceProvider serviceProvider,
             IOptions<ServerConfiguration> serverConfigurationOptions,
             ILogger<DataSyncService> logger)
@@ -63,7 +66,6 @@ namespace CA.Ticketing.Business.Services.Sync
                 BaseAddress = new Uri(serverConfigurationOptions.Value.MainServerUrl)
             };
             _httpClient.DefaultRequestHeaders.Add("ClientId", serverConfigurationOptions.Value.ClientId);
-
             _logger = logger;
 
             SetTask(true);
@@ -77,8 +79,9 @@ namespace CA.Ticketing.Business.Services.Sync
                 await CheckServerHealth();
                 _ = Task.Run(() => SyncProcess(null, null));
             }
-            catch
+            catch(Exception exc)
             {
+                _logger.LogError(exc, $"Error: {exc?.InnerException?.Message}");
                 _serverStatus.IsOnline = false;
             }
             finally
@@ -140,10 +143,16 @@ namespace CA.Ticketing.Business.Services.Sync
                 var syncDataTypeInfoList = TypeExtensions.SyncEntities
                     .Select(x => new SyncDataTypeInfo(x))
                     .ToList();
-                syncData = new SyncData { Changes = JsonConvert.SerializeObject(syncDataTypeInfoList) };
+                syncData = new SyncData { Changes = JsonConvert.SerializeObject(syncDataTypeInfoList), ServerId = Guid.NewGuid().ToString()};
 
                 context.SyncData.Add(syncData);
+
                 await context.SaveChangesAsync();
+            }
+
+            if (string.IsNullOrEmpty(syncData.ServerId))
+            {
+                syncData.ServerId = Guid.NewGuid().ToString();
             }
 
             _serverStatus.LastSyncDate = syncData.LastSyncDate;
@@ -200,11 +209,30 @@ namespace CA.Ticketing.Business.Services.Sync
                 {
                     syncDataChanges.Add(entityType, new SyncDataTypeInfo(entityType));
                 }
-
                 await SendEntities(entityType, syncDataChanges, syncProcessor);
 
                 await GetEntities(entityType, syncDataChanges, syncProcessor);
+           
             }
+
+            try
+            {
+                SyncInfo info = new SyncInfo
+                {
+                    ServerName = syncData.ServerId,
+                    LastSyncDate = DateTime.UtcNow.ToString("yyyyMMddHHmmssfffffff")
+                };
+
+                using StringContent requestBody = new(JsonConvert.SerializeObject(info), Encoding.UTF8, "application/json");
+
+                using var response = await _httpClient.PostAsync($"api/sync/history", requestBody);
+
+                response.EnsureSuccessStatusCode();
+            }catch(Exception exc)
+            {
+                _logger.LogError(exc, $"Error: {exc?.InnerException?.Message}");
+            }
+            
 
             syncData.Changes = JsonConvert.SerializeObject(syncDataChanges.Select(x => x.Value));
             syncData.LastSyncDate = DateTime.UtcNow;

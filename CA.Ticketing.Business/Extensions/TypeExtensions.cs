@@ -28,6 +28,24 @@ namespace CA.Ticketing.Business.Extensions
             typeof(EmployeeNote)
         };
 
+        public static List<Type> SyncHistory = new()
+        {
+            typeof(TicketSpecification),
+            typeof(Scheduling),
+            typeof(PayrollData),
+            typeof(FieldTicket),
+            typeof(InvoiceLateFee),
+            typeof(Invoice),
+            typeof(Employee),
+            typeof(EquipmentFile),
+            typeof(EquipmentCharge),
+            typeof(Equipment),
+            typeof(CustomerContact),
+            typeof(CustomerLocation),
+            typeof(Customer),
+            typeof(Charge),
+        };
+
         public static Type GetTypeFromString(string entityType) => entityType.ToLower() switch
         {
             "charge" => typeof(Charge),

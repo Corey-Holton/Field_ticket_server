@@ -47,6 +47,7 @@ namespace CA.Ticketing.Business.Bootstrap
             services.AddScoped<IPayrollService, PayrollService>();
             services.AddScoped<IFileManagerService, FileManagerService>();
             services.AddScoped<ISyncProcessor, SyncProcessor>();
+            services.AddScoped<ISyncInfoService, SyncInfoService>();
         }
 
         private static void RegisterBaseServices(this IServiceCollection services)
