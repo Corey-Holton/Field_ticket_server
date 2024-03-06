@@ -4,6 +4,7 @@ using CA.Ticketing.Persistance.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CA.Ticketing.Persistance.Migrations
 {
     [DbContext(typeof(CATicketingContext))]
-    partial class CATicketingContextModelSnapshot : ModelSnapshot
+    [Migration("20240206113308_Payroll Notes")]
+    partial class PayrollNotes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -915,30 +917,9 @@ namespace CA.Ticketing.Persistance.Migrations
                     b.Property<DateTime?>("LastSyncDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ServerId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
                     b.ToTable("SyncData");
-                });
-
-            modelBuilder.Entity("CA.Ticketing.Persistance.Models.SyncServerInfo", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("LastSyncDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ServerName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ServerSyncHistory");
                 });
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.TicketSpecification", b =>

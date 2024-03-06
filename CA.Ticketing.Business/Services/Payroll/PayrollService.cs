@@ -96,7 +96,8 @@ namespace CA.Ticketing.Business.Services.Payroll
                             ticket.Mileage,
                             // Get tool pusher rate for any Rig work if the worker is Tool Pusher
                             ToolPusherRate = !isRigWork || !isToolPusher ? 0 :
-                                (toolPusherSpec?.Rate * toolPusherSpec?.Quantity) ?? 0
+                                (toolPusherSpec?.Rate * toolPusherSpec?.Quantity) ?? 0,
+                            ToolPusherQuantity = !isRigWork || !isToolPusher ? 0 : toolPusherSpec?.Quantity ?? 0
                         };
                     }))
                 .GroupBy(x => x.GroupingIdentifier)
@@ -130,6 +131,9 @@ namespace CA.Ticketing.Business.Services.Payroll
                     // Set Jobs count
                     var jobsCount = employeePayrollData.Count();
 
+                    // Set total quantity of Tool Pusher jobs
+                    var totalQuantity = employeePayrollData.Sum(x => x.ToolPusherQuantity);
+
                     // Set total from jobs for ToolPusher
                     var totalJobs = employeePayrollData.Sum(x => x.ToolPusherRate);
 
@@ -144,6 +148,7 @@ namespace CA.Ticketing.Business.Services.Payroll
                         Employee = name,
                         TotalHours = totalHours,
                         Jobs = jobsCount,
+                        TotalQuantity = totalQuantity,
                         TotalJobs = totalJobs,
                         RegularHours = regularHours,
                         OvertimeHours = overTimeHours,

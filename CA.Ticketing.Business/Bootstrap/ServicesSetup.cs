@@ -3,6 +3,7 @@ using CA.Ticketing.Business.Extensions;
 using CA.Ticketing.Business.Services.Authentication;
 using CA.Ticketing.Business.Services.Charges;
 using CA.Ticketing.Business.Services.Customers;
+using CA.Ticketing.Business.Services.EmployeeNotes;
 using CA.Ticketing.Business.Services.Employees;
 using CA.Ticketing.Business.Services.Equipments;
 using CA.Ticketing.Business.Services.FileManager;
@@ -41,6 +42,7 @@ namespace CA.Ticketing.Business.Bootstrap
             services.AddScoped<ITicketService, TicketService>();
             services.AddScoped<IInvoiceService, InvoiceService>();
             services.AddScoped<ISettingsService, SettingsService>();
+            services.AddScoped<INotesService, NotesService>();
             services.AddScoped<IPdfGeneratorService, PdfGeneratorService>();
             services.AddScoped<IPayrollService, PayrollService>();
             services.AddScoped<IFileManagerService, FileManagerService>();

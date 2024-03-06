@@ -21,7 +21,7 @@
 
         public static string ToUSDateTime(this DateTime date)
         {
-            return date.ToString("dd/MM/yyyy");
+            return date.ToString("MM/dd/yyyy");
         }
 
         public static DateTime GetEndofDay(this DateTime initialDate)

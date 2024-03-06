@@ -29,5 +29,7 @@ namespace CA.Ticketing.Persistance.Models
         public double YardHours { get; set; }
 
         public double RoustaboutHours { get; set; }
+
+        public EmployeeNote? EmployeeNote { get; set; }
     }
 }

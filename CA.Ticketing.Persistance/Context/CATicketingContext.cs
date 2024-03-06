@@ -11,6 +11,8 @@ namespace CA.Ticketing.Persistance.Context
 
         public DbSet<Employee> Employees { get; set; }
 
+        public DbSet<EmployeeNote> EmployeeNotes { get; set; }
+
         public DbSet<Customer> Customers { get; set; }
 
         public DbSet<CustomerLocation> CustomerLocations { get; set; }
@@ -60,6 +62,7 @@ namespace CA.Ticketing.Persistance.Context
             builder.Entity<CustomerLocation>().HasQueryFilter(x => !x.DeletedDate.HasValue);
             builder.Entity<CustomerContact>().HasQueryFilter(x => !x.DeletedDate.HasValue);
             builder.Entity<Employee>().HasQueryFilter(x => !x.DeletedDate.HasValue);
+            builder.Entity<EmployeeNote>().HasQueryFilter(x => !x.DeletedDate.HasValue);
             builder.Entity<EquipmentFile>().HasQueryFilter(x => !x.DeletedDate.HasValue);
             builder.Entity<InvoiceLateFee>().HasQueryFilter(x => !x.DeletedDate.HasValue);
             base.OnModelCreating(builder);

@@ -27,5 +27,6 @@
         public double TotalMileage { get; set; }
 
         public double TotalAmount { get; set; }
+        public double TotalQuantity { get; set; }
     }
 }

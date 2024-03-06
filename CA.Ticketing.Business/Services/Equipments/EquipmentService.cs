@@ -9,11 +9,15 @@ using CA.Ticketing.Common.Extensions;
 using CA.Ticketing.Business.Services.FileManager;
 using CA.Ticketing.Common.Constants;
 using CA.Ticketing.Business.Services.Removal;
+using CA.Ticketing.Common.Authentication;
+using CA.Ticketing.Business.Authentication;
 
 namespace CA.Ticketing.Business.Services.Equipments
 {
     public class EquipmentService : EntityServiceBase, IEquipmentService
     {
+        private readonly IUserContext _userContext;
+
         private readonly IFileManagerService _fileManagerService;
 
         private readonly IRemovalService _removalService;
@@ -21,9 +25,11 @@ namespace CA.Ticketing.Business.Services.Equipments
         public EquipmentService(
             CATicketingContext context,
             IMapper mapper,
+            IUserContext userContext,
             IFileManagerService fileManagerService,
             IRemovalService removalService) : base (context, mapper) 
         {
+            _userContext = userContext;
             _fileManagerService = fileManagerService;
             _removalService = removalService;
         }
@@ -41,6 +47,26 @@ namespace CA.Ticketing.Business.Services.Equipments
                 .ToListAsync()).Select(x => _mapper.Map<EquipmentDto>(x));
         }
 
+        public async Task<EntityDtoBase?> GetByEmployeeAssigned()
+        {
+            var userId = _userContext.User!.Id;
+
+            var user = await _context.Users.SingleAsync(x => x.Id == userId);
+            if (string.IsNullOrEmpty(user.EmployeeId))
+            {
+                return null;
+            }
+            var employee = _context.Employees.SingleOrDefault(x => x.Id == user.EmployeeId);
+
+            var equipment = await _context.Equipment.FirstOrDefaultAsync(x => x.Id == employee!.AssignedRigId);
+
+            if (equipment == null)
+            {
+                return null;
+            }
+
+            return _mapper.Map<EntityDtoBase>(equipment);
+        }
 
         public async Task<EquipmentDetailsDto> GetById(string? id)
         {

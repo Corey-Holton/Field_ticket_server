@@ -4,6 +4,7 @@ using CA.Ticketing.Persistance.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CA.Ticketing.Persistance.Migrations
 {
     [DbContext(typeof(CATicketingContext))]
-    partial class CATicketingContextModelSnapshot : ModelSnapshot
+    [Migration("20240205133213_HasNote")]
+    partial class HasNote
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -438,7 +440,7 @@ namespace CA.Ticketing.Persistance.Migrations
 
                     b.Property<string>("EmployeeId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("LastModifiedDate")
                         .HasColumnType("datetime2");
@@ -448,17 +450,13 @@ namespace CA.Ticketing.Persistance.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TicketId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UpdatedBy")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("EmployeeId");
-
-                    b.HasIndex("TicketId");
 
                     b.ToTable("EmployeeNotes");
                 });
@@ -787,12 +785,12 @@ namespace CA.Ticketing.Persistance.Migrations
                     b.Property<string>("EmployeeId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("EmployeeNoteId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("FieldTicketId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool?>("HasNote")
+                        .HasColumnType("bit");
 
                     b.Property<DateTime>("LastModifiedDate")
                         .HasColumnType("datetime2");
@@ -816,8 +814,6 @@ namespace CA.Ticketing.Persistance.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("EmployeeId");
-
-                    b.HasIndex("EmployeeNoteId");
 
                     b.HasIndex("FieldTicketId");
 
@@ -915,30 +911,9 @@ namespace CA.Ticketing.Persistance.Migrations
                     b.Property<DateTime?>("LastSyncDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ServerId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
                     b.ToTable("SyncData");
-                });
-
-            modelBuilder.Entity("CA.Ticketing.Persistance.Models.SyncServerInfo", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("LastSyncDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ServerName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ServerSyncHistory");
                 });
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.TicketSpecification", b =>
@@ -1164,23 +1139,6 @@ namespace CA.Ticketing.Persistance.Migrations
                     b.Navigation("AssignedRig");
                 });
 
-            modelBuilder.Entity("CA.Ticketing.Persistance.Models.EmployeeNote", b =>
-                {
-                    b.HasOne("CA.Ticketing.Persistance.Models.Employee", "Employee")
-                        .WithMany()
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CA.Ticketing.Persistance.Models.FieldTicket", "FieldTicket")
-                        .WithMany("EmployeeNote")
-                        .HasForeignKey("TicketId");
-
-                    b.Navigation("Employee");
-
-                    b.Navigation("FieldTicket");
-                });
-
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.EquipmentCharge", b =>
                 {
                     b.HasOne("CA.Ticketing.Persistance.Models.Charge", "Charge")
@@ -1266,10 +1224,6 @@ namespace CA.Ticketing.Persistance.Migrations
                         .WithMany("Payrolls")
                         .HasForeignKey("EmployeeId");
 
-                    b.HasOne("CA.Ticketing.Persistance.Models.EmployeeNote", "EmployeeNote")
-                        .WithMany()
-                        .HasForeignKey("EmployeeNoteId");
-
                     b.HasOne("CA.Ticketing.Persistance.Models.FieldTicket", "FieldTicket")
                         .WithMany("PayrollData")
                         .HasForeignKey("FieldTicketId")
@@ -1277,8 +1231,6 @@ namespace CA.Ticketing.Persistance.Migrations
                         .IsRequired();
 
                     b.Navigation("Employee");
-
-                    b.Navigation("EmployeeNote");
 
                     b.Navigation("FieldTicket");
                 });
@@ -1425,8 +1377,6 @@ namespace CA.Ticketing.Persistance.Migrations
 
             modelBuilder.Entity("CA.Ticketing.Persistance.Models.FieldTicket", b =>
                 {
-                    b.Navigation("EmployeeNote");
-
                     b.Navigation("PayrollData");
 
                     b.Navigation("TicketSpecifications");
