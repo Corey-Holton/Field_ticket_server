@@ -24,7 +24,7 @@ namespace CA.Ticketing.Business.Bootstrap
             }
 
             services.AddSingleton<InvoiceLateFeeService>();
-            services.AddHostedService(serviceCollection => serviceCollection.GetRequiredService<InvoiceLateFeeService>());;
+            services.AddHostedService(serviceCollection => serviceCollection.GetRequiredService<InvoiceLateFeeService>());
             services.AddHostedService<ServerSyncHistoryService>();
         }
 
