@@ -24,8 +24,8 @@ namespace CA.Ticketing.Business.Bootstrap
             }
 
             services.AddSingleton<InvoiceLateFeeService>();
-            services.AddHostedService(serviceCollection => serviceCollection.GetRequiredService<InvoiceLateFeeService>());;
-            services.AddHostedService(serviceCollection => serviceCollection.GetRequiredService<ServerSyncHistoryService>());
+            services.AddHostedService(serviceCollection => serviceCollection.GetRequiredService<InvoiceLateFeeService>());
+            services.AddHostedService<ServerSyncHistoryService>();
         }
 
         public static async Task<IApplicationBuilder> InitiateDatabase(this IApplicationBuilder app, IConfiguration configuration)
