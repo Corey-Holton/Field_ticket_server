@@ -70,31 +70,41 @@ builder.Services.RegisterMappers();
 
 var app = builder.Build();
 
-await app.InitiateDatabase(builder.Configuration);
+app.Logger.LogInformation("Startup initiated");
 
-app.UseSwagger();
-app.UseSwaggerUI(c =>
+try
 {
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "CA Ticketing API");
-});
+    await app.InitiateDatabase(builder.Configuration);
 
-app.UseErrorLogging();
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "CA Ticketing API");
+    });
 
-app.UseCors("EnableCORS");
+    app.UseErrorLogging();
 
-app.UseHttpsRedirection();
+    app.UseCors("EnableCORS");
 
-app.SetDistributionFolders(builder.Environment);
+    app.UseHttpsRedirection();
 
-app.UseRouting();
+    app.SetDistributionFolders(builder.Environment);
 
-app.UseAuthentication();
+    app.UseRouting();
 
-app.UseAuthorization();
+    app.UseAuthentication();
 
-app.UseEndpoints(endpoints =>
+    app.UseAuthorization();
+
+    app.UseEndpoints(endpoints =>
+    {
+        endpoints.MapControllers();
+    });
+
+    app.Run();
+}
+catch (Exception ex)
 {
-    endpoints.MapControllers();
-});
-
-app.Run();
+    app.Logger.LogError(ex, "Error during startup");
+    throw;
+}
