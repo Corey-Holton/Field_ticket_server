@@ -209,6 +209,7 @@ namespace CA.Ticketing.Business.Services.Sync
                 {
                     syncDataChanges.Add(entityType, new SyncDataTypeInfo(entityType));
                 }
+
                 if (entityType != typeof(Charge))
                 {
                     await SendEntities(entityType, syncDataChanges, syncProcessor);
