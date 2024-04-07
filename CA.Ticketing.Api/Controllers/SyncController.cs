@@ -2,6 +2,7 @@
 using CA.Ticketing.Business.Services.Sync;
 using CA.Ticketing.Business.Services.Sync.Dto;
 using CA.Ticketing.Common.Constants;
+using CA.Ticketing.Persistance.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CA.Ticketing.Api.Controllers
@@ -68,6 +69,11 @@ namespace CA.Ticketing.Api.Controllers
         public async Task<IActionResult> Update(string entityType, [FromBody] IEnumerable<object> entities)
         {
             var typeRequested = TypeExtensions.GetTypeFromString(entityType);
+
+            if (typeRequested == typeof(EquipmentCharge) || typeRequested == typeof(Charge))
+            {
+                return Ok();
+            }
 
             var methodInfo = typeof(SyncProcessor).GetMethod(nameof(SyncProcessor.UpdateEntities))!
                 .MakeGenericMethod(typeRequested);
