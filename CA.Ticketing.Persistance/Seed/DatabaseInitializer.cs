@@ -5,6 +5,7 @@ using CA.Ticketing.Persistance.Context;
 using CA.Ticketing.Persistance.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace CA.Ticketing.Persistance.Seed
 {
@@ -20,8 +21,8 @@ namespace CA.Ticketing.Persistance.Seed
 
         private const string _adminInitialPassword = "I@mAdm1nUs3r";
 
-        public DatabaseInitializer(UserManager<ApplicationUser> userManager, 
-            RoleManager<IdentityRole> roleManager, 
+        public DatabaseInitializer(UserManager<ApplicationUser> userManager,
+            RoleManager<IdentityRole> roleManager,
             CATicketingContext context)
         {
             _userManager = userManager;
@@ -44,6 +45,7 @@ namespace CA.Ticketing.Persistance.Seed
             await CreateRoles();
             await CreateBaseUser();
             await InitiateCharges();
+            await InitiateTypes();
             await InitiateSettings();
             await InitiateBackgroundJobs();
         }
@@ -91,10 +93,73 @@ namespace CA.Ticketing.Persistance.Seed
             }
         }
 
+        private async Task InitiateTypes()
+        {
+            var defaultCharges = GetCharges();
+
+            var defaultTypes = GetTypes();
+
+            var typeNames = defaultTypes.Select(x => x.Name).ToList();
+
+            var typesToRemove = await _context.TicketType
+                .Where(x => !typeNames.Contains(x.Name))
+                .ToListAsync();
+
+            _context.TicketType.RemoveRange(typesToRemove);
+
+            await _context.SaveChangesAsync();
+
+            var existingTypes = await _context.TicketType.ToListAsync();
+
+            var charges = await _context.Charges.ToListAsync();
+
+
+            foreach (var ticketType in defaultTypes)
+            {
+                var existingType = existingTypes.SingleOrDefault(x => x.Name == ticketType.Name);
+                var newType = ticketType;
+                if (existingType == null)
+                {
+                    if (ticketType.Name == "Base")
+                    {
+                        foreach (var charge in charges)
+                        {
+                            if (charge.IncludeInTicketSpecs)
+                            {
+                                newType.IncludedCharges.Add(charge);
+                            }
+
+                        }
+                        _context.TicketType.Add(newType);
+                        continue;
+                    }
+
+                    if(ticketType.Name == "Well")
+                    {
+                        foreach (var charge in charges)
+                        {
+                            if (charge.Name != ChargeNames.SwabCups)
+                            {
+                                newType.IncludedCharges.Add(charge);
+                            }
+                            if (!charge.IncludeInTicketSpecs || charge.Name == ChargeNames.Labor)
+                            {
+                                newType.SpecialCharges.Add(charge);
+                            }
+                        }
+                         _context.TicketType.Add(newType);
+                        continue;
+                    }
+                }                   
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
         private async Task InitiateCharges()
         {
             var defaultCharges = GetCharges();
-            
+
             var chargesNames = defaultCharges.Select(x => x.Name).ToList();
 
             var chargesToRemove = await _context.Charges
@@ -162,7 +227,7 @@ namespace CA.Ticketing.Persistance.Seed
                 return;
             }
 
-            _context.Settings.Add(new Setting 
+            _context.Settings.Add(new Setting
             {
                 TaxRate = 7.5,
                 MileageCost = 1,
@@ -176,8 +241,8 @@ namespace CA.Ticketing.Persistance.Seed
         {
             var backgroundJobs = await _context.BackgroundJobs.ToListAsync();
 
-            var invoiceLateFeesJob= backgroundJobs.SingleOrDefault(x => x.Name == BusinessConstants.BackgroundJobNames.InvoiceLateFees);
-            
+            var invoiceLateFeesJob = backgroundJobs.SingleOrDefault(x => x.Name == BusinessConstants.BackgroundJobNames.InvoiceLateFees);
+
             if (invoiceLateFeesJob == null)
             {
                 _context.BackgroundJobs.Add(new BackgroundJob { Name = BusinessConstants.BackgroundJobNames.InvoiceLateFees });
@@ -238,6 +303,14 @@ namespace CA.Ticketing.Persistance.Seed
 
             await _context.SaveChangesAsync();
         }
+        public static IEnumerable<TicketType> GetTypes()
+        {
+            return new List<TicketType>
+            {
+                new TicketType {Name = "Base"},
+                new TicketType {Name = "Well" },
+            };
+        }
 
         private static IEnumerable<Charge> GetCharges()
         {
@@ -270,7 +343,10 @@ namespace CA.Ticketing.Persistance.Seed
                 new Charge { Order = 25, Name = ChargeNames.ThirdParty, DefaultRate = 0, UoM = UnitOfMeasure.EA, IsRigSpecific = false, IncludeInTicketSpecs = true, AllowRateAdjustment = true },
                 new Charge { Order = 26, Name = ChargeNames.Trucking, DefaultRate = 0, UoM = UnitOfMeasure.EA, IsRigSpecific = false, IncludeInTicketSpecs = true, AllowRateAdjustment = true },
                 new Charge { Order = 27, Name = ChargeNames.Other, DefaultRate = 0, UoM = UnitOfMeasure.None, IsRigSpecific = false, IncludeInTicketSpecs = true, AllowRateAdjustment = true, AllowUoMChange = true },
-                new Charge { Order = 28, Name = ChargeNames.Labor, DefaultRate = 45, UoM = UnitOfMeasure.Hourly, IsRigSpecific = false, IncludeInTicketSpecs = true }
+                new Charge { Order = 28, Name = ChargeNames.PowerTbgTongs, DefaultRate = 10, UoM = UnitOfMeasure.EA, IsRigSpecific = false, IncludeInTicketSpecs = false, AllowRateAdjustment = false },
+                new Charge { Order = 29, Name = ChargeNames.Labor, DefaultRate = 45, UoM = UnitOfMeasure.Hourly, IsRigSpecific = false, IncludeInTicketSpecs = true },
+                new Charge { Order = 30, Name = ChargeNames.InsuranceFuelSurcharge, DefaultRate = 20, UoM = UnitOfMeasure.Hourly, IsRigSpecific = false, IncludeInTicketSpecs = false, AllowRateAdjustment = true },
+                new Charge { Order = 31, Name = ChargeNames.RigTime, DefaultRate = 30, UoM = UnitOfMeasure.Hourly, IsRigSpecific = false, IncludeInTicketSpecs = false, AllowRateAdjustment = true }
             };
         }
     }

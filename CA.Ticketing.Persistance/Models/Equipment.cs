@@ -28,6 +28,9 @@ namespace CA.Ticketing.Persistance.Models
         public double FuelConsumption { get; set; }
 
         [JsonIgnore]
+        public virtual TicketType TicketType { get; set; }
+
+        [JsonIgnore]
         public virtual ICollection<FieldTicket> Tickets { get; set; } = new List<FieldTicket>();
 
         [JsonIgnore]

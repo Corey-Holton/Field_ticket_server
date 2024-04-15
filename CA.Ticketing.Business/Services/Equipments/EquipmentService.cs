@@ -93,10 +93,24 @@ namespace CA.Ticketing.Business.Services.Equipments
                     });
                 }
             }
-            
+
+            equipment.TicketType = await GetTicketType(entity.TicketType);
+
             _context.Equipment.Add(equipment);
             await _context.SaveChangesAsync();
             return equipment.Id;
+        }
+
+        private async Task<TicketType> GetTicketType(string name)
+        {
+            var type = await _context.TicketType.Include(x => x.IncludedCharges).SingleOrDefaultAsync(x => x.Name == name);
+
+            if (type == null)
+            {
+                throw new KeyNotFoundException(nameof(TicketType));
+            }
+
+            return type;
         }
 
         public async Task Update(EquipmentDetailsDto entity)
@@ -104,6 +118,8 @@ namespace CA.Ticketing.Business.Services.Equipments
             var equipment = await GetEquipment(entity.Id);
 
             _mapper.Map(entity, equipment);
+
+            equipment.TicketType = await GetTicketType(entity.TicketType);
 
             await _context.SaveChangesAsync();
         }

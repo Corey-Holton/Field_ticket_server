@@ -71,6 +71,8 @@ namespace CA.Ticketing.Business.Services.Pdf.Dto
 
         public string EmployeeNumber => _employeeNumber ?? string.Empty;
 
+        public string TicketType => _fieldTicket.TicketType?.Name ?? "Base";
+       
         public string ClassName { get; set; }
 
         public List<TicketPayrollData> PayrollData => _fieldTicket.PayrollData
@@ -96,6 +98,29 @@ namespace CA.Ticketing.Business.Services.Pdf.Dto
             return result;
         }
 
+        public List<TicketReportWellCharge> ChargesWellType()
+        {
+            _fieldTicket.TicketSpecifications = _fieldTicket.TicketSpecifications.OrderBy(x => x.CreatedDate).ToList();
+            var result = _fieldTicket.TicketSpecifications.Where(x => !x.SpecialCharge && x.Quantity != 0).Select(x => new TicketReportWellCharge(x)).ToList();
+            return result;
+        }
+
+        public List<TicketReportWellCharge> SpecialWellCharges()
+        {
+            _fieldTicket.TicketSpecifications = _fieldTicket.TicketSpecifications.Where(x => x.SpecialCharge).OrderBy(x => x.CreatedDate).ToList();
+            var result = _fieldTicket.TicketSpecifications.Select(x => new TicketReportWellCharge(x)).ToList();
+            return result;
+        }
+        public List<(WellRecordType name, int amount)> WellTypes()
+        {
+            var result = new List<(WellRecordType name, int amount)>();
+            
+            foreach(var i in (WellRecordType[])Enum.GetValues(typeof(WellRecordType))) {
+                result.Add(new (i, i.GetWellRecordAmount()));
+            }
+
+            return result;
+        }
         public string GetWellType(WellType wellType)
         {
             if (_fieldTicket.Location == null)
@@ -117,9 +142,84 @@ namespace CA.Ticketing.Business.Services.Pdf.Dto
             ServiceType? otherServiceType = _fieldTicket.ServiceTypes.Any(x => x > ServiceType.Completion) ? _fieldTicket.ServiceTypes.First(x => x > ServiceType.Completion) : null;
             return otherServiceType?.GetServiceType() ?? string.Empty;
         }
-    }
+        public List<TicketRecordWell> WellRecords()
+        {
 
-    public class TicketReportCharge
+            _fieldTicket.WellRecord = _fieldTicket.WellRecord.OrderBy(x => x.WellRecordType).ToList();
+            var result = _fieldTicket.WellRecord.Select(x => new TicketRecordWell(x)).ToList();
+            return result;
+        }
+
+        public List<TicketRecordSwab> SwabRecords()
+        {
+            var result = _fieldTicket.SwabCups.Select(x => new TicketRecordSwab(x)).ToList();
+            return result;
+        }
+
+        public string WellOtherDetail()
+        {
+            var otherText = _fieldTicket.OtherText;
+            return otherText;
+        }
+    }
+}
+public class TicketRecordWell
+{
+    public string Name { get; set; } = string.Empty;
+
+    public WellRecordType Type { get; set; }
+
+
+    public string Pulled { get; set; } = string.Empty;
+
+    public string Ran { get; set; } = string.Empty;
+
+    public string Size { get; set; } = string.Empty;
+
+    public string? pumpNumber { get; set; }
+
+    public TicketRecordWell(WellRecord? wellRecord)
+    {
+        if (wellRecord == null)
+        {
+            return;
+        }
+        Type = wellRecord.WellRecordType;
+        Name = wellRecord.WellRecordType.GetWellRecordType(wellRecord.Pump_Number);
+        Pulled = wellRecord.Pulled.ToString();
+        Ran = wellRecord.Ran.ToString();
+        Size = wellRecord.Size;
+        pumpNumber = wellRecord.Pump_Number;
+
+    }
+}
+
+
+public class TicketRecordSwab
+{
+    public string Number { get; set; } = string.Empty;
+
+    public string Size { get; set; } = string.Empty;
+
+    public string Description { get; set; } = string.Empty;
+
+    public string Amount { get; set; } = string.Empty;
+
+    public TicketRecordSwab(SwabCups? swabCups)
+    {
+        if (swabCups == null)
+        {
+            return;
+        }
+
+        Number = swabCups.Number.ToString();
+        Size = swabCups.Size.ToString();
+        Description = swabCups.Description;
+        Amount = swabCups.Amount.ToString();
+    }
+}
+
+public class TicketReportCharge
     {
         public string Item { get; set; } = string.Empty;
 
@@ -146,7 +246,27 @@ namespace CA.Ticketing.Business.Services.Pdf.Dto
         }
     }
 
-    public class TicketPayrollData
+public class TicketReportWellCharge : TicketReportCharge
+{
+    public string Description { get; set; } = string.Empty;
+
+    public TicketReportWellCharge(TicketSpecification? ticketSpecification) : base(ticketSpecification)
+    {
+        if (ticketSpecification == null)
+        {
+            return;
+        }
+
+        Item = ticketSpecification.Charge;
+        UoM = ticketSpecification.UoM.ToString();
+        Rate = ticketSpecification.Rate.ToString("N2");
+        Quantity = ticketSpecification.Quantity.ToString();
+        Amount = (ticketSpecification.Quantity * ticketSpecification.Rate).ToString("N2");
+        Description = ticketSpecification.Charge + " " + ticketSpecification.UoM.ToString() + " " + ticketSpecification.Rate.ToString("N2") + ticketSpecification.Quantity.ToString();
+    }
+}
+
+public class TicketPayrollData
     {
         public JobTitle JobTitle { get; set; }
 
@@ -178,4 +298,3 @@ namespace CA.Ticketing.Business.Services.Pdf.Dto
             Roustabout = payrollData.RoustaboutHours;
         }
     }
-}

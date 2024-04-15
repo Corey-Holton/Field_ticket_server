@@ -18,6 +18,16 @@
             public const string Other = nameof(Other);
         }
 
+        public class WellRecordTypes
+        {
+            public const string NumRodSubs = "Number of Rod Subs";
+            public const string NumRods = "Number of Rods";
+            public const string PumpNum = "Pump #";
+            public const string GasAnchor = "Gas Anchor/Strainer";
+            public const string NumTubing = "Number of Tubing Subs";
+            public const string NumJoints = "Number of Joints (Tubing or Pipe)";
+        }
+
         public class LocationTypes
         {
             public const string HQ = "HQ";

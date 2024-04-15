@@ -9,7 +9,7 @@ namespace CA.Ticketing.Business.Mappers
         public NoteMapper()
         {
             CreateMap<EmployeeNote, EmployeeNoteDto>()
-               .ForMember(x => x.TicketId, dest => dest.MapFrom(src => src.FieldTicket.TicketId));
+               .ForMember(x => x.TicketName, dest => dest.MapFrom(src => src.FieldTicket.TicketId));
 
             CreateMap<EmployeeNoteDto, EmployeeNote>()
              .ForMember(x => x.Id, dest => dest.Ignore());

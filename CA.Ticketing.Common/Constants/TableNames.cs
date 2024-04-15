@@ -35,5 +35,16 @@
         public const string EmployeeNotes = nameof(EmployeeNotes);
 
         public const string ServerSyncHistory = nameof(ServerSyncHistory);
+
+        public const string WellRecords = nameof(WellRecords);
+
+        public const string SwabCups = nameof(SwabCups);
+
+        public const string TicketType = nameof(TicketType);
+
+        public const string TypeCharges = nameof(TypeCharges);
+
+        public const string SpecialTypeCharges = nameof(SpecialTypeCharges);
+
     }
 }

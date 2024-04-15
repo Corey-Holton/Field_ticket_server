@@ -101,6 +101,19 @@ namespace CA.Ticketing.Api.Controllers
         }
 
         /// <summary>
+        /// Update well other text
+        /// </summary>
+        /// <param name="details">ManageWellOtherDetailsDto</param>
+        [Route(ApiRoutes.Tickets.UpdateOther)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> UpdateOtherDetails(ManageWellOtherDetailsDto details)
+        {
+            await _ticketService.UpdateOtherDetails(details);
+            return Ok();
+        }
+
+        /// <summary>
         /// Delete an existing Ticket
         /// </summary>
         [Route(ApiRoutes.Tickets.Delete)]
@@ -175,6 +188,84 @@ namespace CA.Ticketing.Api.Controllers
         {
             var result = await _ticketService.UpdateTicketSpecification(ticketSpecificationDto);
             return Ok(result);
+        }
+
+        /// <summary>
+        /// Update Well Record Specification
+        /// </summary>
+        /// <param name="wellRecordDto">WellRecordDto</param>
+        [Route(ApiRoutes.Tickets.UpdateWellRecord)]
+        [HttpPost]
+        [ProducesResponseType(typeof(UpdateTicketSpecResponse), StatusCodes.Status200OK)]
+        public async Task<IActionResult> UpdateWellRecord(WellRecordDto wellRecordDto)
+        {
+            await _ticketService.UpdateWellRecord(wellRecordDto);
+            return Ok();
+        }
+
+        /// <summary>
+        /// Create Well Record
+        /// </summary>
+        /// <param name="wellRecordDto">WellRecordDto</param>
+        [Route(ApiRoutes.Tickets.AddWellRecord)]
+        [HttpPost]
+        [ProducesResponseType(typeof(UpdateTicketSpecResponse), StatusCodes.Status200OK)]
+        public async Task<IActionResult> AddWellRecord(WellRecordDto wellRecordDto)
+        {
+            await _ticketService.AddWellRecord(wellRecordDto);
+            return Ok();
+        }
+
+        /// <summary>
+        /// Remove Well Record
+        /// </summary>
+        /// <param name="wellRecordDto">WellRecord Id</param>
+        [Route(ApiRoutes.Tickets.DeleteWellRecord)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> RemoveWellRecord(WellRecordDto wellRecordDto)
+        {
+            await _ticketService.RemoveWellRecord(wellRecordDto);
+            return Ok();
+        }
+
+        /// <summary>
+        /// Update Swab Charge
+        /// </summary>
+        /// <param name="swabCupDto">swabCupDto</param>
+        [Route(ApiRoutes.Tickets.UpdateSwabCharge)]
+        [HttpPost]
+        [ProducesResponseType(typeof(UpdateTicketSpecResponse), StatusCodes.Status200OK)]
+        public async Task<IActionResult> UpdateSwabCharge(SwabCupsDto swabCupDto)
+        {
+            await _ticketService.UpdateSwabCharge(swabCupDto);
+            return Ok();
+        }
+
+        /// <summary>
+        /// Create Swab Charge
+        /// </summary>
+        /// <param name="swabCupDto">swabCupDto</param>
+        [Route(ApiRoutes.Tickets.AddSwabCharge)]
+        [HttpPost]
+        [ProducesResponseType(typeof(UpdateTicketSpecResponse), StatusCodes.Status200OK)]
+        public async Task<IActionResult> AddSwabCharge(SwabCupsDto swabCupDto)
+        {
+            await _ticketService.AddSwabCharge(swabCupDto);
+            return Ok();
+        }
+
+        /// <summary>
+        /// Remove Swab Charge
+        /// </summary>
+        /// <param name="swabCupsDto">swabCupsDto</param>
+        [Route(ApiRoutes.Tickets.DeleteSwabCharge)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> RemoveSwabCup(SwabCupsDto swabCupsDto)
+        {
+            await _ticketService.RemoveSwabCharge(swabCupsDto);
+            return Ok();
         }
 
         /// <summary>

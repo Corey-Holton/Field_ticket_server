@@ -171,6 +171,7 @@ namespace CA.Ticketing.Business.Services.Removal
             ticket.PayrollData.DeleteRelated(_context);
             ticket.TicketSpecifications.DeleteRelated(_context);
             ticket.EmployeeNotes.DeleteRelated(_context);
+            ticket.WellRecord.DeleteRelated(_context);
 
             _fileManagerService.DeleteFile(FilePaths.Tickets, ticket.FileName);
 

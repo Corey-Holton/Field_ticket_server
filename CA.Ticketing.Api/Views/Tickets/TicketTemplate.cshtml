@@ -5,7 +5,7 @@
 
 @{
     Layout = "~/Views/Shared/_Layout_Ticket.cshtml";
-    var charges = Model.Charges();
+    
 }
 
 <div class="wrapper @Model.ClassName">
@@ -113,62 +113,50 @@
             </tr>
         </table>
     </div>
-    <div class="description-info">
-        <p class="subtitle center">Description Of Work Performed</p>
-        <div class="work-description">
-            @Model.Description
+    @if (Model.TicketType == "Base")
+    {
+        <div class="description-info">
+            <p class="subtitle center">Description Of Work Performed</p>
+            <div class="work-description">
+                @Model.Description
+            </div>
         </div>
-    </div>
     <div class="equipment-charges">
         <p class="subtitle center uppercase">Equipment Charges</p>
-        <table class="charges-table mt-4 w-100">
-            <tr class="equipment-header">
-                <th style="width: 14%;">Item</th>
-                <th style="width: 8%;">Quantity</th>
-                <th style="width: 8%;">Unit</th>
-                <th style="width: 8%;">Rate</th>
-                <th style="width: 12%;">Amount</th>
-                <th style="width: 14%;">Item</th>
-                <th style="width: 8%;">Quantity</th>
-                <th style="width: 8%;">Unit</th>
-                <th style="width: 8%;">Rate</th>
-                <th style="width: 12%;">Amount</th>
-            </tr>
-            @foreach (var equipmentCharge in charges)
-            {
-                <tr class="equipment-row">
-                    <td>@equipmentCharge.LeftSide.Item</td>
-                    <td>@equipmentCharge.LeftSide.Quantity</td>
-                    <td>@equipmentCharge.LeftSide.UoM</td>
-                    <td>@equipmentCharge.LeftSide.Rate</td>
-                    <td>@equipmentCharge.LeftSide.Amount</td>
-                    <td>@equipmentCharge.RightSide.Item</td>
-                    <td>@equipmentCharge.RightSide.Quantity</td>
-                    <td>@equipmentCharge.RightSide.UoM</td>
-                    <td>@equipmentCharge.RightSide.Rate</td>
-                    <td>@equipmentCharge.RightSide.Amount</td>
-                </tr>
-            }
-            <tr class="equipment-row">
-                <td class="no-border" colspan="6"></td>
-                <td colspan="2" class="additional-field">Sub Total</td>
-                <td colspan="2" class="bold">$@Model.Subtotal.ToString("N2")</td>
-            </tr>
-            <tr class="equipment-row">
-                <td class="no-border" colspan="6"></td>
-                <td colspan="2" class="additional-field">Tax %</td>
-                <td colspan="2">@Model.TaxRate</td>
-            </tr>
-            <tr class="equipment-row">
-                <td class="no-border" colspan="6"></td>
-                <td colspan="2" class="additional-field">Total</td>
-                <td colspan="2" class="bold">$@Model.Total.ToString("N2")</td>
-            </tr>
-        </table>
-
-    </div>
-
-    <div class="equipment-charges">
+            @Html.Partial("_PartialChargesTable", @Model);
+        </div>
+    }
+    else if (Model.TicketType == "Well")
+    {
+        <div class="description-info">
+            <p class="subtitle center">Description Of Work Performed</p>
+        </div>
+        <div class="wrapper-table">
+            @Html.Partial("_PartialWellTypeTable", @Model)
+            @Html.Partial("_PartialSwabTable", @Model)
+        </div>
+        <div class="description-info">
+            <p class="subtitle center">Remarks:</p>
+            <div class="work-description">
+                @Model.Description
+            </div>
+        </div>
+    }
+    <table class="charges-table mt-4 w-100" align="right">
+        <tr class="equipment-row">
+            <td class="additional-field">Sub Total</td>
+            <td class="bold">$@Model.Subtotal.ToString("N2")</td>
+        </tr>
+        <tr class="equipment-row">
+            <td class="additional-field">Tax %</td>
+            <td>@Model.TaxRate</td>
+        </tr>
+        <tr class="equipment-row">
+            <td class="additional-field">Total</td>
+            <td class="bold">$@Model.Total.ToString("N2")</td>
+        </tr>
+    </table>
+    <div class="payroll-charges">
         <p class="subtitle center">Payroll</p>
         <table class="charges-table mt-4 w-100">
             <tr class="equipment-header">

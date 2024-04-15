@@ -9,7 +9,21 @@ namespace CA.Ticketing.Business.Services.Tickets
 
         Task<IEnumerable<TicketDto>> GetByDates(DateTime startDate, DateTime endDate);
 
-        Task<TicketDetailsDto> GetById(string id);
+        Task<TicketDto> GetById(string id);
+
+        Task UpdateWellRecord(WellRecordDto wellRecordDto);
+
+        Task AddWellRecord(WellRecordDto wellRecordDto);
+
+        Task RemoveWellRecord(WellRecordDto wellRecordDto);
+
+        Task UpdateOtherDetails(ManageWellOtherDetailsDto manageWellOther);
+
+        Task AddSwabCharge(SwabCupsDto swabCupsDto);
+
+        Task UpdateSwabCharge(SwabCupsDto swabCupsDto);
+
+        Task RemoveSwabCharge(SwabCupsDto swabChargeId);
 
         Task<string> Create(ManageTicketDto manageTicketDto);
 

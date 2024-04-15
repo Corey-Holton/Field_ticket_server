@@ -1,6 +1,7 @@
 ﻿using CA.Ticketing.Common.Constants;
 using CA.Ticketing.Common.Enums;
 using CA.Ticketing.Persistance.Models.Abstracts;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CA.Ticketing.Persistance.Models
@@ -25,5 +26,11 @@ namespace CA.Ticketing.Persistance.Models
         public bool AllowRateAdjustment { get; set; }
 
         public bool AutoCalculated { get; set; }
+
+        [JsonIgnore]
+        public virtual ICollection<TicketType> TicketTypes { get; set; } = new List<TicketType>();
+
+        [JsonIgnore]
+        public virtual ICollection<TicketType> SpecialChargesTicketTypes { get; set; } = new List<TicketType>();
     }
 }
