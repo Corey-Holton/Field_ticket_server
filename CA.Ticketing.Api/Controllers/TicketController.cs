@@ -139,6 +139,19 @@ namespace CA.Ticketing.Api.Controllers
         }
 
         /// <summary>
+        /// Get Special Ticket Specification data
+        /// </summary>
+        /// <returns>Special Ticket Specification Details</returns>
+        [Route(ApiRoutes.Tickets.GetSpecialTicketSpec)]
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<List<TicketSpecificationDto>>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetSpecialTicketSpec(string ticketId)
+        {
+            var ticketSpecData = await _ticketService.GetSpecialTicketSpec(ticketId);
+            return Ok(ticketSpecData);
+        }
+
+        /// <summary>
         /// Add Payroll data
         /// </summary>
         /// <param name="payrollDataDto">PayrollDataDto</param>

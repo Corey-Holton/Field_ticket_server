@@ -20,12 +20,12 @@ namespace CA.Ticketing.Persistance.Models
         [JsonIgnore]
         public virtual FieldTicket FieldTicket { get; set; }
 
-        public double Number {  get; set; }
+        public double? Number {  get; set; }
 
-        public double Size { get; set; }
+        public double? Size { get; set; }
 
-        public string Description {  get; set; }
+        public string? Description {  get; set; }
 
-        public double Amount { get; set; }
+        public double? Amount { get; set; }
     }
 }

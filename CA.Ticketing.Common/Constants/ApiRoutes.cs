@@ -155,6 +155,8 @@
 
             public const string GetPayrollData = $"{_root}/payroll/{{ticketId}}";
 
+            public const string GetSpecialTicketSpec = $"{_root}/specialTicketSpec/{{ticketId}}";
+
             public const string AddPayrollEntry = $"{_root}/payroll/add";
 
             public const string UpdatePayrollEntry = $"{_root}/payroll/update";

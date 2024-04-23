@@ -151,12 +151,12 @@ namespace CA.Ticketing.Business.Services.Tickets
         {
             var ticket = await GetTicket(id);
             ticket.Equipment = _context.Equipment.First(x => x.Id == ticket.EquipmentId);
-            ticket.TicketType = _context.TicketType.First(x => x.Id == ticket.TicketTypeId);
+            ticket.TicketType = _context.TicketType.FirstOrDefault(x => x.Id == ticket.TicketTypeId);
             ticket.TicketSpecifications = ticket.TicketSpecifications.OrderBy(x => x.CreatedDate).ToList();
             var chargesCount = ticket.TicketSpecifications.Count;
             
             var isAdmin = _userContext.User!.Role == ApplicationRole.Admin;
-            if (ticket.TicketType.Name != "Base")
+            if (ticket.TicketType != null && ticket.TicketType?.Name != "Base")
             {
                 var ticketTypeDetailsDto = _mapper.Map<TicketTypeDetailsDto>(ticket);
                 ticketTypeDetailsDto.TicketSpecificationsData = ticket.TicketSpecifications.Where(x => x.SpecialCharge || x.Quantity > 0).ToList().Select(x => _mapper.Map<TicketSpecificationDto>((isAdmin, x)));
@@ -233,6 +233,10 @@ namespace CA.Ticketing.Business.Services.Tickets
 
             await GenerateCharges(ticket);
 
+                GenerateRecords(ticket);
+
+            
+
             if (ticket.IsTaxable())
             {
                 var settings = await _context.Settings.FirstAsync();
@@ -255,7 +259,15 @@ namespace CA.Ticketing.Business.Services.Tickets
             ticket.Equipment = null;
 
             _context.FieldTickets.Add(ticket);
-            await _context.SaveChangesAsync();
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                var e = ex;
+            }
             return ticket.Id;
         }
 
@@ -340,6 +352,22 @@ namespace CA.Ticketing.Business.Services.Tickets
             var payrollDataDto = _mapper.Map<List<PayrollDataDto>>(ticket.PayrollData);
 
             return payrollDataDto.OrderBy(x => x.JobTitle).ToList();
+        }
+
+        public async Task<List<TicketSpecificationDto>> GetSpecialTicketSpec(string ticketId)
+        {
+            var ticket = await GetTicket(ticketId);
+
+            if (ticket == null)
+            {
+                throw new KeyNotFoundException(nameof(FieldTicket));
+            }
+
+            var isAdmin = _userContext.User!.Role == ApplicationRole.Admin;
+
+            var specialSpecDto = ticket.TicketSpecifications.Where(x => x.SpecialCharge || x.Quantity > 0).ToList().Select(x => _mapper.Map<TicketSpecificationDto>((isAdmin, x)));
+
+            return specialSpecDto.ToList();
         }
 
         public async Task AddPayroll(PayrollDataDto payrollDataDto)
@@ -758,6 +786,40 @@ namespace CA.Ticketing.Business.Services.Tickets
             }
         }
 
+        private void GenerateRecords(FieldTicket ticket)
+        {
+            if (ticket.TicketType == null || ticket.TicketType.IncludedCharges == null)
+            {
+                throw new KeyNotFoundException(nameof(FieldTicket));
+            }
+
+            if (ticket.TicketType?.Name == "Well")
+            {
+                if (ticket.WellRecord.Any() || ticket.SwabCups.Any())
+                {
+                    return;
+                }
+                
+                foreach (var type in (WellRecordType[])Enum.GetValues(typeof(WellRecordType)))
+                {
+                    for (int i = 0; i < type.GetWellRecordAmount(); i++)
+                    {
+                        var wellData = new WellRecord { FieldTicketId = ticket.Id, FieldTicket = ticket, WellRecordType = type };
+
+                        ticket.WellRecord.Add(wellData);
+                    }
+                }
+
+                for (int i = 0; i < 6; i++)
+                {
+                    var swabData = new SwabCups { FieldTicket = ticket, FieldTicketId = ticket.Id };
+
+                    ticket.SwabCups.Add(swabData);
+                }
+            }
+            return;
+        }
+
         private async Task GenerateCharges(FieldTicket ticket)
         {
             if (ticket.IsServiceType(ServiceType.Yard) || ticket.TicketSpecifications.Any())
@@ -766,6 +828,7 @@ namespace CA.Ticketing.Business.Services.Tickets
             }
 
             var chargesContext =  _context.Charges;
+
             if (ticket.TicketType == null || ticket.TicketType.IncludedCharges == null) {
                 throw new KeyNotFoundException(nameof(FieldTicket));
             }
@@ -1046,7 +1109,6 @@ namespace CA.Ticketing.Business.Services.Tickets
             ticket.WellRecord.Add(wellData);
 
             await _context.SaveChangesAsync();
-
         }
 
         public async Task AddSwabCharge(SwabCupsDto swabCupsDto)

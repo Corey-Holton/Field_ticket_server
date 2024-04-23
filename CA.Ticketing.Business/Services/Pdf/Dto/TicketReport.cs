@@ -186,9 +186,9 @@ public class TicketRecordWell
         }
         Type = wellRecord.WellRecordType;
         Name = wellRecord.WellRecordType.GetWellRecordType(wellRecord.Pump_Number);
-        Pulled = wellRecord.Pulled.ToString();
-        Ran = wellRecord.Ran.ToString();
-        Size = wellRecord.Size;
+        Pulled = wellRecord.Pulled?.ToString() ?? string.Empty;
+        Ran = wellRecord.Ran?.ToString() ?? string.Empty;
+        Size = wellRecord.Size ?? string.Empty;
         pumpNumber = wellRecord.Pump_Number;
 
     }

@@ -24,22 +24,22 @@ namespace CA.Ticketing.Persistance.Models
 
         public string? Pump_Number { get; set; }
 
-        public string Pulled { get; set; }
+        public string? Pulled { get; set; }
 
-        public string Ran { get; set; }
+        public string? Ran { get; set; }
 
-        public string SizeW { get; set; }
+        public string? SizeW { get; set; }
 
         public string? SizeL { get; set; }
 
         public string? SizeH { get; set; }
 
         [NotMapped]
-        public string Size
+        public string? Size
         {
             get
             {
-                string returnSize = SizeW;
+                string returnSize = SizeW ?? "";
                 if (SizeL != null)
                 {
                     returnSize = returnSize + " x " + SizeL;

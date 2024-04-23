@@ -35,6 +35,8 @@ namespace CA.Ticketing.Business.Services.Tickets
 
         Task<List<PayrollDataDto>> GetPayrollData(string ticketId);
 
+        Task<List<TicketSpecificationDto>> GetSpecialTicketSpec(string ticketId);
+
         Task AddPayroll(PayrollDataDto payrollDataDto);
 
         Task UpdatePayrollData(PayrollDataDto payrollDataDto);
