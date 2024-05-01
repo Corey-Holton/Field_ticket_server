@@ -170,6 +170,37 @@ namespace CA.Ticketing.Persistance.Seed
 
             await _context.SaveChangesAsync();
 
+            var chargesGrouped = (await _context.Charges
+                .ToListAsync()).GroupBy(x => x.Name);
+
+            foreach (var chargeGroup in chargesGrouped)
+            {
+                if (chargeGroup.Count() > 1)
+                {
+                    foreach(var charge in chargeGroup.Skip(1).ToList())
+                    {
+                        _context.Entry(charge).State = EntityState.Deleted;
+                    }
+                }
+            }
+
+            await _context.SaveChangesAsync();
+
+            var rigChargesGrouped = (await _context.EquipmentCharges.ToListAsync()).GroupBy(x => x.ChargeId);
+
+            foreach(var rigChargeGroup in rigChargesGrouped)
+            {
+                if (rigChargeGroup.Count() > 1)
+                {
+                    foreach (var rigCharge in rigChargeGroup.Skip(1).ToList())
+                    {
+                        _context.Entry(rigCharge).State = EntityState.Deleted;
+                    }
+                }
+            }
+
+            await _context.SaveChangesAsync();
+
             var existingCharges = await _context.Charges.ToListAsync();
 
             foreach (var charge in defaultCharges)
