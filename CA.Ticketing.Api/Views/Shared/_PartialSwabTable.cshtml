@@ -1,0 +1,74 @@
+﻿@using CA.Ticketing.Business.Services.Pdf.Dto;
+
+@model TicketReport
+
+@{
+    var charges = Model.ChargesWellType();
+    var swabs = Model.SwabRecords();
+    var specialCharges = Model.SpecialWellCharges();
+}
+
+<table id="table-swab" class="charges-table mt-4 w-50">
+    <tr class="equipment-header">
+        <th style="width: 20%;">No.</th>
+        <th style="width: 20%;">Size</th>
+        <th style="width: 25%;">SwabCups</th>
+        <th style="width: 50%;">Amount</th>
+    </tr>
+    @foreach (var swabcup in swabs)
+    {
+        <tr class="swab-row">
+            <td>@swabcup.Number</td>
+            <td>@swabcup.Size</td>
+            <td id="no-up-down-border">@swabcup.Description</td>
+            <td>@swabcup.Amount</td>
+        </tr>
+    }
+    @for (int i = swabs.Count; i < 6; i++)
+    {
+        <tr class="swab-row">
+            <td></td>
+            <td></td>
+            <td id="no-up-down-border"></td>
+            <td></td>
+        </tr>
+    }
+    @{
+
+        <tr class="equipment-row">
+            <td colspan="3">@specialCharges[0].Item  @specialCharges[0].Quantity</td>
+            <td>@specialCharges[0].Amount</td>
+        </tr>
+        <tr class="equipment-row">
+            <td colspan="3">@specialCharges[1].Item  @specialCharges[1].Quantity at</td>
+            <td>@specialCharges[1].Amount</td>
+        </tr>
+        <tr class="equipment-row">
+            <td colspan="3">OTHER CHARGES:</td>
+            <td></td>
+        </tr>
+        foreach (var equipmentCharge in charges)
+        {
+            <tr class="equipment-row">
+                <td colspan ="3">@equipmentCharge.Description</td>
+                <td>@equipmentCharge.Amount</td>
+            </tr>
+        }
+        for (int i = charges.Count; i < 11; i++)
+        {
+            <tr class="equipment-row">
+                <td colspan="3"></td>
+                <td></td>
+            </tr>
+        }
+        foreach (var specialCharge in specialCharges.Skip(2))
+        {
+            <tr class="equipment-row">
+                <td colspan="3">@specialCharge.Item @@ @specialCharge.Rate Per Hr. @specialCharge.Quantity</td>
+                <td>@specialCharge.Amount</td>
+            </tr>
+        }
+    }
+    
+</table>
+

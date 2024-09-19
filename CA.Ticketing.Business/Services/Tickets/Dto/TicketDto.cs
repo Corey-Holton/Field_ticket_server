@@ -30,5 +30,7 @@ namespace CA.Ticketing.Business.Services.Tickets.Dto
         public bool HasCustomerSignature { get; set; }
 
         public bool HasEmployeeSignature { get; set; }
+
+        public string TicketType { get; set; }
     }
 }

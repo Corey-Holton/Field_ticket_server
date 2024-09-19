@@ -20,5 +20,7 @@ namespace CA.Ticketing.Business.Services.Tickets.Dto
         public bool AllowRateAdjustment { get; set; }
 
         public bool IsReadOnly { get; set; }
+
+        public bool SpecialCharge { get; set; }
     }
 }

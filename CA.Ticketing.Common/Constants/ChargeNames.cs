@@ -57,6 +57,12 @@
         public const string Other = nameof(Other);
 
         public const string Labor = nameof(Labor);
+
+        public const string PowerTbgTongs = "Power Tubing Tongs";
+
+        public const string InsuranceFuelSurcharge = "Insurance & Fuel Surcharge";
+
+        public const string RigTime = "Hrs. Rig Time";
     }
 
     public class ChargesInfo
@@ -69,5 +75,11 @@
         };
         
         public static List<string> ReadonlyCharges => _readonlyCharges;
+    }
+
+    public class WellChargeName
+    {
+        public const string PowerTbgTongs = "Power Tubing Tongs";
+
     }
 }

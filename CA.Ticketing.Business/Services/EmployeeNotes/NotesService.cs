@@ -40,7 +40,7 @@ namespace CA.Ticketing.Business.Services.EmployeeNotes
             if(string.IsNullOrEmpty(entity.TicketId))
             {
                 var noteExist = await _context.EmployeeNotes
-              .SingleOrDefaultAsync(x => x.EmployeeId == entity.EmployeeId && x.TicketId == entity.TicketId);
+                    .SingleOrDefaultAsync(x => x.EmployeeId == entity.EmployeeId && x.TicketId == entity.TicketId);
 
                 if (noteExist != null)
                 {
@@ -95,12 +95,14 @@ namespace CA.Ticketing.Business.Services.EmployeeNotes
             {
                 throw new Exception("Note Does Not Exist");
             }
+
+                _mapper.Map(entity, note);
+
+                note.UpdatedBy = _userContext.User!.Id;
+
+                await _context.SaveChangesAsync();
+
            
-            _mapper.Map(entity, note);
-
-            note.UpdatedBy = _userContext.User!.Id;
-
-            await _context.SaveChangesAsync();
         }
     }
 }

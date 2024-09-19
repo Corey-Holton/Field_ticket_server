@@ -15,5 +15,6 @@ namespace CA.Ticketing.Business.Services.Equipments.Dto
         public DateTime? PermitExpirationDate { get; set; }
 
         public DateTime? LastMaintenance { get; set; }
+        public string TicketType { get; set; }
     }
 }

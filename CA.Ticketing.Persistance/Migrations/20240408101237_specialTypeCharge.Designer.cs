@@ -4,6 +4,7 @@ using CA.Ticketing.Persistance.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CA.Ticketing.Persistance.Migrations
 {
     [DbContext(typeof(CATicketingContext))]
-    partial class CATicketingContextModelSnapshot : ModelSnapshot
+    [Migration("20240408101237_specialTypeCharge")]
+    partial class specialTypeCharge
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -922,7 +924,7 @@ namespace CA.Ticketing.Persistance.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<double?>("Amount")
+                    b.Property<double>("Amount")
                         .HasColumnType("float");
 
                     b.Property<DateTime>("CreatedDate")
@@ -932,6 +934,7 @@ namespace CA.Ticketing.Persistance.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FieldTicketId")
@@ -941,10 +944,10 @@ namespace CA.Ticketing.Persistance.Migrations
                     b.Property<DateTime>("LastModifiedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<double?>("Number")
+                    b.Property<double>("Number")
                         .HasColumnType("float");
 
-                    b.Property<double?>("Size")
+                    b.Property<double>("Size")
                         .HasColumnType("float");
 
                     b.HasKey("Id");
@@ -1094,7 +1097,6 @@ namespace CA.Ticketing.Persistance.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Pump_Number")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Ran")
@@ -1102,11 +1104,9 @@ namespace CA.Ticketing.Persistance.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SizeH")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SizeL")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SizeW")
@@ -1588,14 +1588,14 @@ namespace CA.Ticketing.Persistance.Migrations
                         .HasForeignKey("ChargeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK_SpecialTypeCharges_Charge_ChargeId");
+                        .HasConstraintName("FK_SpecialCharges_Charge_ChargeId");
 
                     b.HasOne("CA.Ticketing.Persistance.Models.TicketType", null)
                         .WithMany()
                         .HasForeignKey("TicketTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK_SpecialTypeCharges_TicketType_TicketTypeId");
+                        .HasConstraintName("FK_SpecialCharges_TicketType_TicketTypeId");
                 });
 
             modelBuilder.Entity("TypeCharges", b =>

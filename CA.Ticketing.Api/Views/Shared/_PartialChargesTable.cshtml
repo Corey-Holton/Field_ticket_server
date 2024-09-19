@@ -1,0 +1,37 @@
+﻿@using CA.Ticketing.Business.Services.Pdf.Dto;
+
+@model TicketReport
+
+@{
+    var charges = Model.Charges();
+}
+
+<table class="charges-table mt-4 w-100">
+    <tr class="equipment-header">
+        <th style="width: 14%;">Item</th>
+        <th style="width: 8%;">Quantity</th>
+        <th style="width: 8%;">Unit</th>
+        <th style="width: 8%;">Rate</th>
+        <th style="width: 12%;">Amount</th>
+        <th style="width: 14%;">Item</th>
+        <th style="width: 8%;">Quantity</th>
+        <th style="width: 8%;">Unit</th>
+        <th style="width: 8%;">Rate</th>
+        <th style="width: 12%;">Amount</th>
+    </tr>
+    @foreach (var equipmentCharge in charges)
+    {
+        <tr class="equipment-row">
+            <td>@equipmentCharge.LeftSide.Item</td>
+            <td>@equipmentCharge.LeftSide.Quantity</td>
+            <td>@equipmentCharge.LeftSide.UoM</td>
+            <td>@equipmentCharge.LeftSide.Rate</td>
+            <td>@equipmentCharge.LeftSide.Amount</td>
+            <td>@equipmentCharge.RightSide.Item</td>
+            <td>@equipmentCharge.RightSide.Quantity</td>
+            <td>@equipmentCharge.RightSide.UoM</td>
+            <td>@equipmentCharge.RightSide.Rate</td>
+            <td>@equipmentCharge.RightSide.Amount</td>
+        </tr>
+    }
+</table>

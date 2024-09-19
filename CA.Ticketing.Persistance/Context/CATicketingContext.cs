@@ -1,4 +1,5 @@
-﻿using CA.Ticketing.Persistance.Models;
+﻿using CA.Ticketing.Common.Constants;
+using CA.Ticketing.Persistance.Models;
 using CA.Ticketing.Persistance.Models.Abstracts;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -33,6 +34,12 @@ namespace CA.Ticketing.Persistance.Context
 
         public DbSet<PayrollData> PayrollData { get; set; }
 
+        public DbSet<WellRecord> WellRecord { get; set; }
+
+        public DbSet<SwabCups> SwabCups { get; set; }
+
+        public DbSet<TicketType> TicketType { get; set; }
+
         public DbSet<Scheduling> Scheduling { get; set; }
 
         public DbSet<Invoice> Invoices { get; set; }
@@ -46,6 +53,7 @@ namespace CA.Ticketing.Persistance.Context
         public DbSet<SyncServerInfo> ServerSyncHistory { get; set; }
 
         public DbSet<BackgroundJob> BackgroundJobs { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -63,8 +71,43 @@ namespace CA.Ticketing.Persistance.Context
             builder.Entity<CustomerContact>().HasQueryFilter(x => !x.DeletedDate.HasValue);
             builder.Entity<Employee>().HasQueryFilter(x => !x.DeletedDate.HasValue);
             builder.Entity<EmployeeNote>().HasQueryFilter(x => !x.DeletedDate.HasValue);
+            builder.Entity<SwabCups>().HasQueryFilter(x => !x.DeletedDate.HasValue);
+            builder.Entity<WellRecord>().HasQueryFilter(x => !x.DeletedDate.HasValue);
             builder.Entity<EquipmentFile>().HasQueryFilter(x => !x.DeletedDate.HasValue);
             builder.Entity<InvoiceLateFee>().HasQueryFilter(x => !x.DeletedDate.HasValue);
+            builder.Entity<TicketType>().HasQueryFilter(x => !x.DeletedDate.HasValue);
+            builder.Entity<TicketType>()
+                .HasMany(x => x.IncludedCharges)
+                .WithMany(x => x.TicketTypes)
+                .UsingEntity<Dictionary<string, object>>(
+                    TableNames.TypeCharges,
+                    j => j.HasOne<Charge>()
+                    .WithMany()
+                    .HasForeignKey("ChargeId")
+                    .HasConstraintName("FK_TypeCharges_Charge_ChargeId")
+                    .OnDelete(DeleteBehavior.Cascade),
+                    j => j.HasOne<TicketType>()
+                    .WithMany()
+                    .HasForeignKey("TicketTypeId")
+                    .HasConstraintName("FK_TypeCharges_TicketType_TicketTypeId")
+                    .OnDelete(DeleteBehavior.Cascade))
+                .ToTable(TableNames.TypeCharges);
+            builder.Entity<TicketType>()
+                .HasMany(x => x.SpecialCharges)
+                .WithMany(x => x.SpecialChargesTicketTypes)
+                .UsingEntity<Dictionary<string, object>>(
+                    TableNames.SpecialTypeCharges,
+                    j => j.HasOne<Charge>()
+                    .WithMany()
+                    .HasForeignKey("ChargeId")
+                    .HasConstraintName("FK_SpecialTypeCharges_Charge_ChargeId")
+                    .OnDelete(DeleteBehavior.Cascade),
+                    j => j.HasOne<TicketType>()
+                    .WithMany()
+                    .HasForeignKey("TicketTypeId")
+                    .HasConstraintName("FK_SpecialTypeCharges_TicketType_TicketTypeId")
+                    .OnDelete(DeleteBehavior.Cascade))
+                .ToTable(TableNames.SpecialTypeCharges);
             base.OnModelCreating(builder);
         }
 

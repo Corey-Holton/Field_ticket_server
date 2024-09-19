@@ -139,7 +139,23 @@
 
             public const string UpdateSpecifications = $"{_root}/update-specs";
 
+            public const string UpdateWellRecord = $"{_root}/update-well";
+
+            public const string DeleteWellRecord = $"{_root}/delete-well";
+
+            public const string AddWellRecord = $"{_root}/add-well";
+
+            public const string UpdateOther = $"{_root}/update-other";
+
+            public const string UpdateSwabCharge = $"{_root}/update-swab";
+
+            public const string DeleteSwabCharge = $"{_root}/delete-swab";
+
+            public const string AddSwabCharge = $"{_root}/add-swab";
+
             public const string GetPayrollData = $"{_root}/payroll/{{ticketId}}";
+
+            public const string GetSpecialTicketSpec = $"{_root}/specialTicketSpec/{{ticketId}}";
 
             public const string AddPayrollEntry = $"{_root}/payroll/add";
 

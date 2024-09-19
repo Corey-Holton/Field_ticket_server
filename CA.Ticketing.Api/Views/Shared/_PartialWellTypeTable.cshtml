@@ -1,0 +1,45 @@
+﻿@using CA.Ticketing.Business.Services.Pdf.Dto;
+@namespace CA.Ticketing.Common.Enums
+@using CA.Ticketing.Common.Extensions;
+@model TicketReport
+
+@{
+    var wellRecords = Model.WellRecords();
+    var otherText = Model.WellOtherDetail();
+    var types = (WellRecordType[])Enum.GetValues(typeof(WellRecordType));
+}
+<table id="table-well" class="charges-table mt-4 w-50">
+    <tr class="equipment-header">
+        <th style="width: 30%;">Well Records</th>
+        <th style="width: 20%;">Pulled</th>
+        <th style="width: 20%;">Ran</th>
+        <th style="width: 30%;">Size</th>
+    </tr>
+
+    @foreach (var type in types)
+    {
+        var amount = type.GetWellRecordAmount();
+        var wellRecordsType = wellRecords.Where(x => x.Type == type);
+        var firstRecord = wellRecordsType.FirstOrDefault();
+        <tr class="@(type == WellRecordType.GasAnchor ? "gas-row" : "equipment-row")">
+            <td rowspan=@amount>@type.GetWellRecordType(firstRecord?.pumpNumber)</td>
+            <td>@firstRecord?.Pulled</td>
+            <td>@firstRecord?.Ran</td>
+            <td>@firstRecord?.Size</td>
+        </tr>
+        @for (int i = 1; i < amount; i++)
+        {
+            <tr class="equipment-row">
+                <td>@wellRecordsType.ElementAtOrDefault(i)?.Pulled</td>
+                <td>@wellRecordsType.ElementAtOrDefault(i)?.Ran</td>
+                <td>@wellRecordsType.ElementAtOrDefault(i)?.Size</td>
+            </tr>
+        }
+    }
+    <tr class="equipment-row">
+        <td rowspan="2">Other</td>
+        <td rowspan="2" colspan="3">@otherText</td>
+    </tr>
+    <tr class="equipment-row">
+    </tr>
+</table>

@@ -10,7 +10,8 @@ namespace CA.Ticketing.Business.Mappers
     {
         public EquipmentMapper() 
         {
-            CreateMap<Equipment, EquipmentDto>();
+            CreateMap<Equipment, EquipmentDto>()
+                .ForMember(x => x.TicketType, dest => dest.MapFrom(src => src.TicketType.Name));
 
             CreateMap<Equipment, EquipmentDetailsDto>()
                 .IncludeBase<Equipment, EquipmentDto>();
@@ -18,7 +19,8 @@ namespace CA.Ticketing.Business.Mappers
             CreateMap<Equipment, EntityDtoBase>();
 
             CreateMap<EquipmentDetailsDto, Equipment>()
-                .ForMember(x => x.Id, dest => dest.Ignore());
+                .ForMember(x => x.Id, dest => dest.Ignore())
+                .ForMember(x => x.TicketType, dest => dest.Ignore());
 
             CreateMap<EquipmentCharge, EquipmentChargeDto>()
                 .ForMember(x => x.Name, dest => dest.MapFrom(src => src.Charge.Name))

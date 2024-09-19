@@ -27,6 +27,41 @@ namespace CA.Ticketing.Common.Extensions
             };
         }
 
+        public static int GetWellRecordAmount(this WellRecordType wellRecordType)
+        {
+            return wellRecordType switch
+            {
+                WellRecordType.NumRodSubs => 4,
+                WellRecordType.NumRods => 4,
+                WellRecordType.FirstPump => 1,
+                WellRecordType.SecondPump => 1,
+                WellRecordType.GasAnchor => 1,
+                WellRecordType.NumTubing => 4,
+                WellRecordType.NumJoints => 4,
+                _ => throw new ArgumentException(null, nameof(wellRecordType))
+            };
+        }
+
+        public static string GetWellRecordType(this WellRecordType wellRecordType, string? pumpNumber = null)
+        {
+            return wellRecordType switch
+            {
+                WellRecordType.NumRodSubs => WellRecordTypes.NumRodSubs,
+                WellRecordType.NumRods => WellRecordTypes.NumRods,
+                WellRecordType.FirstPump => WellRecordTypes.PumpNum + " " + pumpNumber,
+                WellRecordType.SecondPump => WellRecordTypes.PumpNum + " " + pumpNumber,
+                WellRecordType.GasAnchor => WellRecordTypes.GasAnchor,
+                WellRecordType.NumTubing => WellRecordTypes.NumTubing,
+                WellRecordType.NumJoints => WellRecordTypes.NumJoints,
+                _ => throw new ArgumentException(null, nameof(wellRecordType))
+            };
+        }
+
+        public static string GetPumpName(int pumpNumber)
+        {
+            return WellRecordTypes.PumpNum + pumpNumber;
+        }
+
         public static string GetLocationType(this LocationType locationType)
         {
             return locationType switch

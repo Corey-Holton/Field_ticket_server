@@ -65,6 +65,12 @@ namespace CA.Ticketing.Persistance.Models
         [JsonIgnore]
         public virtual CustomerLocation? Location { get; set; }
 
+        [ForeignKey(nameof(TicketType))]
+        public string? TicketTypeId { get; set; }
+
+        [JsonIgnore]
+        public virtual TicketType? TicketType { get; set; } 
+
         public DateTime? StartTime { get; set; }
 
         public DateTime? EndTime { get; set; }
@@ -97,6 +103,8 @@ namespace CA.Ticketing.Persistance.Models
 
         public string SendEmailTo { get; set; } = string.Empty;
 
+        public string OtherText { get; set; } = string.Empty;
+
         public DateTime? SentToCustomerOn { get; set; }
 
         public string FileName { get; set; } = string.Empty;
@@ -107,7 +115,13 @@ namespace CA.Ticketing.Persistance.Models
         public virtual ICollection<TicketSpecification> TicketSpecifications { get; set; } = new List<TicketSpecification>();
 
         [JsonIgnore]
+        public virtual ICollection<WellRecord> WellRecord { get; set; } = new List<WellRecord>();
+
+        [JsonIgnore]
         public virtual ICollection<PayrollData> PayrollData { get; set; } = new List<PayrollData>();
+
+        [JsonIgnore]
+        public virtual ICollection<SwabCups> SwabCups { get; set; } = new List<SwabCups>();
 
         [JsonIgnore]
         public virtual ICollection<EmployeeNote> EmployeeNotes { get; set; } = new List<EmployeeNote>();

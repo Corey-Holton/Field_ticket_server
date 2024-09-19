@@ -4,6 +4,7 @@ using CA.Ticketing.Business.Services.Tickets.Dto;
 using CA.Ticketing.Common.Constants;
 using CA.Ticketing.Persistance.Models;
 using Microsoft.AspNetCore.Routing.Constraints;
+using System.Linq;
 
 namespace CA.Ticketing.Business.Mappers
 {
@@ -15,13 +16,22 @@ namespace CA.Ticketing.Business.Mappers
                 .ForMember(x => x.Invoice, dest => dest.MapFrom(src => src.Invoice))
                 .ForMember(x => x.LocationName, dest => dest.MapFrom(src => src.Location != null ? src.Location.DisplayName : "None"))
                 .ForMember(x => x.ServiceType, dest => dest.MapFrom(src => src.ServiceTypes.First()))
-                .ForMember(x => x.CustomerName, dest => dest.MapFrom(src => src.Customer != null ? src.Customer.Name : "None"));
+                .ForMember(x => x.CustomerName, dest => dest.MapFrom(src => src.Customer != null ? src.Customer.Name : "None"))
+                .ForMember(x => x.TicketType, dest => dest.MapFrom(src => src.TicketType != null ? src.TicketType.Name : "Base"));
 
             CreateMap<FieldTicket, TicketDetailsDto>()
                 .IncludeBase<FieldTicket, TicketDto>()
                 .AfterMap((fieldTicket, ticketDto) => 
                 { 
                     ticketDto.PayrollData = ticketDto.PayrollData.OrderBy(x => x.JobTitle).ToList();
+                });
+
+            CreateMap<FieldTicket, TicketTypeDetailsDto>()
+                .IncludeBase<FieldTicket, TicketDto>()
+                .AfterMap((fieldTicket, ticketDto) =>
+                {
+                    ticketDto.PayrollData = ticketDto.PayrollData.OrderBy(x => x.JobTitle).ToList();
+                    ticketDto.WellRecord = ticketDto.WellRecord.OrderBy(x => x.WellRecordType).ToList();
                 });
 
             CreateMap<FieldTicket, TicketInfoDto>();
@@ -50,11 +60,25 @@ namespace CA.Ticketing.Business.Mappers
             CreateMap<PayrollDataDto, PayrollData>()
                 .ForMember(x => x.Id, dest => dest.Ignore());
 
+            CreateMap<WellRecord, WellRecordDto>();
+
+            CreateMap<WellRecordDto, WellRecord>()
+                .ForMember(x => x.Id, dest => dest.Ignore());
+
+            CreateMap<SwabCups, SwabCupsDto>();
+
+            CreateMap<SwabCupsDto, SwabCups>()
+                .ForMember(x => x.Id, dest => dest.Ignore());
+
             CreateMap<ManageTicketDto, FieldTicket>()
                 .ForMember(x => x.Id, dest => dest.Ignore())
                 .ForMember(x => x.SendEmailTo, dest => dest.MapFrom(src => !string.IsNullOrEmpty(src.SendEmailTo) ? src.SendEmailTo : string.Empty))
                 .ForMember(x => x.CustomerId, dest => dest.MapFrom(src => !string.IsNullOrEmpty(src.CustomerId) ? src.CustomerId : null))
                 .ForMember(x => x.LocationId, dest => dest.MapFrom(src => !string.IsNullOrEmpty(src.CustomerLocationId) ? src.CustomerLocationId : null));
+
+            CreateMap<ManageWellOtherDetailsDto, FieldTicket>()
+                .ForMember(x => x.Id, dest => dest.Ignore())
+                .ForMember(x => x.OtherText, dest => dest.MapFrom(src => !string.IsNullOrEmpty(src.OtherText) ? src.OtherText : string.Empty));
 
             CreateMap<ManageTicketHoursDto, FieldTicket>()
                 .ForMember(x => x.StartTime, dest => dest.MapFrom((src, dest) => 
@@ -87,6 +111,12 @@ namespace CA.Ticketing.Business.Mappers
                 .ForMember(x => x.Id, dest => dest.Ignore());
 
             CreateMap<PayrollData, PayrollData>()
+                .ForMember(x => x.Id, dest => dest.Ignore());
+
+            CreateMap<WellRecord, WellRecord>()
+                .ForMember(x => x.Id, dest => dest.Ignore());
+
+            CreateMap<SwabCups, SwabCups>()
                 .ForMember(x => x.Id, dest => dest.Ignore());
         }
     }
